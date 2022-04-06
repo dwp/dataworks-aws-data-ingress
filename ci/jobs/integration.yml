@@ -1,0 +1,27 @@
+jobs:
+  - name: integration
+    max_in_flight: 1
+    plan:
+      - in_parallel:
+        - get: dataworks-aws-data-ingress
+          trigger: true
+          passed:
+            - qa
+        - .: (( inject meta.plan.get-dw-al2-ecs-ami ))
+          passed:
+            - qa
+      - .: (( inject meta.plan.terraform-bootstrap ))
+      - .: (( inject meta.plan.terraform-apply ))
+        params:
+          TF_WORKSPACE: 'integration'
+      - .: (( inject meta.plan.terraform-plan ))
+        params:
+          TF_WORKSPACE: 'integration'
+
+  - name: cycle-data-ingress-integration
+    plan:
+      - .: (( inject meta.plan.cycle-containers ))
+        params:
+          AWS_ROLE_ARN: arn:aws:iam::((aws_account.integration)):role/ci
+          CLUSTER: data-ingress
+          SERVICE: data-ingress

@@ -1,11 +1,16 @@
 jobs:
   - name: qa
+    serial_groups: [qa-applies]
     max_in_flight: 1
     plan:
-      - get: dataworks-aws-data-ingress
-        trigger: true
-        passed:
-          - development
+      - in_parallel:
+        - get: meta
+          resource: meta-qa
+        - get: dataworks-aws-data-ingress
+          trigger: true
+        - get: dataworks-behavioural-framework
+          trigger: false
+        - .: (( inject meta.plan.get-dw-al2-ecs-ami ))
       - .: (( inject meta.plan.terraform-bootstrap ))
       - .: (( inject meta.plan.terraform-apply ))
         params:
@@ -13,3 +18,16 @@ jobs:
       - .: (( inject meta.plan.terraform-plan ))
         params:
           TF_WORKSPACE: 'qa'
+#      - .: (( inject meta.plan.e2e-tests))
+#        params:
+#          TF_WORKSPACE: qa
+#          AWS_ACC: ((aws_account.qa))
+#          AWS_ROLE_ARN: arn:aws:iam::((aws_account.qa)):role/ci
+
+  - name: cycle-data-ingress-qa
+    plan:
+      - .: (( inject meta.plan.cycle-containers ))
+        params:
+          AWS_ROLE_ARN: arn:aws:iam::((aws_account.qa)):role/ci
+          CLUSTER: data-ingress
+          SERVICE: data-ingress
