@@ -62,6 +62,7 @@ resource "aws_autoscaling_group" "data_ingress_server" {
   min_size                  = local.data_ingress_server_asg_min[local.environment]
   desired_capacity          = local.data_ingress_server_asg_desired[local.environment]
   max_size                  = local.data_ingress_server_asg_max[local.environment]
+
   protect_from_scale_in     = false
   health_check_grace_period = 600
   health_check_type         = "EC2"
@@ -69,7 +70,6 @@ resource "aws_autoscaling_group" "data_ingress_server" {
   vpc_zone_identifier       = data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity.*.id
   launch_template {
     id      = aws_launch_template.data_ingress_server.id
-    version = aws_launch_template.data_ingress_server.latest_version
   }
   dynamic "tag" {
     for_each = local.data_ingress_server_tags_asg
@@ -87,9 +87,6 @@ resource "aws_autoscaling_group" "data_ingress_server" {
   }
   lifecycle {
     create_before_destroy = true
-    ignore_changes = [
-      version,
-    ]
   }
 }
 
