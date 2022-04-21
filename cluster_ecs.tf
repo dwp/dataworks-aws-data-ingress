@@ -127,6 +127,9 @@ resource "aws_launch_template" "data_ingress_server" {
   }
   lifecycle {
     create_before_destroy = true
+    ignore_changes = [
+      latest_version,
+    ]
   }
   tags = merge(
     local.common_repo_tags,
