@@ -17,7 +17,7 @@ locals {
     }
   )
   data_ingress_server_asg_min = {
-    development = 1
+    development = 2
     qa          = 0
     integration = 0
     preprod     = 0
@@ -33,7 +33,7 @@ locals {
   }
 
   data_ingress_server_asg_max = {
-    development = 2
+    development = 3
     qa          = 2
     integration = 2
     preprod     = 2
@@ -62,6 +62,9 @@ locals {
     production     = "management"
     management     = "management"
   }
+  config_file = "agent-application-config.tpl"
+
+  agent_config_file = "agent-config.tpl"
 
   management_infra_account = {
     development    = "default"
@@ -73,6 +76,22 @@ locals {
     management     = "management"
   }
 
+  truststore_aliases = {
+    development = "dataworks_root_ca,dataworks_mgt_root_ca"
+    qa          = "dataworks_root_ca,dataworks_mgt_root_ca"
+    integration = "dataworks_root_ca,dataworks_mgt_root_ca"
+    preprod     = "dataworks_root_ca,dataworks_mgt_root_ca,sdx1,sdx2"
+    production  = "dataworks_root_ca,dataworks_mgt_root_ca,sdx1,sdx2"
+  }
+  env_certificate_bucket = "dw-${local.environment}-public-certificates"
+
+  truststore_certs = {
+    development = "s3://${local.env_certificate_bucket}/ca_certificates/dataworks/dataworks_root_ca.pem,s3://${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.id}/ca_certificates/dataworks/dataworks_root_ca.pem"
+    qa          = "s3://${local.env_certificate_bucket}/ca_certificates/dataworks/dataworks_root_ca.pem,s3://${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.id}/ca_certificates/dataworks/dataworks_root_ca.pem"
+    integration = "s3://${local.env_certificate_bucket}/ca_certificates/dataworks/dataworks_root_ca.pem,s3://${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.id}/ca_certificates/dataworks/dataworks_root_ca.pem"
+    preprod     = "s3://${local.env_certificate_bucket}/ca_certificates/dataworks/dataworks_root_ca.pem,s3://${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.id}/ca_certificates/dataworks/dataworks_root_ca.pem,s3://${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.id}/server_certificates/sdx/service_1/sdx_mitm.pem,s3://${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.id}/server_certificates/sdx/service_2/sdx_mitm.pem"
+    production  = "s3://${local.env_certificate_bucket}/ca_certificates/dataworks/dataworks_root_ca.pem,s3://${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.id}/ca_certificates/dataworks/dataworks_root_ca.pem,s3://${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.id}/server_certificates/sdx/service_1/sdx_mitm.pem,s3://${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.id}/server_certificates/sdx/service_2/sdx_mitm.pem"
+  }
 
   data_ingress_server_name = "data-ingress-server"
   data_ingress_server_tags_asg = merge(
@@ -104,8 +123,30 @@ locals {
       destination : data.terraform_remote_state.aws_sdx.outputs.internet_proxy.sg
     },
   ]
+  sft_agent_config_s3_prefix = "component/data-egress-sft"
 
-
+  data_ingress = {
+    development = {
+      sft_agent_api_key        = "te5tapiKey"
+      sft_agent_destination_ip = "127.0.0.1"
+    }
+    qa = {
+      sft_agent_api_key        = "te5tapiKey"
+      sft_agent_destination_ip = "127.0.0.1"
+    }
+    integration = {
+      sft_agent_api_key        = "te5tapiKey"
+      sft_agent_destination_ip = "127.0.0.1"
+    }
+    preprod = {
+      sft_agent_api_key        = "te5tapiKey"
+      sft_agent_destination_ip = "127.0.0.1"
+    }
+    production = {
+      sft_agent_api_key        = "te5tapiKey"
+      sft_agent_destination_ip = "127.0.0.1"
+    }
+  }
   data-ingress_group_name = "data-ingress"
 
   server_security_group_rules = [

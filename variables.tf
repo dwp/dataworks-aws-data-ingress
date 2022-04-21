@@ -45,12 +45,28 @@ variable "ecs_hardened_ami_id" {
   default     = "ami-00b441a83d7d7c8f0"
 }
 
+variable "parent_domain_name" {
+  description = "parent domain name for monitoring"
+  type        = string
+  default     = "dataworks.di.dwp.gov.uk"
+}
 
 variable "data_ingress_port" {
   type    = number
   default = 8080
 }
 
+variable "sft_agent_image_version" {
+  description = "image version for the SFT agent"
+  type        = map(string)
+  default = {
+    development = "0.0.37"
+    qa          = "0.0.37"
+    integration = "0.0.37"
+    preprod     = "0.0.37"
+    production  = "0.0.37"
+  }
+}
 
 variable "test_ami" {
   description = "Defines if cluster should test untested ECS AMI"
