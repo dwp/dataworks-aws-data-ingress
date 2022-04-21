@@ -8,7 +8,6 @@ import sys
 import yaml
 import json
 
-
 def main():
     if 'AWS_PROFILE' in os.environ:
         boto3.setup_default_session(profile_name=os.environ['AWS_PROFILE'])
@@ -17,7 +16,6 @@ def main():
             'secretsmanager', region_name=os.environ['AWS_REGION'])
     else:
         secrets_manager = boto3.client('secretsmanager')
-
     try:
         response = secrets_manager.get_secret_value(
             SecretId="/concourse/dataworks/terraform")
@@ -44,7 +42,6 @@ def main():
     with open('terraform.tfvars', 'w+') as terraform_tfvars:
         terraform_tfvars.write(template.render(config_data))
     print("Terraform config successfully created")
-
 
 if __name__ == "__main__":
     main()

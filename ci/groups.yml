@@ -1,11 +1,28 @@
 groups:
-  - name: master
-    jobs:
-      - development
-      - qa
-  - name: pull-request
-    jobs:
-      - dataworks-aws-data-ingress-pr
-  - name: update-pipeline
-    jobs:
-      - update-pipeline
+- name: master
+  jobs:
+    - development
+    - qa
+    - integration
+    - preprod
+    - production
+
+- name: pull-request
+  jobs:
+    - dataworks-aws-data-ingress-pr
+
+- name: ami-test
+  jobs:
+    - apply-and-test-with-ami
+
+- name: update-pipeline
+  jobs:
+    - update-pipeline
+
+- name: cycle-containers
+  jobs:
+    - cycle-data-ingress-development
+    - cycle-data-ingress-qa
+    - cycle-data-ingress-integration
+    - cycle-data-ingress-preprod
+    - cycle-data-ingress-production

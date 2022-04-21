@@ -8,6 +8,8 @@ jobs:
         params:
           path: dataworks-aws-data-ingress-pr
           status: pending
+      - get: dw-al2-ecs-ami
+        trigger: false
       - .: (( inject meta.plan.terraform-bootstrap ))
         input_mapping:
           dataworks-aws-data-ingress: dataworks-aws-data-ingress-pr
