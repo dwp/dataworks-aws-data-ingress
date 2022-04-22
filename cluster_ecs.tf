@@ -112,19 +112,6 @@ resource "aws_launch_template" "data_ingress_server" {
   iam_instance_profile {
     arn = aws_iam_instance_profile.data_ingress_server.arn
   }
-  block_device_mappings {
-    device_name = "/dev/xvda"
-
-    ebs {
-      volume_size           = var.data_ingress_server_ebs_volume_size[local.environment]
-      volume_type           = var.data_ingress_server_ebs_volume_type[local.environment]
-      kms_key_id            = data.terraform_remote_state.data_egress.outputs.data_egress_ebs_cmk.arn
-      delete_on_termination = true
-      encrypted             = true
-      iops                  = 6000
-      throughput            = 1000
-    }
-  }
   lifecycle {
     create_before_destroy = true
   }

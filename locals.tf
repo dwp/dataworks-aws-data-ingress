@@ -17,7 +17,7 @@ locals {
     }
   )
   data_ingress_server_asg_min = {
-    development = 2
+    development = 0
     qa          = 0
     integration = 0
     preprod     = 0
