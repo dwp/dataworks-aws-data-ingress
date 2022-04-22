@@ -31,14 +31,19 @@ resource "aws_ecs_task_definition" "data-ingress" {
       driver        = "local"
     }
   }
+#  placement_constraints {
+#    type       = "memberOf"
+#    expression = "attribute:instance-type == additional"
+#  }
+
   tags = merge(local.common_repo_tags, { Name = local.name })
 }
 
 data "template_file" "sft_agent_definition" {
   template = file("${path.module}/reserved_container_definition.tpl")
   vars = {
-    name          = "sft-agent"
-    group_name    = "sft-agent"
+    name          = "sft-agent-di"
+    group_name    = "sft-agent-di"
     cpu           = var.task_definition_cpu[local.environment]
     image_url     = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_sft_agent_url, var.sft_agent_image_version[local.environment])
     memory        = var.task_definition_memory[local.environment]
@@ -51,6 +56,7 @@ data "template_file" "sft_agent_definition" {
     config_bucket = data.terraform_remote_state.common.outputs.config_bucket.id
     s3_prefix     = "/data-ingress-e2e"
     essential     = true
+
 
     mount_points = jsonencode([
       {
@@ -110,7 +116,7 @@ data "template_file" "sft_agent_definition" {
 }
 
 resource "aws_ecs_service" "data-ingress" {
-  name            = "data-egress"
+  name            = "data-ingress"
   cluster         = aws_ecs_cluster.data_ingress_cluster.id
   task_definition = aws_ecs_task_definition.data-ingress.arn
   desired_count   = 1
@@ -121,7 +127,7 @@ resource "aws_ecs_service" "data-ingress" {
   }
   service_registries {
     registry_arn   = aws_service_discovery_service.data-ingress.arn
-    container_name = "data-egress"
+    container_name = "data-ingress"
   }
 
   tags = merge(local.common_repo_tags, { Name = "service-di" })

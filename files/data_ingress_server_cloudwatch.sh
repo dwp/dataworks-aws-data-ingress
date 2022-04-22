@@ -154,7 +154,7 @@ cat > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json <<CWAGEN
           {
             "file_path": "/var/log/data_ingress_server/data_ingress_server.out",
             "log_group_name": "${cwa_log_group_name}",
-            "log_stream_name": "data_egress_server.out",
+            "log_stream_name": "data_ingress_server.out",
             "timezone": "UTC"
           }
         ]

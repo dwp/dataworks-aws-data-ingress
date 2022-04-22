@@ -123,7 +123,7 @@ locals {
       destination : data.terraform_remote_state.aws_sdx.outputs.internet_proxy.sg
     },
   ]
-  sft_agent_config_s3_prefix = "component/data-egress-sft"
+  sft_agent_config_s3_prefix = "component/data-ingress-sft"
 
   data_ingress = {
     development = {

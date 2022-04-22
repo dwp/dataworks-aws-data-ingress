@@ -77,6 +77,8 @@ locals {
   }
 }
 
+data "aws_region" "current" {}
+
 data "terraform_remote_state" "aws_sdx" {
   backend   = "s3"
   workspace = terraform.workspace

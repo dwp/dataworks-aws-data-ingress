@@ -100,10 +100,10 @@ resource "aws_launch_template" "data_ingress_server" {
     security_groups             = [aws_security_group.data_ingress_server.id]
     subnet_id                   = data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity.0.id
   }
-  user_data = base64encode(templatefile("${path.module}/files/data_ingress_cluster_userdata.tpl", {
+  user_data = base64encode(templatefile("files/data_ingress_cluster_userdata.tpl", {
     cluster_name  = local.cluster_name
     instance_role = aws_iam_instance_profile.data_ingress_server.name
-    region        = var.region
+    region        = data.aws_region.current.name
     folder        = "/mnt/config"
     mnt_bucket    = data.terraform_remote_state.common.outputs.config_bucket.id
     name          = local.launch_template_name
