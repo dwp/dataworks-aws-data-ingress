@@ -23,6 +23,17 @@ locals {
     preprod     = 0
     production  = 0
   }
+
+  configure_ssl = {
+    development    = ""
+    qa             = ""
+    integration    = ""
+    management-dev = ""
+    preprod        = ""
+    production     = "true"
+    management     = ""
+  }
+
   autoscaling_group_name = "data-ingress-ag"
   data_ingress_server_asg_desired = {
     development = 2
@@ -33,7 +44,7 @@ locals {
   }
 
   data_ingress_server_asg_max = {
-    development = 3
+    development = 2
     qa          = 2
     integration = 2
     preprod     = 2
@@ -124,7 +135,7 @@ locals {
     },
   ]
   sft_agent_config_s3_prefix = "component/data-ingress-sft"
-
+  internet_proxy_port        = "3128"
   data_ingress = {
     development = {
       sft_agent_api_key        = "te5tapiKey"
@@ -148,6 +159,25 @@ locals {
     }
   }
   data-ingress_group_name = "data-ingress"
+  test_sft = {
+    development    = "TRUE"
+    qa             = "TRUE"
+    integration    = ""
+    management-dev = ""
+    preprod        = ""
+    production     = ""
+    management     = ""
+  }
+
+  sft_test_dir = {
+    development    = "test"
+    qa             = "test"
+    integration    = ""
+    management-dev = ""
+    preprod        = ""
+    production     = ""
+    management     = ""
+  }
 
   server_security_group_rules = [
     {

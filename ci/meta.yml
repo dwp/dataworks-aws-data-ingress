@@ -64,6 +64,7 @@
               terraform workspace show
               cp ../terraform-bootstrap/terraform.tf .
               terraform init
+              terraform force-unlock -force f12d5ed9-11b7-d298-50bf-ac80201b488d
               terraform plan -out terraform.plan
               terraform apply -auto-approve terraform.plan
           dir: dataworks-aws-data-ingress

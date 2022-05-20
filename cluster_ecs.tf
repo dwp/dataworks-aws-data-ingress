@@ -41,7 +41,6 @@ resource "aws_ecs_capacity_provider" "data_ingress_cluster" {
       minimum_scaling_step_size = 1
       status                    = "ENABLED"
       target_capacity           = 5
-
     }
   }
   lifecycle {

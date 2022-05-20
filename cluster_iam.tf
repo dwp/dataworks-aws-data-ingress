@@ -82,13 +82,36 @@ data "aws_iam_policy_document" "data_ingress_cluster_monitoring_logging" {
   }
 }
 
+data "aws_iam_policy_document" "kms_key_use" {
+  statement {
+    sid    = "AllowKMSPB"
+    effect = "Allow"
+
+    actions = [
+      "kms:*"
+    ]
+
+    resources = ["arn:aws:kms:*:${local.account[local.environment]}:key/*"]
+  }
+}
+resource "aws_iam_role_policy_attachment" "kms_key_use" {
+  role       = aws_iam_role.data_ingress_server.name
+  policy_arn = aws_iam_policy.kms_key_use.arn
+}
+
+resource "aws_iam_policy" "kms_key_use" {
+  name        = "DataIngressKMSPB"
+  description = "Allow data egress cluster to log"
+  policy      = data.aws_iam_policy_document.kms_key_use.json
+}
+
 resource "aws_iam_role_policy_attachment" "data_ingress_cluster_monitoring_logging" {
   role       = aws_iam_role.data_ingress_server.name
   policy_arn = aws_iam_policy.data_ingress_cluster_monitoring_logging.arn
 }
 
 resource "aws_iam_policy" "data_ingress_cluster_monitoring_logging" {
-  name        = "DataIngressClusterLoggingPolicy"
+  name        = "DataIngressClusterLoggingPolicyNew"
   description = "Allow data egress cluster to log"
   policy      = data.aws_iam_policy_document.data_ingress_cluster_monitoring_logging.json
 }

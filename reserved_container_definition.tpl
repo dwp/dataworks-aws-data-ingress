@@ -8,6 +8,7 @@
   "networkMode": "awsvpc",
   "user": "${user}",
   "essential": ${essential},
+  "privileged": ${privileged},
   "portMappings": ${jsonencode([
     for port in jsondecode(ports) : {
       containerPort = port,
@@ -23,12 +24,13 @@
       softLimit = limit
     }
   ])},
-  "mountPoints": ${jsonencode([
-    for mount in jsondecode(mount_points) : {
-      containerPath = mount.container_path,
-      sourceVolume = mount.source_volume
+  "mountPoints": [
+    {
+      "readOnly": null,
+      "containerPath": "/mnt/tmp",
+      "sourceVolume": "s3fs"
     }
-  ])},
+  ],
   "logConfiguration": {
     "logDriver": "awslogs",
     "options": {

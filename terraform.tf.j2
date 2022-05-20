@@ -51,6 +51,11 @@ locals {
     production  = "Ignore"
   }
 
+  management_workspace = {
+      management-dev = "default"
+      management     = "management"
+  }
+
   auto_shutdown_tag_value = {
     development = "True"
     qa          = "False"
@@ -176,3 +181,16 @@ data "terraform_remote_state" "data_egress" {
   }
 }
 
+data "terraform_remote_state" "internet_egress" {
+  backend   = "s3"
+  workspace = terraform.workspace
+
+  config = {
+    bucket         = "{{terraform.state_file_bucket}}"
+    key            = "terraform/dataworks/aws-internet-egress.tfstate"
+    region         = "{{terraform.state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}

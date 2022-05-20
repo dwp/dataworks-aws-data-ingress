@@ -1,5 +1,5 @@
 resource "aws_iam_role" "sft_agent_task" {
-  name               = "SFTAgentTaskDI"
+  name               = "SFTAgentTaskDi"
   assume_role_policy = data.aws_iam_policy_document.sft_agent_task_assume_role.json
 }
 
@@ -13,6 +13,7 @@ data "aws_iam_policy_document" "sft_agent_task_assume_role" {
       type        = "Service"
       identifiers = ["ecs-tasks.amazonaws.com"]
     }
+
   }
 }
 
@@ -119,26 +120,15 @@ data "aws_iam_policy_document" "data_ingress_server_task" {
   }
 
   statement {
-    sid = "PublishedBucketReadDI"
+    sid = "PublishedBucketReadDIlb"
     actions = [
       "s3:ListBucket",
-      "s3:GetBucketLocation"
-    ]
-    resources = [data.terraform_remote_state.common.outputs.published_bucket.arn]
-  }
-
-  statement {
-    sid = "PublishedBucketObjectReadDI"
-    actions = [
+      "s3:DeleteObject",
       "s3:GetObject",
       "s3:PutObject"
     ]
-    resources = [
-
-      "${data.terraform_remote_state.common.outputs.published_bucket.arn}/data-ingress-e2e/*"
-    ]
+    resources = ["arn:aws:s3:::s3fs-test-1234554321", "arn:aws:s3:::s3fs-test-1234554321/*"]
   }
-
   statement {
     sid       = "DataIngressGetCAMgmtCertS3"
     effect    = "Allow"

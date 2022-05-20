@@ -21,50 +21,39 @@ resource "aws_ecs_task_definition" "data-ingress" {
   memory                   = var.task_definition_memory[local.environment]
   task_role_arn            = aws_iam_role.data_ingress_server_task.arn
   execution_role_arn       = data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
-  container_definitions    = "[${data.template_file.sft_agent_definition.rendered}]"
-
+  container_definitions    = "[${data.template_file.s3fs_definition.rendered}]"
   volume {
-    name = "data-egress"
-    docker_volume_configuration {
-      scope         = "shared"
-      autoprovision = true
-      driver        = "local"
-    }
+    name      = "s3fs"
+    host_path = "/mnt/tmp"
   }
-#  placement_constraints {
-#    type       = "memberOf"
-#    expression = "attribute:instance-type == additional"
-#  }
-
   tags = merge(local.common_repo_tags, { Name = local.name })
 }
 
-data "template_file" "sft_agent_definition" {
+
+data "template_file" "s3fs_definition" {
   template = file("${path.module}/reserved_container_definition.tpl")
   vars = {
-    name          = "sft-agent-di"
-    group_name    = "sft-agent-di"
-    cpu           = var.task_definition_cpu[local.environment]
-    image_url     = format("%s:%s", data.terraform_remote_state.management.outputs.ecr_sft_agent_url, var.sft_agent_image_version[local.environment])
-    memory        = var.task_definition_memory[local.environment]
+    name               = "sft_agent_ingress"
+    group_name         = "sft_agent_ingress"
+    cpu                = var.task_definition_cpu[local.environment]
+    image_url          = ""
+    memory             = var.task_definition_memory[local.environment]
     memory_reservation = var.task_definition_memory[local.environment]
-    user          = "nobody"
-    ports         = jsonencode([9996])
-    ulimits       = jsonencode([])
-    log_group     = aws_cloudwatch_log_group.data_ingress_cluster.name
-    region        = var.region
-    config_bucket = data.terraform_remote_state.common.outputs.config_bucket.id
-    s3_prefix     = "/data-ingress-e2e"
-    essential     = true
-
-
+    user               = "root"
+    ports              = jsonencode([])
+    ulimits            = jsonencode([])
+    log_group          = aws_cloudwatch_log_group.data_ingress_cluster.name
+    region             = var.region
+    config_bucket      = data.terraform_remote_state.common.outputs.config_bucket.id
+    s3_prefix          = local.sft_agent_config_s3_prefix
+    essential          = true
+    privileged         = true
     mount_points = jsonencode([
       {
-        "container_path" : "/data-egress",
-        "source_volume" : "data-egress"
+        "container_path" : "/mnt/tmp",
+        "source_volume" : "s3fs"
       }
     ])
-
     environment_variables = jsonencode([
       {
         name  = "AWS_REGION",
@@ -77,6 +66,14 @@ data "template_file" "sft_agent_definition" {
       {
         name : "LOG_LEVEL",
         value : "DEBUG"
+      },
+      {
+        name  = "STAGE_BUCKET_ID",
+        value = ""
+      },
+      {
+        name  = "KMS_KEY_ARN",
+        value = ""
       },
       {
         name  = "acm_cert_arn",
@@ -92,7 +89,7 @@ data "template_file" "sft_agent_definition" {
       },
       {
         name  = "private_key_alias",
-        value = "data_ingress"
+        value = ""
       },
       {
         name  = "internet_proxy",
@@ -105,6 +102,18 @@ data "template_file" "sft_agent_definition" {
       {
         name  = "dks_fqdn",
         value = local.dks_fqdn
+      },
+      {
+        name  = "CREATE_TEST_FILES",
+        value = local.test_sft[local.environment]
+      },
+      {
+        name  = "TEST_DIRECTORY",
+        value = local.sft_test_dir[local.environment]
+      },
+      {
+        name  = "CONFIGURE_SSL",
+        value = local.configure_ssl[local.environment]
       },
       {
         name  = "PROMETHEUS",
@@ -125,12 +134,13 @@ resource "aws_ecs_service" "data-ingress" {
     security_groups = [aws_security_group.data_ingress_server.id]
     subnets         = data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity.*.id
   }
+
   service_registries {
     registry_arn   = aws_service_discovery_service.data-ingress.arn
     container_name = "data-ingress"
   }
 
-  tags = merge(local.common_repo_tags, { Name = "service-di" })
+  tags = merge(local.common_repo_tags, { Name = "data-ingress-service" })
 }
 
 resource "aws_service_discovery_service" "data-ingress" {
@@ -145,11 +155,11 @@ resource "aws_service_discovery_service" "data-ingress" {
     }
   }
 
-  tags = merge(local.common_repo_tags, { Name = "service-discovery-di" })
+  tags = merge(local.common_repo_tags, { Name = "di-discovery-service"})
 }
 
 resource "aws_service_discovery_private_dns_namespace" "data-ingress" {
   name = "${local.environment}.services.${var.parent_domain_name}"
   vpc  = data.terraform_remote_state.aws_sdx.outputs.vpc.vpc.id
-  tags = merge(local.common_repo_tags, { Name = "namespace-DI" })
+  tags = merge(local.common_repo_tags, { Name = "di-ds-dns-namespace" })
 }
