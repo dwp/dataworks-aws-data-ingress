@@ -36,7 +36,7 @@ locals {
 
   autoscaling_group_name = "data-ingress-ag"
   data_ingress_server_asg_desired = {
-    development = 2
+    development = 1
     qa          = 2
     integration = 2
     preprod     = 2
@@ -134,6 +134,7 @@ locals {
       destination : data.terraform_remote_state.aws_sdx.outputs.internet_proxy.sg
     },
   ]
+  ecr_repository_name        = "dataworks-ingress-sft-agent"
   sft_agent_config_s3_prefix = "component/data-ingress-sft"
   internet_proxy_port        = "3128"
   data_ingress = {

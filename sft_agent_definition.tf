@@ -24,19 +24,18 @@ resource "aws_ecs_task_definition" "data-ingress" {
   container_definitions    = "[${data.template_file.s3fs_definition.rendered}]"
   volume {
     name      = "s3fs"
-    host_path = "/mnt/tmp"
+    host_path = "/mnt/point"
   }
   tags = merge(local.common_repo_tags, { Name = local.name })
 }
 
-
 data "template_file" "s3fs_definition" {
   template = file("${path.module}/reserved_container_definition.tpl")
   vars = {
-    name               = "sft_agent_ingress"
-    group_name         = "sft_agent_ingress"
+    name               = "ingress_sft_agent"
+    group_name         = "ingress_sft_agent"
     cpu                = var.task_definition_cpu[local.environment]
-    image_url          = ""
+    image_url          = "${local.account[local.management_account[local.environment]]}.dkr.ecr.${var.region}.amazonaws.com/${local.ecr_repository_name}"
     memory             = var.task_definition_memory[local.environment]
     memory_reservation = var.task_definition_memory[local.environment]
     user               = "root"
@@ -50,7 +49,7 @@ data "template_file" "s3fs_definition" {
     privileged         = true
     mount_points = jsonencode([
       {
-        "container_path" : "/mnt/tmp",
+        "container_path" : "/mnt/point",
         "source_volume" : "s3fs"
       }
     ])
@@ -69,11 +68,11 @@ data "template_file" "s3fs_definition" {
       },
       {
         name  = "STAGE_BUCKET_ID",
-        value = ""
+        value = data.terraform_remote_state.common.outputs.data_ingress_stage_bucket.id
       },
       {
         name  = "KMS_KEY_ARN",
-        value = ""
+        value = data.terraform_remote_state.common.outputs.stage_data_ingress_bucket_cmk.arn
       },
       {
         name  = "acm_cert_arn",
@@ -89,7 +88,7 @@ data "template_file" "s3fs_definition" {
       },
       {
         name  = "private_key_alias",
-        value = ""
+        value = "data_ingress"
       },
       {
         name  = "internet_proxy",
@@ -105,7 +104,7 @@ data "template_file" "s3fs_definition" {
       },
       {
         name  = "CREATE_TEST_FILES",
-        value = local.test_sft[local.environment]
+        value = "false"
       },
       {
         name  = "TEST_DIRECTORY",
@@ -119,7 +118,6 @@ data "template_file" "s3fs_definition" {
         name  = "PROMETHEUS",
         value = "true"
       }
-
     ])
   }
 }
@@ -131,7 +129,7 @@ resource "aws_ecs_service" "data-ingress" {
   desired_count   = 1
   launch_type     = "EC2"
   network_configuration {
-    security_groups = [aws_security_group.data_ingress_server.id]
+    security_groups = [aws_security_group.sft_agent_service.id]
     subnets         = data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity.*.id
   }
 
@@ -155,7 +153,7 @@ resource "aws_service_discovery_service" "data-ingress" {
     }
   }
 
-  tags = merge(local.common_repo_tags, { Name = "di-discovery-service"})
+  tags = merge(local.common_repo_tags, { Name = "di-discovery-service" })
 }
 
 resource "aws_service_discovery_private_dns_namespace" "data-ingress" {

@@ -1,32 +1,13 @@
-resource "aws_iam_role" "sft_agent_task" {
-  name               = "SFTAgentTaskDi"
-  assume_role_policy = data.aws_iam_policy_document.sft_agent_task_assume_role.json
-}
-
-data "aws_iam_policy_document" "sft_agent_task_assume_role" {
-  statement {
-    actions = [
-      "sts:AssumeRole",
-    ]
-
-    principals {
-      type        = "Service"
-      identifiers = ["ecs-tasks.amazonaws.com"]
-    }
-
-  }
-}
-
 data "aws_iam_policy_document" "sft_agent_task" {
 
   statement {
-    sid = "PullSFTAgentImageECRdataIngress"
+    sid = "PullIngressSFTAgentImageECRrepository"
     actions = [
       "ecr:BatchCheckLayerAvailability",
       "ecr:GetDownloadUrlForLayer",
       "ecr:BatchGetImage",
     ]
-    resources = [data.terraform_remote_state.management.outputs.sft_agent_ecr_repository.arn]
+    resources = ["arn:aws:ecr:${var.region}:${local.account[local.management_account[local.environment]]}:repository/${local.ecr_repository_name}"]
   }
 
   statement {
@@ -69,8 +50,8 @@ data "aws_iam_policy_document" "sft_agent_task" {
 }
 
 resource "aws_iam_policy" "sft_agent_task" {
-  name        = "SFTAgentTaskDI"
-  description = "Custom policy for the sft agent task"
+  name        = "IngressSFTAgentTask"
+  description = "Custom policy for the ingress sft agent task"
   policy      = data.aws_iam_policy_document.sft_agent_task.json
 }
 resource "aws_iam_role_policy_attachment" "sft_agent" {
