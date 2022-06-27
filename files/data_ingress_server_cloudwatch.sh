@@ -1,13 +1,5 @@
 #!/bin/bash
-set -Eeuo pipefail
-cwa_metrics_collection_interval="$1"
-cwa_namespace="$2"
-cwa_cpu_metrics_collection_interval="$3"
-cwa_disk_measurement_metrics_collection_interval="$4"
-cwa_disk_io_metrics_collection_interval="$5"
-cwa_mem_metrics_collection_interval="$6"
-cwa_netstat_metrics_collection_interval="$7"
-cwa_log_group_name="$8"
+
 export AWS_DEFAULT_REGION="${9}"
 # Create config file required for CloudWatch Agent
 mkdir -p /opt/aws/amazon-cloudwatch-agent/etc/
@@ -143,12 +135,6 @@ cat > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json <<CWAGEN
             "file_path": "/var/log/cloud-init-output.log",
             "log_group_name": "${cwa_log_group_name}",
             "log_stream_name": "cloud-init-output.log",
-            "timezone": "UTC"
-          },
-          {
-            "file_path": "/var/log/acm-cert-retriever.log",
-            "log_group_name": "${cwa_log_group_name}",
-            "log_stream_name": "acm-cert-retriever.log",
             "timezone": "UTC"
           },
           {

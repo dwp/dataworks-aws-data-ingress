@@ -159,6 +159,7 @@ locals {
       sft_agent_destination_ip = "127.0.0.1"
     }
   }
+  secret_trendmicro       = "/concourse/dataworks/data_ingress/trendmicro"
   data-ingress_group_name = "data-ingress"
   test_sft = {
     development    = "TRUE"
