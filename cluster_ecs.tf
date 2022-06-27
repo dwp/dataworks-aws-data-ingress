@@ -41,7 +41,6 @@ resource "aws_ecs_capacity_provider" "data_ingress_cluster" {
       minimum_scaling_step_size = 1
       status                    = "ENABLED"
       target_capacity           = 5
-
     }
   }
   lifecycle {
@@ -100,30 +99,19 @@ resource "aws_launch_template" "data_ingress_server" {
     security_groups             = [aws_security_group.data_ingress_server.id]
     subnet_id                   = data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity.0.id
   }
-  user_data = base64encode(templatefile("${path.module}/files/data_ingress_cluster_userdata.tpl", {
-    cluster_name  = local.cluster_name
-    instance_role = aws_iam_instance_profile.data_ingress_server.name
-    region        = var.region
-    folder        = "/mnt/config"
-    mnt_bucket    = data.terraform_remote_state.common.outputs.config_bucket.id
-    name          = local.launch_template_name
+  user_data = base64encode(templatefile("files/data_ingress_cluster_userdata.tpl", {
+    cluster_name         = local.cluster_name
+    instance_role        = aws_iam_instance_profile.data_ingress_server.name
+    region               = data.aws_region.current.name
+    folder               = "/mnt/config"
+    mnt_bucket           = data.terraform_remote_state.common.outputs.config_bucket.id
+    name                 = local.launch_template_name
+    proxy_host           = data.terraform_remote_state.aws_sdx.outputs.internet_proxy.host
+    proxy_port           = local.internet_proxy_port
   }))
   instance_initiated_shutdown_behavior = "terminate"
   iam_instance_profile {
     arn = aws_iam_instance_profile.data_ingress_server.arn
-  }
-  block_device_mappings {
-    device_name = "/dev/xvda"
-
-    ebs {
-      volume_size           = var.data_ingress_server_ebs_volume_size[local.environment]
-      volume_type           = var.data_ingress_server_ebs_volume_type[local.environment]
-      kms_key_id            = data.terraform_remote_state.data_egress.outputs.data_egress_ebs_cmk.arn
-      delete_on_termination = true
-      encrypted             = true
-      iops                  = 6000
-      throughput            = 1000
-    }
   }
   lifecycle {
     create_before_destroy = true
@@ -158,4 +146,10 @@ resource "aws_launch_template" "data_ingress_server" {
       }
     )
   }
+}
+
+
+
+data "aws_secretsmanager_secret" "trendmicro" {
+  name = local.secret_trendmicro
 }
