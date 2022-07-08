@@ -23,8 +23,8 @@ resource "aws_ecs_task_definition" "data-ingress" {
   execution_role_arn       = data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
   container_definitions    = "[${data.template_file.s3fs_definition.rendered}]"
   volume {
-    name      = "s3fs"
-    host_path = "/mnt/point"
+    name      = local.source_volume
+    host_path = local.mount_path
   }
   tags = merge(local.common_repo_tags, { Name = local.name })
 }
@@ -49,8 +49,8 @@ data "template_file" "s3fs_definition" {
     privileged         = true
     mount_points = jsonencode([
       {
-        "container_path" : "/mnt/point",
-        "source_volume" : "s3fs"
+        "container_path" : local.mount_path,
+        "source_volume" : local.source_volume
       }
     ])
     environment_variables = jsonencode([
@@ -67,7 +67,7 @@ data "template_file" "s3fs_definition" {
         value : "DEBUG"
       },
       {
-        name  = "STAGE_BUCKET_ID",
+        name  = "STAGE_BUCKET",
         value = data.terraform_remote_state.common.outputs.data_ingress_stage_bucket.id
       },
       {
@@ -91,8 +91,12 @@ data "template_file" "s3fs_definition" {
         value = "data_ingress"
       },
       {
-        name  = "internet_proxy",
+        name  = "proxy_host",
         value = data.terraform_remote_state.aws_sdx.outputs.internet_proxy.host
+      },
+      {
+        name  = "proxy_port",
+        value = local.proxy_port
       },
       {
         name  = "non_proxied_endpoints",
@@ -104,7 +108,7 @@ data "template_file" "s3fs_definition" {
       },
       {
         name  = "CREATE_TEST_FILES",
-        value = "false"
+        value = "true"
       },
       {
         name  = "TEST_DIRECTORY",
@@ -117,7 +121,15 @@ data "template_file" "s3fs_definition" {
       {
         name  = "PROMETHEUS",
         value = "true"
-      }
+      },
+      {
+        name  = "MNT_POINT",
+        value = local.mount_path
+      },
+      {
+        name : "AWS_DEFAULT_REGION",
+        value : var.region
+      },
     ])
   }
 }

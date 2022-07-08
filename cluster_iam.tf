@@ -126,6 +126,13 @@ data "aws_iam_policy_document" "data_ingress_get_secret" {
     ]
     resources = [data.aws_secretsmanager_secret.trendmicro.arn]
   }
+  statement {
+    sid       = "DataIngressGetCAMgmtCertS3"
+    effect    = "Allow"
+    actions   = ["s3:GetObject"]
+    resources = ["${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.arn}/*"]
+  }
+
 }
 
 resource "aws_iam_policy" "data_ingress_get_secret" {
@@ -137,4 +144,26 @@ resource "aws_iam_policy" "data_ingress_get_secret" {
 resource "aws_iam_role_policy_attachment" "data_ingress_get_secret" {
   role       = aws_iam_role.data_ingress_server.name
   policy_arn = aws_iam_policy.data_ingress_get_secret.arn
+}
+
+data "aws_iam_policy_document" "test_bucket_all" {
+
+  statement {
+    sid = "PublishedBucketReadDIlb"
+    actions = [
+      "s3:*"
+    ]
+    resources = [data.terraform_remote_state.common.outputs.data_ingress_stage_bucket.arn, "${data.terraform_remote_state.common.outputs.data_ingress_stage_bucket.arn}/*"]
+  }
+}
+
+resource "aws_iam_policy" "test_bucket_all" {
+  name        = "testBucketAll"
+  description = "Allow data ingress instances to read and write to test bucket"
+  policy      = data.aws_iam_policy_document.test_bucket_all.json
+}
+
+resource "aws_iam_role_policy_attachment" "test_bucket_all" {
+  role       = aws_iam_role.data_ingress_server.name
+  policy_arn = aws_iam_policy.test_bucket_all.arn
 }

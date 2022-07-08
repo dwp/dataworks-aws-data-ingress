@@ -24,13 +24,12 @@
       softLimit = limit
     }
   ])},
-  "mountPoints": [
-    {
-      "readOnly": null,
-      "containerPath": "/mnt/tmp",
-      "sourceVolume": "s3fs"
+  "mountPoints": ${jsonencode([
+    for mount in jsondecode(mount_points) : {
+      containerPath = mount.container_path,
+      sourceVolume = mount.source_volume
     }
-  ],
+  ])},
   "logConfiguration": {
     "logDriver": "awslogs",
     "options": {

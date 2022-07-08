@@ -91,24 +91,17 @@ data "aws_iam_policy_document" "data_ingress_server_task" {
   statement {
     sid = "PublishedBucketKMSDecryptDI"
     actions = [
-      "kms:Encrypt",
-      "kms:Decrypt",
-      "kms:ReEncrypt*",
-      "kms:GenerateDataKey*",
-      "kms:DescribeKey"
+      "kms:*"
     ]
-    resources = [data.terraform_remote_state.common.outputs.published_bucket_cmk.arn]
+    resources = [data.terraform_remote_state.common.outputs.published_bucket_cmk.arn, data.terraform_remote_state.common.outputs.stage_data_ingress_bucket_cmk.arn]
   }
 
   statement {
     sid = "PublishedBucketReadDIlb"
     actions = [
-      "s3:ListBucket",
-      "s3:DeleteObject",
-      "s3:GetObject",
-      "s3:PutObject"
+      "s3:*"
     ]
-    resources = ["arn:aws:s3:::s3fs-test-1234554321", "arn:aws:s3:::s3fs-test-1234554321/*"]
+    resources = [data.terraform_remote_state.common.outputs.data_ingress_stage_bucket.arn, "${data.terraform_remote_state.common.outputs.data_ingress_stage_bucket.arn}/*"]
   }
   statement {
     sid       = "DataIngressGetCAMgmtCertS3"

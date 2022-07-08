@@ -130,13 +130,13 @@ locals {
     },
     {
       name : "Internet proxy endpoints"
-      port : 3128
+      port : local.proxy_port
       destination : data.terraform_remote_state.aws_sdx.outputs.internet_proxy.sg
     },
   ]
   ecr_repository_name        = "dataworks-ingress-sft-agent"
   sft_agent_config_s3_prefix = "component/data-ingress-sft"
-  internet_proxy_port        = "3128"
+  proxy_port                 = "3128"
   data_ingress = {
     development = {
       sft_agent_api_key        = "te5tapiKey"
@@ -180,7 +180,8 @@ locals {
     production     = ""
     management     = ""
   }
-
+  mount_path    = "/mnt/point"
+  source_volume = "s3fs"
   server_security_group_rules = [
     {
       name : "VPC endpoints"
@@ -191,6 +192,6 @@ locals {
       name : "Internet proxy endpoints"
       port : 3128
       destination : data.terraform_remote_state.aws_sdx.outputs.internet_proxy.sg
-    },
+    }
   ]
 }
