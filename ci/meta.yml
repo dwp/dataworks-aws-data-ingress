@@ -105,8 +105,8 @@
       get: dw-al2-ecs-ami
       trigger: true
 #
-#    e2e-tests:
-#      task: e2e-tests
+#    e2e-test-sft:
+#      task: e2e-test-sft
 #      config:
 #        platform: linux
 #        image_resource:
@@ -133,6 +133,36 @@
 #        inputs:
 #          - name: dataworks-behavioural-framework
 #          - name: dataworks-aws-data-ingress
+#          - name: meta
+#
+#    e2e-test-trend:
+#      task: e2e-test-trend
+#      config:
+#        platform: linux
+#        image_resource:
+#          type: docker-image
+#          source:
+#            repository: ((dataworks.docker_python_boto_behave_repository))
+#            tag: ((dataworks.docker_python_boto_behave_version))
+#        params:
+#          AWS_DEFAULT_REGION: ((dataworks.aws_region))
+#          NUMBER_OF_TOPICS_TO_USE: "3"
+#          E2E_TEST_TIMEOUT: 300
+#          E2E_FEATURE_TAG_FILTER: "@data-ingress-s3"
+#          ASSUME_DURATION: 3600
+#        run:
+#          path: sh
+#          dir: dataworks-behavioural-framework
+#          args:
+#            - -exc
+#            - |
+#              source /assume-role
+#              cd src/runners
+#              ./run-ci.sh \
+#              "../../../meta"
+#        inputs:
+#          - name: dataworks-behavioural-framework
+#          - name: dataworks-aws-data-ingress-trend
 #          - name: meta
 
     cycle-containers:
