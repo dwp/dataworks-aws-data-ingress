@@ -115,10 +115,6 @@ data "template_file" "s3fs_definition" {
         value = local.sft_test_dir[local.environment]
       },
       {
-        name  = "TEST_TRENDMICRO",
-        value = local.test_trendmicro[local.environment]
-      },
-      {
         name  = "CONFIGURE_SSL",
         value = local.configure_ssl[local.environment]
       },

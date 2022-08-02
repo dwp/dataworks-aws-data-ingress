@@ -171,16 +171,6 @@ locals {
     management     = ""
   }
 
-  test_trendmicro = {
-    development    = "TRUE"
-    qa             = "TRUE"
-    integration    = ""
-    management-dev = ""
-    preprod        = ""
-    production     = ""
-    management     = ""
-  }
-
   sft_test_dir = {
     development    = "test"
     qa             = "test"
