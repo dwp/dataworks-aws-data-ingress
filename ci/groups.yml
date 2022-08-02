@@ -2,7 +2,9 @@ groups:
 - name: master
   jobs:
     - development
+    - development-trendmicro-test
     - qa
+    - qa-trendmicro-test
     - integration
     - preprod
     - production
