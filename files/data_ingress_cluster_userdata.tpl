@@ -8,10 +8,10 @@ mkdir ${folder}
 
 #install deep security agent
 
-tenant_id_activation=$(aws secretsmanager get-secret-value --secret-id /concourse/dataworks/data_ingress/trendmicro --query SecretString --output text | jq .tenant_id_activation | tr -d '"')
-token=$(aws secretsmanager get-secret-value --secret-id /concourse/dataworks/data_ingress/trendmicro --query SecretString --output text | jq .token | tr -d '"')
-policy_id=$(aws secretsmanager get-secret-value --secret-id /concourse/dataworks/data_ingress/trendmicro --query SecretString --output text | jq .policy_id | tr -d '"')
-tenant_id_download=$(aws secretsmanager get-secret-value --secret-id /concourse/dataworks/data_ingress/trendmicro --query SecretString --output text | jq .tenant_id_download | tr -d '"')
+tenant_id_activation=$(aws secretsmanager get-secret-value --secret-id ${secret_name} --query SecretString --output text | jq .tenant_id_activation | tr -d '"')
+token=$(aws secretsmanager get-secret-value --secret-id ${secret_name} --query SecretString --output text | jq .token | tr -d '"')
+policy_id=$(aws secretsmanager get-secret-value --secret-id ${secret_name} --query SecretString --output text | jq .policy_id | tr -d '"')
+tenant_id_download=$(aws secretsmanager get-secret-value --secret-id ${secret_name} --query SecretString --output text | jq .tenant_id_download | tr -d '"')
 PROXY_ADDR_PORT='${proxy_host}:${proxy_port}/'
 RELAY_PROXY_ADDR_PORT='${proxy_host}:${proxy_port}/'
 touch /etc/use_dsa_with_iptables

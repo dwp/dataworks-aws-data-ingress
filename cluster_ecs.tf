@@ -107,6 +107,7 @@ resource "aws_launch_template" "data_ingress_server" {
     name          = local.launch_template_name
     proxy_host    = data.terraform_remote_state.aws_sdx.outputs.internet_proxy.host
     proxy_port    = local.proxy_port
+    secret_name   = local.secret_trendmicro
 
   }))
   instance_initiated_shutdown_behavior = "terminate"
