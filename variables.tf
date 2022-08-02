@@ -9,6 +9,11 @@ variable "region" {
   default = "eu-west-2"
 }
 
+variable "test_trend_micro" {
+  type    = bool
+  default = false
+}
+
 variable "data_ingress_server_ec2_instance_type" {
   type = map(string)
   default = {
@@ -19,6 +24,7 @@ variable "data_ingress_server_ec2_instance_type" {
     production  = "m5.2xlarge"
   }
 }
+
 variable "data_ingress_server_ebs_volume_size" {
   type = map(string)
   default = {

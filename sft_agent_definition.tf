@@ -134,6 +134,10 @@ data "template_file" "s3fs_definition" {
         name : "AWS_DEFAULT_REGION",
         value : var.region
       },
+      {
+        name : "TEST_TREND_MICRO",
+        value : var.test_trend_micro
+      },
     ])
   }
 }

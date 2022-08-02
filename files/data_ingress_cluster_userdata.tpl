@@ -6,7 +6,6 @@ export AWS_DEFAULT_REGION=${region} >> /etc/ecs/ecs.config
 mkdir ${folder}
 /usr/bin/s3fs -o iam_role=${instance_role} -o url=https://s3-${region}.amazonaws.com -o endpoint=${region} -o dbglevel=info -o curldbg -o allow_other -o use_cache=/tmp -o umask=0007,uid=65534,gid=65533 ${mnt_bucket} ${folder}
 
-
 #install deep security agent
 
 tenant_id_activation=$(aws secretsmanager get-secret-value --secret-id /concourse/dataworks/data_ingress/trendmicro --query SecretString --output text | jq .tenant_id_activation | tr -d '"')
@@ -24,7 +23,6 @@ sleep 15
 /opt/ds_agent/dsa_control -x dsm_proxy://$PROXY_ADDR_PORT/
 /opt/ds_agent/dsa_control -y relay_proxy://$RELAY_PROXY_ADDR_PORT/
 /opt/ds_agent/dsa_control -a dsm://agents.deepsecurity.trendmicro.com:443/ "tenantID:$tenant_id_activation" "token:$token" "policyid:$policy_id"
-
 
 export INSTANCE_ID=$(curl http://169.254.169.254/latest/meta-data/instance-id)
 UUID=$(dbus-uuidgen | cut -c 1-8)
