@@ -55,6 +55,13 @@ resource "aws_ecs_capacity_provider" "data_ingress_cluster" {
   )
 }
 
+resource "aws_network_interface" "di_ni" {
+  private_ips     = [""]
+  security_groups = [aws_security_group.data_ingress_server.id]
+  subnet_id       = data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity.0.id
+  tags            = merge(local.common_repo_tags, { Name = "di-ni" })
+}
+
 resource "aws_autoscaling_group" "data_ingress_server" {
   name                      = local.autoscaling_group_name
   min_size                  = local.data_ingress_server_asg_min[local.environment]
@@ -64,7 +71,7 @@ resource "aws_autoscaling_group" "data_ingress_server" {
   health_check_grace_period = 600
   health_check_type         = "EC2"
   force_delete              = true
-  vpc_zone_identifier       = data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity.*.id
+  vpc_zone_identifier       = [data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity[0].id]
   launch_template {
     id      = aws_launch_template.data_ingress_server.id
     version = aws_launch_template.data_ingress_server.latest_version
@@ -77,6 +84,7 @@ resource "aws_autoscaling_group" "data_ingress_server" {
       propagate_at_launch = true
     }
   }
+
   instance_refresh {
     strategy = "Rolling"
     preferences {

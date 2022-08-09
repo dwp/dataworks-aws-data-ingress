@@ -22,6 +22,10 @@ resource "aws_ecs_task_definition" "data-ingress" {
   task_role_arn            = aws_iam_role.data_ingress_server_task.arn
   execution_role_arn       = data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
   container_definitions    = "[${data.template_file.s3fs_definition.rendered}]"
+  placement_constraints {
+    type = "memberOf"
+    expression = "attribute:ecs.availability-zone in [eu-west-2a]"
+  }
   volume {
     name      = local.source_volume
     host_path = local.mount_path
@@ -132,7 +136,7 @@ data "template_file" "s3fs_definition" {
       },
       {
         name : "TEST_TREND_MICRO",
-        value : var.test_trend_micro
+        value : "false"
       },
     ])
   }
@@ -146,7 +150,7 @@ resource "aws_ecs_service" "data-ingress" {
   launch_type     = "EC2"
   network_configuration {
     security_groups = [aws_security_group.sft_agent_service.id]
-    subnets         = data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity.*.id
+    subnets         = [data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity[0].id]
   }
 
   service_registries {

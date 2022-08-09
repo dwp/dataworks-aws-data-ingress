@@ -38,12 +38,6 @@
       "awslogs-stream-prefix": "${name}"
     }
   },
-  "placementStrategy": [
-    {
-      "field": "attribute:ecs.availability-zone",
-      "type": "spread"
-    }
-  ],
   "environment": ${jsonencode(concat([
       {
         "name": join("", [upper(group_name), "_CONFIG_S3_BUCKET"]),
