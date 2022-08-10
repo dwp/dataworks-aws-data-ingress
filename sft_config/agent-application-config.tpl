@@ -4,8 +4,8 @@ receiver:
       actions:
         - name: renameFile
           properties:
-            rename_regex: (.*.csv)
-            rename_replacement: "BasicCompanyData\-${today}\.csv"
+            rename_regex: prod217.csv
+            rename_replacement: "${filename_prefix}\-${today}\.csv"
         - name: writeFile
           properties:
             destination: /mnt/point/data-ingress
