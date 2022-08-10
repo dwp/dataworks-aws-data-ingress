@@ -1,12 +1,11 @@
 receiver:
   routes:
-    - name: route1
-      actions:
-        - name: writeFile
-          properties:
-            destination: ./tmp/
+    - name: ch_integration
       actions:
         - name: renameFile
           properties:
-           rename_regex: (.*)(.csv)
-           rename_replacement: $1today$2
+            rename_regex: (.*.csv)
+            rename_replacement: "BasicCompanyData\-${today}\.csv"
+        - name: writeFile
+          properties:
+            destination: /mnt/point/data-ingress
