@@ -79,6 +79,8 @@ locals {
 
   agent_config_file = "agent-config.tpl"
 
+  filename_prefix = "BasicCompanyData"
+
   management_infra_account = {
     development    = "default"
     qa             = "default"
