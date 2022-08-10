@@ -49,6 +49,45 @@ data "aws_iam_policy_document" "sft_agent_task" {
   }
 }
 
+
+data "aws_iam_policy_document" "sft_task_ni" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "ecs:DescribeContainerInstances"
+    ]
+
+    resources = [
+      "*"
+    ]
+  }
+  statement {
+
+  effect = "Allow"
+
+    actions = [
+      "ec2:AttachNetworkInterface"
+    ]
+
+    resources = [
+      "*"
+    ]
+  }
+
+}
+
+resource "aws_iam_role_policy_attachment" "sft_task_ni" {
+  role       = aws_iam_role.data_ingress_server_task.name
+  policy_arn = aws_iam_policy.sft_task_ni.arn
+}
+
+resource "aws_iam_policy" "sft_task_ni" {
+  name        = "SFTni"
+  policy      = data.aws_iam_policy_document.sft_task_ni.json
+}
+
+
 resource "aws_iam_policy" "sft_agent_task" {
   name        = "IngressSFTAgentTask"
   description = "Custom policy for the ingress sft agent task"

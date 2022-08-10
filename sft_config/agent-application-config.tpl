@@ -5,7 +5,7 @@ receiver:
         - name: renameFile
           properties:
             rename_regex: prod217.csv
-            rename_replacement: ${filename_prefix}
+            rename_replacement: prod217.csv
         - name: writeFile
           properties:
             destination: ${destination}

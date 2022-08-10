@@ -24,7 +24,7 @@ resource "aws_ecs_task_definition" "data-ingress" {
   container_definitions    = "[${data.template_file.s3fs_definition.rendered}]"
   placement_constraints {
     type = "memberOf"
-    expression = "attribute:ecs.availability-zone in [eu-west-2a]"
+    expression = "attribute:ecs.availability-zone in ${az_ni}"
   }
   volume {
     name      = local.source_volume
@@ -131,12 +131,16 @@ data "template_file" "s3fs_definition" {
         value = local.mount_path
       },
       {
-        name : "AWS_DEFAULT_REGION",
-        value : var.region
+        name : "FILENAME_PREFIX",
+        value : local.filename_prefix
       },
       {
         name : "TEST_TREND_MICRO",
         value : "false"
+      },
+      {
+        name : "ni_id",
+        value : aws_network_interface.di_ni.id
       },
     ])
   }
@@ -146,7 +150,7 @@ resource "aws_ecs_service" "data-ingress" {
   name            = "data-ingress"
   cluster         = aws_ecs_cluster.data_ingress_cluster.id
   task_definition = aws_ecs_task_definition.data-ingress.arn
-  desired_count   = 1
+  desired_count   = 0
   launch_type     = "EC2"
   network_configuration {
     security_groups = [aws_security_group.sft_agent_service.id]

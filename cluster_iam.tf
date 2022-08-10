@@ -111,6 +111,44 @@ resource "aws_iam_role_policy_attachment" "data_ingress_cluster_monitoring_loggi
   policy_arn = aws_iam_policy.data_ingress_cluster_monitoring_logging.arn
 }
 
+data "aws_iam_policy_document" "data_ingress_server_ni" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "ecs:DescribeContainerInstances"
+    ]
+
+    resources = [
+      "*"
+    ]
+  }
+  statement {
+
+  effect = "Allow"
+
+    actions = [
+      "ec2:AttachNetworkInterface"
+    ]
+
+    resources = [
+      "*"
+    ]
+  }
+
+}
+
+resource "aws_iam_role_policy_attachment" "data_ingress_ni" {
+  role       = aws_iam_role.data_ingress_server.name
+  policy_arn = aws_iam_policy.data_ingress_ni.arn
+}
+
+resource "aws_iam_policy" "data_ingress_ni" {
+  name        = "DataIngressClusterni"
+  description = "Allow data ingress cluster to log"
+  policy      = data.aws_iam_policy_document.data_ingress_server_ni.json
+}
+
 resource "aws_iam_policy" "data_ingress_cluster_monitoring_logging" {
   name        = "DataIngressClusterLoggingPolicy"
   description = "Allow data ingress cluster to log"

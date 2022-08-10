@@ -23,7 +23,7 @@ locals {
     preprod     = 0
     production  = 0
   }
-
+  az_ni = "[eu-west-2a]"
   configure_ssl = {
     development    = ""
     qa             = ""
