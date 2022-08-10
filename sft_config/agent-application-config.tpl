@@ -5,7 +5,7 @@ receiver:
         - name: renameFile
           properties:
             rename_regex: prod217.csv
-            rename_replacement: "${filename_prefix}\-${today}\.csv"
+            rename_replacement: ${filename_prefix}
         - name: writeFile
           properties:
-            destination: /mnt/point/data-ingress
+            destination: ${destination}

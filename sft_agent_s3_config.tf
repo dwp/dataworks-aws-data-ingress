@@ -22,9 +22,7 @@ data "template_file" "data_ingress_sft_agent_config_tpl" {
 data "template_file" "data_ingress_sft_agent_application_config_tpl" {
   template = file("${path.module}/sft_config/${local.config_file}")
   vars = {
-    dest_bucket   = data.terraform_remote_state.common.outputs.published_bucket.arn
-    dest_prefix   = "/data-ingress-e2e"
-    error_bucket  = data.terraform_remote_state.common.outputs.published_bucket.arn
-    source_bucket = ""
+    filename_prefix = "BasicCompaniesData"
+    destination = "${local.mount_path}/data-ingress"
   }
 }
