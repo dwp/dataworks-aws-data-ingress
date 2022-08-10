@@ -24,7 +24,7 @@ resource "aws_ecs_task_definition" "data-ingress" {
   container_definitions    = "[${data.template_file.s3fs_definition.rendered}]"
   placement_constraints {
     type = "memberOf"
-    expression = "attribute:ecs.availability-zone in ${az_ni}"
+    expression = "attribute:ecs.availability-zone in ${local.az_ni}"
   }
   volume {
     name      = local.source_volume
