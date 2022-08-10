@@ -34,6 +34,8 @@ locals {
     management     = ""
   }
 
+  rename_file = "true"
+
   autoscaling_group_name = "data-ingress-ag"
   data_ingress_server_asg_desired = {
     development = 1

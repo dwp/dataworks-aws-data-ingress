@@ -142,6 +142,10 @@ data "template_file" "s3fs_definition" {
         name : "ni_id",
         value : aws_network_interface.di_ni.id
       },
+      {
+        name : "RENAME_FILE",
+        value : local.rename_file
+      },
     ])
   }
 }
