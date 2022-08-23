@@ -125,10 +125,12 @@ data "aws_iam_policy_document" "data_ingress_server_ni" {
   }
   statement {
 
-  effect = "Allow"
+    effect = "Allow"
 
     actions = [
-      "ec2:AttachNetworkInterface"
+      "ec2:AttachNetworkInterface",
+      "ec2:DescribeNetworkInterfaces",
+      "ec2:TerminateInstances"
     ]
 
     resources = [

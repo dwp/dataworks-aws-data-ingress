@@ -23,7 +23,8 @@ data "aws_iam_policy_document" "sft_agent_task" {
     ]
     resources = [
       "${data.terraform_remote_state.common.outputs.config_bucket.arn}/${aws_s3_bucket_object.data_ingress_sft_agent_config.key}",
-      "${data.terraform_remote_state.common.outputs.config_bucket.arn}/${aws_s3_bucket_object.data_ingress_sft_agent_application_config.key}",
+      "${data.terraform_remote_state.common.outputs.config_bucket.arn}/${aws_s3_bucket_object.data_ingress_sft_agent_application_config_receiver.key}",
+      "${data.terraform_remote_state.common.outputs.config_bucket.arn}/${aws_s3_bucket_object.data_ingress_sft_agent_application_config_sender.key}",
       "${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.arn}/*"
     ]
   }
@@ -44,6 +45,8 @@ data "aws_iam_policy_document" "sft_agent_task" {
     effect = "Allow"
     actions = [
       "acm:ExportCertificate",
+      "acm:GetCertificate"
+
     ]
     resources = [aws_acm_certificate.data_ingress_server.arn]
   }
@@ -64,10 +67,12 @@ data "aws_iam_policy_document" "sft_task_ni" {
   }
   statement {
 
-  effect = "Allow"
+    effect = "Allow"
 
     actions = [
-      "ec2:AttachNetworkInterface"
+      "ec2:AttachNetworkInterface",
+      "ec2:DescribeNetworkInterfaces",
+
     ]
 
     resources = [
@@ -83,8 +88,8 @@ resource "aws_iam_role_policy_attachment" "sft_task_ni" {
 }
 
 resource "aws_iam_policy" "sft_task_ni" {
-  name        = "SFTni"
-  policy      = data.aws_iam_policy_document.sft_task_ni.json
+  name   = "SFTni"
+  policy = data.aws_iam_policy_document.sft_task_ni.json
 }
 
 
@@ -123,8 +128,19 @@ data "aws_iam_policy_document" "data_ingress_server_task" {
     effect = "Allow"
     actions = [
       "acm:ExportCertificate",
+      "acm:GetCertificate"
+
     ]
     resources = [aws_acm_certificate.data_ingress_server.arn]
+  }
+
+    statement {
+    sid    = "certCreatePermission"
+    effect = "Allow"
+    actions = [
+    "acm-pca:CreatePermission"
+    ]
+    resources = ["*"]
   }
 
   statement {

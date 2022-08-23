@@ -16,6 +16,14 @@ locals {
       Name = "dataIngressClusterLogs"
     }
   )
+
+  desired_capacity_on = 2
+  min_capacity_on = 0
+  max_capacity_on = 2
+  desired_capacity_off = 2
+  min_capacity_off = 0
+  max_capacity_off = 2
+  time_zone = "Europe/London"
   data_ingress_server_asg_min = {
     development = 0
     qa          = 0
@@ -35,22 +43,23 @@ locals {
   }
 
   rename_file = "true"
+  today_date  = formatdate("YYYY-MM-DD hh:mm:ss", timestamp())
 
   autoscaling_group_name = "data-ingress-ag"
   data_ingress_server_asg_desired = {
-    development = 1
-    qa          = 1
-    integration = 1
-    preprod     = 1
-    production  = 1
+    development = 2
+    qa          = 0
+    integration = 0
+    preprod     = 0
+    production  = 0
   }
 
   data_ingress_server_asg_max = {
     development = 2
-    qa          = 2
-    integration = 2
-    preprod     = 2
-    production  = 2
+    qa          = 0
+    integration = 0
+    preprod     = 0
+    production  = 0
   }
 
   data_ingress_server_ssmenabled = {
@@ -138,6 +147,7 @@ locals {
       destination : data.terraform_remote_state.aws_sdx.outputs.internet_proxy.sg
     },
   ]
+
   ecr_repository_name        = "dataworks-ingress-sft-agent"
   sft_agent_config_s3_prefix = "component/data-ingress-sft"
   proxy_port                 = "3128"

@@ -31,8 +31,8 @@ resource "aws_security_group_rule" "sft_agent_service_s3_http" {
   security_group_id = aws_security_group.sft_agent_service.id
 }
 
-resource "aws_security_group_rule" "sft_ingress" {
-  for_each                 = { for security_group_rule in local.server_security_group_rules : security_group_rule.name => security_group_rule }
+resource "aws_security_group_rule" "service_ingress" {
+  for_each                 = { for security_group_rule in local.service_security_group_rules : security_group_rule.name => security_group_rule }
   description              = "Allow inbound requests from ${each.value.name}"
   type                     = "ingress"
   from_port                = each.value.port
@@ -42,8 +42,8 @@ resource "aws_security_group_rule" "sft_ingress" {
   source_security_group_id = aws_security_group.sft_agent_service.id
 }
 
-resource "aws_security_group_rule" "sft_egress" {
-  for_each                 = { for security_group_rule in local.server_security_group_rules : security_group_rule.name => security_group_rule }
+resource "aws_security_group_rule" "service_egress" {
+  for_each                 = { for security_group_rule in local.service_security_group_rules : security_group_rule.name => security_group_rule }
   description              = "Allow outbound requests to ${each.value.name}"
   type                     = "egress"
   from_port                = each.value.port

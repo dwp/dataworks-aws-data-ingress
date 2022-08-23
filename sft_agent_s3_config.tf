@@ -5,10 +5,10 @@ resource "aws_s3_bucket_object" "data_ingress_sft_agent_config" {
   kms_key_id = data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
 }
 
-resource "aws_s3_bucket_object" "data_ingress_sft_agent_application_config" {
+resource "aws_s3_bucket_object" "data_ingress_sft_agent_application_config_receiver" {
   bucket     = data.terraform_remote_state.common.outputs.config_bucket.id
-  key        = "${local.sft_agent_config_s3_prefix}/agent-application-config.yml"
-  content    = data.template_file.data_ingress_sft_agent_application_config_tpl.rendered
+  key        = "${local.sft_agent_config_s3_prefix}/agent-application-config-receiver.yml"
+  content    = data.template_file.data_ingress_sft_agent_application_config_tpl_receiver.rendered
   kms_key_id = data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
 }
 
@@ -19,10 +19,24 @@ data "template_file" "data_ingress_sft_agent_config_tpl" {
   }
 }
 
-data "template_file" "data_ingress_sft_agent_application_config_tpl" {
-  template = file("${path.module}/sft_config/${local.config_file}")
+data "template_file" "data_ingress_sft_agent_application_config_tpl_receiver" {
+  template = file("${path.module}/sft_config/agent-application-config-receiver.tpl")
   vars = {
     filename_prefix = "BasicCompaniesData"
-    destination = "${local.mount_path}/data-ingress"
+    destination     = "${local.mount_path}/data-ingress"
   }
+}
+
+data "template_file" "data_ingress_sft_agent_application_config_tpl_sender" {
+  template = file("${path.module}/sft_config/agent-application-config-sender.tpl")
+  vars = {
+    destination_ip     = "123.1.2.1"
+  }
+}
+
+resource "aws_s3_bucket_object" "data_ingress_sft_agent_application_config_sender" {
+  bucket     = data.terraform_remote_state.common.outputs.config_bucket.id
+  key        = "${local.sft_agent_config_s3_prefix}/agent-application-config-sender.yml"
+  content    = data.template_file.data_ingress_sft_agent_application_config_tpl_sender.rendered
+  kms_key_id = data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
 }
