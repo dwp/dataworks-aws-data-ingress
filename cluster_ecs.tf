@@ -45,7 +45,6 @@ resource "aws_ecs_capacity_provider" "data_ingress_cluster" {
     ignore_changes = all
   }
 
-
   tags = merge(
     local.common_repo_tags,
     {
@@ -54,27 +53,18 @@ resource "aws_ecs_capacity_provider" "data_ingress_cluster" {
   )
 }
 
-//resource "aws_network_interface" "di_ni_sender" {
-//  private_ip = ""
-//  //  private_ip     = data.terraform_remote_state.aws_sdx.outputs.network_interface_ips_data_ingress[local.environment]
-//  security_groups = [aws_security_group.data_ingress_server.id]
-//  subnet_id       = data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity.0.id
-//  tags            = merge(local.common_repo_tags, { Name = "di-ni-sender" })
-//}
-//
-//resource "aws_network_interface" "di_ni_receiver" {
-//  private_ip = ""
-//  //  private_ip     = data.terraform_remote_state.aws_sdx.outputs.network_interface_ips_data_ingress[local.environment]
-//  security_groups = [aws_security_group.data_ingress_server.id]
-//  subnet_id       = data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity.0.id
-//  tags            = merge(local.common_repo_tags, { Name = "di-ni-receiver" })
-//}
+resource "aws_network_interface" "di_ni_receiver" {
+  //  private_ip     = data.terraform_remote_state.aws_sdx.outputs.network_interface_ips_data_ingress[local.environment]
+  security_groups = [aws_security_group.data_ingress_server.id]
+  subnet_id       = data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity.0.id
+  tags            = merge(local.common_repo_tags, { Name = "di-ni-receiver" })
+}
 
 resource "aws_autoscaling_group" "data_ingress_server" {
   name                  = local.autoscaling_group_name
-  min_size              = local.data_ingress_server_asg_min[local.environment]
-  max_size              = local.data_ingress_server_asg_max[local.environment]
-  desired_capacity      = local.data_ingress_server_asg_desired[local.environment]
+  min_size              = local.asg_instance_count.off
+  max_size              = local.asg_instance_count.off
+  desired_capacity      = local.asg_instance_count.off
   protect_from_scale_in = false
   default_cooldown      = 30
   force_delete          = true
@@ -95,9 +85,9 @@ resource "aws_autoscaling_group" "data_ingress_server" {
 
 resource "aws_autoscaling_schedule" "on" {
   scheduled_action_name  = "on"
-  desired_capacity       = local.desired_capacity_on
-  min_size               = local.min_capacity_on
-  max_size               = local.max_capacity_on
+  desired_capacity       = local.asg_instance_count.desired[local.environment]
+  max_size               = local.asg_instance_count.max[local.environment]
+  min_size               = local.asg_instance_count.min[local.environment]
   recurrence             = "30 23 2 * *"
   start_time             = timeadd(timestamp(), "5m")
   time_zone              = local.time_zone
@@ -106,40 +96,38 @@ resource "aws_autoscaling_schedule" "on" {
 
 resource "aws_autoscaling_schedule" "off" {
   scheduled_action_name  = "off"
-  desired_capacity       = local.desired_capacity_off
-  min_size               = local.min_capacity_off
-  max_size               = local.max_capacity_off
+  desired_capacity       = local.asg_instance_count.off
+  max_size               = local.asg_instance_count.off
+  min_size               = local.asg_instance_count.off
   recurrence             = "30 23 4 * *"
   time_zone              = local.time_zone
   start_time             = timeadd(timestamp(), "7m")
   autoscaling_group_name = aws_autoscaling_group.data_ingress_server.name
 }
-//
-//resource "aws_autoscaling_schedule" "test_on" {
-//  count = contains(["development","qa"], local.environment) ? 1 : 0
-//  scheduled_action_name  = "test_on"
-//  desired_capacity       = local.desired_capacity_on
-//  min_size               = local.min_capacity_on
-//  max_size               = local.max_capacity_on
-//  recurrence             = format("%s %s", formatdate("mm hh DD MM", timeadd(timestamp(), "4m")), " *")
-//  start_time             = timeadd(timestamp(), "3m")
-//  end_time               = timeadd(timestamp(), "1h")
-//  time_zone              = local.time_zone
-//  autoscaling_group_name = aws_autoscaling_group.data_ingress_server.name
-//}
-//
-//resource "aws_autoscaling_schedule" "test_off" {
-//  count = contains(["development","qa"], local.environment) ? 1 : 0
-//  scheduled_action_name  = "test_off"
-//  desired_capacity       = local.desired_capacity_off
-//  min_size               = local.min_capacity_off
-//  max_size               = local.max_capacity_off
-//  recurrence             = format("%s %s", formatdate("mm hh DD MM", timeadd(timestamp(), "10m")), " *")
-//  time_zone              = local.time_zone
-//  start_time             = timeadd(timestamp(), "6m")
-//  end_time               = timeadd(timestamp(), "1h")
-//  autoscaling_group_name = aws_autoscaling_group.data_ingress_server.name
-//}
+
+resource "aws_autoscaling_schedule" "test_on" {
+  count = contains(["development","qa"], local.environment) ? 1 : 0
+  scheduled_action_name  = "test_on"
+  desired_capacity       = local.asg_instance_count.test_desired
+  max_size               = local.asg_instance_count.test_max
+  recurrence             = format("%s %s", formatdate("mm hh DD MM", timeadd(timestamp(), "4m")), " *")
+  start_time             = timeadd(timestamp(), "3m")
+  end_time               = timeadd(timestamp(), "1h")
+  time_zone              = local.time_zone
+  autoscaling_group_name = aws_autoscaling_group.data_ingress_server.name
+}
+
+resource "aws_autoscaling_schedule" "test_off" {
+  count = contains(["development","qa"], local.environment) ? 1 : 0
+  scheduled_action_name  = "test_off"
+  desired_capacity       = local.asg_instance_count.off
+  max_size               = local.asg_instance_count.off
+  recurrence             = format("%s %s", formatdate("mm hh DD MM", timeadd(timestamp(), "10m")), " *")
+  time_zone              = local.time_zone
+  start_time             = timeadd(timestamp(), "6m")
+  end_time               = timeadd(timestamp(), "1h")
+  autoscaling_group_name = aws_autoscaling_group.data_ingress_server.name
+}
 
 resource "aws_launch_template" "data_ingress_server" {
   name                    = local.launch_template_name

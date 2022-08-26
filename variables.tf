@@ -74,9 +74,6 @@ variable "sft_agent_image_version" {
   }
 }
 
-variable "sft_agent_port" {
-  default = 8091
-}
 variable "test_ami" {
   description = "Defines if cluster should test untested ECS AMI"
   type        = bool

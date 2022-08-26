@@ -52,3 +52,40 @@ resource "aws_security_group_rule" "service_egress" {
   source_security_group_id = each.value.destination
   security_group_id        = aws_security_group.sft_agent_service.id
 }
+
+
+resource "aws_security_group_rule" "exameple" {
+  type              = "egress"
+  from_port         = 8080
+  to_port           = 8081
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.sft_agent_service.id
+}
+
+resource "aws_security_group_rule" "examssspeled" {
+  type              = "ingress"
+  from_port         = 8080
+  to_port           = 8081
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.sft_agent_service.id
+}
+
+resource "aws_security_group_rule" "exaddmeple" {
+  type              = "egress"
+  from_port         = local.sft_port
+  to_port           = local.sft_port
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.sft_agent_service.id
+}
+
+resource "aws_security_group_rule" "exaddddmpeled" {
+  type              = "ingress"
+  from_port         = local.sft_port
+  to_port           = local.sft_port
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.sft_agent_service.id
+}

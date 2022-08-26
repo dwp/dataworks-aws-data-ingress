@@ -86,12 +86,16 @@ data "aws_iam_policy_document" "kms_key_use" {
   statement {
     sid    = "AllowKMSPB"
     effect = "Allow"
-
     actions = [
-      "kms:*"
+      "kms:Encrypt",
+      "kms:Decrypt",
+      "kms:ReEncrypt",
+      "kms:GenerateDataKey",
+      "kms:DescribeKey"
     ]
-
-    resources = ["arn:aws:kms:*:${local.account[local.environment]}:key/*"]
+    resources = [data.terraform_remote_state.common.outputs.config_bucket_cmk.arn,
+                 data.terraform_remote_state.common.outputs.published_bucket_cmk.arn,
+                 data.terraform_remote_state.common.outputs.stage_data_ingress_bucket_cmk.arn]
   }
 }
 
@@ -123,6 +127,17 @@ data "aws_iam_policy_document" "data_ingress_server_ni" {
       "*"
     ]
   }
+
+  statement {
+    sid    = "CertificateExportDI"
+    effect = "Allow"
+    actions = [
+      "acm:ExportCertificate",
+      "acm:GetCertificate",
+    ]
+    resources = [aws_acm_certificate.data_ingress_server.arn]
+  }
+
   statement {
 
     effect = "Allow"
@@ -132,12 +147,20 @@ data "aws_iam_policy_document" "data_ingress_server_ni" {
       "ec2:DescribeNetworkInterfaces",
       "ec2:TerminateInstances"
     ]
-
+    condition {
+      test = "StringEquals"
+      variable = "ec2:ResourceTag/Owner"
+      values = [local.name]
+    }
     resources = [
       "*"
     ]
   }
 
+}
+
+data "aws_iam_role" "AWSServiceRoleForAutoScaling" {
+  name = "AWSServiceRoleForAutoScaling"
 }
 
 resource "aws_iam_role_policy_attachment" "data_ingress_ni" {
@@ -172,7 +195,6 @@ data "aws_iam_policy_document" "data_ingress_get_secret" {
     actions   = ["s3:GetObject"]
     resources = ["${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.arn}/*"]
   }
-
 }
 
 resource "aws_iam_policy" "data_ingress_get_secret" {
@@ -186,10 +208,10 @@ resource "aws_iam_role_policy_attachment" "data_ingress_get_secret" {
   policy_arn = aws_iam_policy.data_ingress_get_secret.arn
 }
 
-data "aws_iam_policy_document" "test_bucket_all" {
+data "aws_iam_policy_document" "stage_bucket_all" {
 
   statement {
-    sid = "PublishedBucketReadDIlb"
+    sid = "StageBucketS3All"
     actions = [
       "s3:*"
     ]
@@ -197,13 +219,13 @@ data "aws_iam_policy_document" "test_bucket_all" {
   }
 }
 
-resource "aws_iam_policy" "test_bucket_all" {
+resource "aws_iam_policy" "stage_bucket_all" {
   name        = "testBucketAll"
   description = "Allow data ingress instances to read and write to test bucket"
-  policy      = data.aws_iam_policy_document.test_bucket_all.json
+  policy      = data.aws_iam_policy_document.stage_bucket_all.json
 }
 
-resource "aws_iam_role_policy_attachment" "test_bucket_all" {
+resource "aws_iam_role_policy_attachment" "stage_bucket_all" {
   role       = aws_iam_role.data_ingress_server.name
-  policy_arn = aws_iam_policy.test_bucket_all.arn
+  policy_arn = aws_iam_policy.stage_bucket_all.arn
 }

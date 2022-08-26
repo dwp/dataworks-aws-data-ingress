@@ -1,7 +1,11 @@
 receiver:
   routes:
-    - name: ch_integration
+    - name: app
       actions:
+        - name: renameFile
+          properties:
+            rename_regex: prod217.csv
+            rename_replacement: FILENAME
         - name: writeFile
           properties:
-            destination: ${destination}
+            destination: /mnt/point/data-ingress

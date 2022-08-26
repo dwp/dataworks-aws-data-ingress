@@ -1,27 +1,28 @@
-
 resource "aws_acm_certificate" "data_ingress_server" {
-  certificate_authority_arn = data.terraform_remote_state.mgmt_ca.outputs.root_ca.arn
+  certificate_authority_arn = data.terraform_remote_state.aws_certificate_authority.outputs.root_ca.arn
   domain_name               = "${local.data_ingress_server_name}.${local.env_prefix[local.environment]}dataworks.dwp.gov.uk"
+
   options {
     certificate_transparency_logging_preference = "ENABLED"
   }
   tags = merge(
     local.common_repo_tags,
     {
-      Name = "data_ingress_server_name"
+      Name = local.data_ingress_server_name
     },
   )
 }
 
 resource "aws_ecs_task_definition" "sft_agent_receiver" {
   family                   = "sft_agent_receiver"
-  network_mode             = "awsvpc"
+  network_mode             = "host"
   requires_compatibilities = ["EC2"]
   cpu                      = var.task_definition_cpu[local.environment]
   memory                   = var.task_definition_memory[local.environment]
   task_role_arn            = aws_iam_role.data_ingress_server_task.arn
   execution_role_arn       = data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
   container_definitions    = "[${data.template_file.sft_agent_receiver_definition.rendered}]"
+
   placement_constraints {
     type       = "memberOf"
     expression = "attribute:ecs.availability-zone in ${local.az_ni}"
@@ -35,7 +36,7 @@ resource "aws_ecs_task_definition" "sft_agent_receiver" {
 
 resource "aws_ecs_task_definition" "sft_agent_sender" {
   family                   = "sft_agent_sender"
-  network_mode             = "awsvpc"
+  network_mode             = "host"
   requires_compatibilities = ["EC2"]
   cpu                      = var.task_definition_cpu[local.environment]
   memory                   = var.task_definition_memory[local.environment]
@@ -64,7 +65,7 @@ data "template_file" "sft_agent_receiver_definition" {
     memory             = var.task_definition_memory[local.environment]
     memory_reservation = var.task_definition_memory[local.environment]
     user               = "root"
-    ports              = jsonencode([9996])
+    ports              = jsonencode([8080, 8081, local.sft_port])
     ulimits            = jsonencode([])
     log_group          = aws_cloudwatch_log_group.data_ingress_cluster.name
     region             = var.region
@@ -79,10 +80,6 @@ data "template_file" "sft_agent_receiver_definition" {
       }
     ])
     environment_variables = jsonencode([
-      {
-        name  = "AWS_REGION",
-        value = var.region
-      },
       {
         name : "AWS_DEFAULT_REGION",
         value : var.region
@@ -116,36 +113,12 @@ data "template_file" "sft_agent_receiver_definition" {
         value = "data_ingress"
       },
       {
-        name  = "proxy_host",
+        name  = "internet_proxy",
         value = data.terraform_remote_state.aws_sdx.outputs.internet_proxy.host
-      },
-      {
-        name  = "proxy_port",
-        value = local.proxy_port
       },
       {
         name  = "non_proxied_endpoints",
         value = join(",", data.terraform_remote_state.aws_sdx.outputs.vpc.no_proxy_list)
-      },
-      {
-        name  = "dks_fqdn",
-        value = local.dks_fqdn
-      },
-      {
-        name  = "CREATE_TEST_FILES",
-        value = "true"
-      },
-      {
-        name  = "TEST_DIRECTORY",
-        value = local.sft_test_dir[local.environment]
-      },
-      {
-        name  = "CONFIGURE_SSL",
-        value = local.configure_ssl[local.environment]
-      },
-      {
-        name  = "PROMETHEUS",
-        value = "true"
       },
       {
         name  = "MNT_POINT",
@@ -159,17 +132,21 @@ data "template_file" "sft_agent_receiver_definition" {
         name : "TEST_TREND_MICRO",
         value : "false"
       },
-//      {
-//        name : "ni_id",
-//        value : aws_network_interface.di_ni_receiver.id
-//      },
       {
-        name : "RENAME_FILE",
-        value : local.rename_file
+        name : "NI_ID",
+        value : aws_network_interface.di_ni_receiver.id
+      },
+      {
+        name : "RENAME",
+        value : "yes"
       },
       {
         name : "TYPE",
         value : "receiver"
+      },
+      {
+        name  = "dks_fqdn",
+        value = local.dks_fqdn
       },
     ])
   }
@@ -185,7 +162,7 @@ data "template_file" "sft_agent_sender_definition" {
     memory             = var.task_definition_memory[local.environment]
     memory_reservation = var.task_definition_memory[local.environment]
     user               = "root"
-    ports              = jsonencode([9996])
+    ports              = jsonencode([8080, 8081, local.sft_port])
     ulimits            = jsonencode([])
     log_group          = aws_cloudwatch_log_group.data_ingress_cluster.name
     region             = var.region
@@ -193,6 +170,7 @@ data "template_file" "sft_agent_sender_definition" {
     s3_prefix          = local.sft_agent_config_s3_prefix
     essential          = true
     privileged         = true
+
     mount_points = jsonencode([
       {
         "container_path" : local.mount_path,
@@ -200,10 +178,6 @@ data "template_file" "sft_agent_sender_definition" {
       }
     ])
     environment_variables = jsonencode([
-      {
-        name  = "AWS_REGION",
-        value = var.region
-      },
       {
         name : "AWS_DEFAULT_REGION",
         value : var.region
@@ -237,36 +211,12 @@ data "template_file" "sft_agent_sender_definition" {
         value = "data_ingress"
       },
       {
-        name  = "proxy_host",
+        name  = "internet_proxy",
         value = data.terraform_remote_state.aws_sdx.outputs.internet_proxy.host
-      },
-      {
-        name  = "proxy_port",
-        value = local.proxy_port
       },
       {
         name  = "non_proxied_endpoints",
         value = join(",", data.terraform_remote_state.aws_sdx.outputs.vpc.no_proxy_list)
-      },
-      {
-        name  = "dks_fqdn",
-        value = local.dks_fqdn
-      },
-      {
-        name  = "CREATE_TEST_FILES",
-        value = "true"
-      },
-      {
-        name  = "TEST_DIRECTORY",
-        value = local.sft_test_dir[local.environment]
-      },
-      {
-        name  = "CONFIGURE_SSL",
-        value = local.configure_ssl[local.environment]
-      },
-      {
-        name  = "PROMETHEUS",
-        value = "true"
       },
       {
         name  = "MNT_POINT",
@@ -280,23 +230,17 @@ data "template_file" "sft_agent_sender_definition" {
         name : "TEST_TREND_MICRO",
         value : "false"
       },
-//      {
-//        name : "ni_id",
-//        value : aws_network_interface.di_ni_sender.id
-//      },
-      {
-        name : "RENAME_FILE",
-        value : local.rename_file
-      },
       {
         name : "TYPE",
         value : "sender"
-      }
+      },
+      {
+        name  = "dks_fqdn",
+        value = local.dks_fqdn
+      },
     ])
   }
 }
-
-
 
 resource "aws_ecs_service" "sft_agent_receiver" {
   name            = "sft_agent_receiver"
@@ -304,16 +248,10 @@ resource "aws_ecs_service" "sft_agent_receiver" {
   task_definition = aws_ecs_task_definition.sft_agent_receiver.arn
   desired_count   = 1
   launch_type     = "EC2"
-  network_configuration {
-    security_groups = [aws_security_group.sft_agent_service.id]
-    subnets         = [data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity[0].id]
-  }
 
-  service_registries {
-    registry_arn   = aws_service_discovery_service.data-ingress.arn
-    container_name = "sft_agent_receiver"
+  placement_constraints {
+    type = "distinctInstance"
   }
-
   tags = merge(local.common_repo_tags, { Name = "data-ingress-receiver-service" })
 }
 
@@ -323,36 +261,9 @@ resource "aws_ecs_service" "sft_agent_sender" {
   task_definition = aws_ecs_task_definition.sft_agent_sender.arn
   desired_count   = 1
   launch_type     = "EC2"
-  network_configuration {
-    security_groups = [aws_security_group.sft_agent_service.id]
-    subnets         = [data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity[0].id]
-  }
 
-  service_registries {
-    registry_arn   = aws_service_discovery_service.data-ingress.arn
-    container_name = "sft_agent_sender"
+  placement_constraints {
+    type = "distinctInstance"
   }
-
   tags = merge(local.common_repo_tags, { Name = "data-ingress-sender-service" })
-}
-
-resource "aws_service_discovery_service" "data-ingress" {
-  name = "data-ingress"
-
-  dns_config {
-    namespace_id = aws_service_discovery_private_dns_namespace.data-ingress.id
-
-    dns_records {
-      ttl  = 10
-      type = "A"
-    }
-  }
-
-  tags = merge(local.common_repo_tags, { Name = "di-discovery-service" })
-}
-
-resource "aws_service_discovery_private_dns_namespace" "data-ingress" {
-  name = "${local.environment}.services.${var.parent_domain_name}"
-  vpc  = data.terraform_remote_state.aws_sdx.outputs.vpc.vpc.id
-  tags = merge(local.common_repo_tags, { Name = "di-ds-dns-namespace" })
 }

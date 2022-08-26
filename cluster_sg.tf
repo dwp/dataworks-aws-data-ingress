@@ -50,3 +50,39 @@ resource "aws_security_group_rule" "s3_http_egress" {
   to_port           = 80
   security_group_id = aws_security_group.data_ingress_server.id
 }
+
+resource "aws_security_group_rule" "route_ports_egress" {
+  type              = "egress"
+  from_port         = 8080
+  to_port           = 8081
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.data_ingress_server.id
+}
+
+resource "aws_security_group_rule" "route_ports_ingress" {
+  type              = "ingress"
+  from_port         = 8080
+  to_port           = 8081
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.data_ingress_server.id
+}
+
+resource "aws_security_group_rule" "route_port_second_egress" {
+  type              = "egress"
+  from_port         = local.sft_port
+  to_port           = local.sft_port
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.data_ingress_server.id
+}
+
+resource "aws_security_group_rule" "route_port_second_ingress" {
+  type              = "ingress"
+  from_port         = local.sft_port
+  to_port           = local.sft_port
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.data_ingress_server.id
+}

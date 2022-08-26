@@ -5,17 +5,11 @@
   "memoryReservation": ${memory_reservation},
   "volumesFrom": [],
   "name": "${name}",
-  "networkMode": "awsvpc",
+  "networkMode": "host",
   "user": "${user}",
   "essential": ${essential},
   "privileged": ${privileged},
-  "portMappings": ${jsonencode([
-    for port in jsondecode(ports) : {
-      containerPort = port,
-      hostPort = port,
-      protocol = "tcp"
-    }
-  ])},
+  "containerName": "${name}",
   "ulimits": ${jsonencode([
     for limit in jsondecode(ulimits) :
     {

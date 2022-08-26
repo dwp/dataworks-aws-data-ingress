@@ -22,7 +22,8 @@ data "aws_iam_policy_document" "sft_agent_task" {
       "s3:GetObject"
     ]
     resources = [
-      "${data.terraform_remote_state.common.outputs.config_bucket.arn}/${aws_s3_bucket_object.data_ingress_sft_agent_config.key}",
+      "${data.terraform_remote_state.common.outputs.config_bucket.arn}/${aws_s3_bucket_object.data_ingress_sft_agent_config_receiver.key}",
+      "${data.terraform_remote_state.common.outputs.config_bucket.arn}/${aws_s3_bucket_object.data_ingress_sft_agent_config_sender.key}",
       "${data.terraform_remote_state.common.outputs.config_bucket.arn}/${aws_s3_bucket_object.data_ingress_sft_agent_application_config_receiver.key}",
       "${data.terraform_remote_state.common.outputs.config_bucket.arn}/${aws_s3_bucket_object.data_ingress_sft_agent_application_config_sender.key}",
       "${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.arn}/*"
@@ -128,17 +129,33 @@ data "aws_iam_policy_document" "data_ingress_server_task" {
     effect = "Allow"
     actions = [
       "acm:ExportCertificate",
-      "acm:GetCertificate"
+      "acm:GetCertificate",
+      "acm:*"
 
     ]
-    resources = [aws_acm_certificate.data_ingress_server.arn]
+    //    resources = [aws_acm_certificate.data_ingress_server.arn]
+    resources = ["*"]
+
   }
 
-    statement {
+  statement {
+    sid    = "CertificateExportDIsss"
+    effect = "Allow"
+    actions = [
+      "kms:*"
+
+    ]
+    //    resources = [aws_acm_certificate.data_ingress_server.arn]
+    resources = ["*"]
+
+  }
+
+
+  statement {
     sid    = "certCreatePermission"
     effect = "Allow"
     actions = [
-    "acm-pca:CreatePermission"
+      "acm-pca:CreatePermission"
     ]
     resources = ["*"]
   }
