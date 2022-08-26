@@ -10,7 +10,7 @@ sender:
         -
           name: httpRequest
           properties:
-            destination: "https://:8091/app"
+            destination: "https://${ip}:${port}/app"
       deleteOnSend: false
       errorFolder: /data-ingress/error/warehouse
       filenameRegex: .*

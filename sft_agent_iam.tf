@@ -61,7 +61,6 @@ data "aws_iam_policy_document" "sft_task_ni" {
     actions = [
       "ecs:DescribeContainerInstances"
     ]
-
     resources = [
       "*"
     ]
@@ -70,17 +69,19 @@ data "aws_iam_policy_document" "sft_task_ni" {
 
     effect = "Allow"
 
+    condition {
+        test = "StringEquals"
+        variable = "ec2:ResourceTag/Owner"
+        values = [local.name]
+    }
     actions = [
       "ec2:AttachNetworkInterface",
       "ec2:DescribeNetworkInterfaces",
-
     ]
-
     resources = [
       "*"
     ]
   }
-
 }
 
 resource "aws_iam_role_policy_attachment" "sft_task_ni" {
@@ -129,35 +130,9 @@ data "aws_iam_policy_document" "data_ingress_server_task" {
     effect = "Allow"
     actions = [
       "acm:ExportCertificate",
-      "acm:GetCertificate",
-      "acm:*"
-
+      "acm:GetCertificate"
     ]
-    //    resources = [aws_acm_certificate.data_ingress_server.arn]
-    resources = ["*"]
-
-  }
-
-  statement {
-    sid    = "CertificateExportDIsss"
-    effect = "Allow"
-    actions = [
-      "kms:*"
-
-    ]
-    //    resources = [aws_acm_certificate.data_ingress_server.arn]
-    resources = ["*"]
-
-  }
-
-
-  statement {
-    sid    = "certCreatePermission"
-    effect = "Allow"
-    actions = [
-      "acm-pca:CreatePermission"
-    ]
-    resources = ["*"]
+    resources = [aws_acm_certificate.data_ingress_server.arn]
   }
 
   statement {

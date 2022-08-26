@@ -36,17 +36,14 @@ resource "aws_ecs_task_definition" "sft_agent_receiver" {
 
 resource "aws_ecs_task_definition" "sft_agent_sender" {
   family                   = "sft_agent_sender"
+  count = local.test_sft[local.environment] == "true" ? 1 : 0
   network_mode             = "host"
   requires_compatibilities = ["EC2"]
   cpu                      = var.task_definition_cpu[local.environment]
   memory                   = var.task_definition_memory[local.environment]
   task_role_arn            = aws_iam_role.data_ingress_server_task.arn
   execution_role_arn       = data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
-  container_definitions    = "[${data.template_file.sft_agent_sender_definition.rendered}]"
-  placement_constraints {
-    type       = "memberOf"
-    expression = "attribute:ecs.availability-zone in ${local.az_ni}"
-  }
+  container_definitions    = "[${data.template_file.sft_agent_sender_definition[0].rendered}]"
   volume {
     name      = local.source_volume
     host_path = local.mount_path
@@ -154,6 +151,7 @@ data "template_file" "sft_agent_receiver_definition" {
 
 data "template_file" "sft_agent_sender_definition" {
   template = file("${path.module}/reserved_container_definition.tpl")
+  count = local.test_sft[local.environment] == "true" ? 1 : 0
   vars = {
     name               = "sft_agent_sender"
     group_name         = "sft_agent_sender"
@@ -257,8 +255,9 @@ resource "aws_ecs_service" "sft_agent_receiver" {
 
 resource "aws_ecs_service" "sft_agent_sender" {
   name            = "sft_agent_sender"
+  count = local.test_sft[local.environment] == "true" ? 1 : 0
   cluster         = aws_ecs_cluster.data_ingress_cluster.id
-  task_definition = aws_ecs_task_definition.sft_agent_sender.arn
+  task_definition = aws_ecs_task_definition.sft_agent_sender[0].arn
   desired_count   = 1
   launch_type     = "EC2"
 

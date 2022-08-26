@@ -21,28 +21,30 @@ resource "aws_s3_bucket_object" "data_ingress_sft_agent_application_config_recei
 data "template_file" "data_ingress_sft_agent_config_tpl_sender" {
   template = file("${path.module}/sft_config/agent-config-sender.tpl")
   vars = {
-    apiKey = local.data_ingress[local.environment].sft_agent_api_key
+    apiKey = local.api_key
   }
 }
 
 data "template_file" "data_ingress_sft_agent_config_tpl_receiver" {
   template = file("${path.module}/sft_config/agent-config-receiver.tpl")
   vars = {
-    apiKey = local.data_ingress[local.environment].sft_agent_api_key
+    apiKey = local.api_key
   }
 }
 
 data "template_file" "data_ingress_sft_agent_application_config_tpl_receiver" {
   template = file("${path.module}/sft_config/agent-application-config-receiver.tpl")
   vars = {
-    destination     = "${local.mount_path}/data_ingress"
+    destination     = "${local.mount_path}/data-ingress"
+    source_filename = "prod2017.csv"
   }
 }
 
 data "template_file" "data_ingress_sft_agent_application_config_tpl_sender" {
   template = file("${path.module}/sft_config/agent-application-config-sender.tpl")
   vars = {
-    destination_ip = aws_network_interface.di_ni_receiver.private_ip
+    ip = aws_network_interface.di_ni_receiver.private_ip
+    port = local.sft_port
   }
 }
 

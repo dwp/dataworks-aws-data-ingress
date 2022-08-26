@@ -10,7 +10,7 @@ resource "aws_security_group" "data_ingress_server" {
 }
 
 resource "aws_security_group_rule" "server_ingress" {
-  for_each                 = { for security_group_rule in local.server_security_group_rules : security_group_rule.name => security_group_rule }
+  for_each                 = { for security_group_rule in local.security_group_rules : security_group_rule.name => security_group_rule }
   description              = "Allow inbound requests from ${each.value.name}"
   type                     = "ingress"
   from_port                = each.value.port
@@ -21,7 +21,7 @@ resource "aws_security_group_rule" "server_ingress" {
 }
 
 resource "aws_security_group_rule" "server_egress" {
-  for_each                 = { for security_group_rule in local.server_security_group_rules : security_group_rule.name => security_group_rule }
+  for_each                 = { for security_group_rule in local.security_group_rules : security_group_rule.name => security_group_rule }
   description              = "Allow outbound requests to ${each.value.name}"
   type                     = "egress"
   from_port                = each.value.port

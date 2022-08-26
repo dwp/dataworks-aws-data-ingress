@@ -30,5 +30,5 @@ logging:
       archivedLogFilenamePattern: /var/log/sft-agent-%d.log.gz
       archivedFileCount: 7
       timeZone: UTC
-apikey: Te5tAp1Key
+apikey: ${apiKey}
 <#include "agent-application-config.yml">

@@ -4,8 +4,8 @@ receiver:
       actions:
         - name: renameFile
           properties:
-            rename_regex: prod217.csv
+            rename_regex: ${source_filename}
             rename_replacement: FILENAME
         - name: writeFile
           properties:
-            destination: /mnt/point/data-ingress
+            destination: ${destination}

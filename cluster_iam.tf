@@ -220,7 +220,7 @@ data "aws_iam_policy_document" "stage_bucket_all" {
 }
 
 resource "aws_iam_policy" "stage_bucket_all" {
-  name        = "testBucketAll"
+  name        = "stageBucketAll"
   description = "Allow data ingress instances to read and write to test bucket"
   policy      = data.aws_iam_policy_document.stage_bucket_all.json
 }
