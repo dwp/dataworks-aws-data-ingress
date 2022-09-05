@@ -19,7 +19,7 @@ curl --proxy http://${proxy_host}:${proxy_port} https://app.deepsecurity.trendmi
 if [[ -s /tmp/agent.rpm ]]; then
     rpm -ihv /tmp/agent.rpm
 fi
-sleep 15
+sleep 10
 /opt/ds_agent/dsa_control -x dsm_proxy://$PROXY_ADDR_PORT/
 /opt/ds_agent/dsa_control -y relay_proxy://$RELAY_PROXY_ADDR_PORT/
 /opt/ds_agent/dsa_control -a dsm://agents.deepsecurity.trendmicro.com:443/ "tenantID:$tenant_id_activation" "token:$token" "policyid:$policy_id"

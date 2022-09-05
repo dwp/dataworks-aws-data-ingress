@@ -2,9 +2,7 @@ groups:
 - name: master
   jobs:
     - development
-    - development-trend-micro-test
     - qa
-    - qa-trend-micro-test
     - integration
     - preprod
     - production
@@ -28,3 +26,7 @@ groups:
     - cycle-data-ingress-integration
     - cycle-data-ingress-preprod
     - cycle-data-ingress-production
+
+- name: trend-micro
+  jobs:
+    - userdata-changed

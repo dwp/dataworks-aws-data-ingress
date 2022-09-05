@@ -14,6 +14,36 @@
           TF_CLI_ARGS_plan: -lock-timeout=300s
           TF_VAR_costcode: ((dataworks.costcode))
 
+    terraform-plan:
+      task: terraform-plan
+      .: (( inject meta.plan.terraform-common-config ))
+      config:
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              if [ -f ../previous_success/exit-if-succeeded.sh ]; then
+                source ../previous_success/exit-if-succeeded.sh
+              fi
+              export TF_VAR_ecs_hardened_ami_id=$(cat ../dw-al2-ecs-ami/id)
+              cp ../terraform-bootstrap/terraform.tf .
+              terraform workspace show
+              terraform init
+              terraform plan $DETAILED_EXITCODE
+          dir: dataworks-aws-data-ingress
+        inputs:
+          - name: dataworks-aws-data-ingress
+          - name: terraform-bootstrap
+          - name: dw-al2-ecs-ami
+      params:
+        DETAILED_EXITCODE: -detailed-exitcode
+        AWS_REGION: eu-west-2
+
+    get-dw-al2-ecs-ami:
+      get: dw-al2-ecs-ami
+      trigger: true
+
     terraform-bootstrap:
       task: terraform-bootstrap
       config:
@@ -95,7 +125,6 @@
             - |
               export TF_VAR_test_trend_micro=true
           dir: dataworks-aws-data-ingress
-
         inputs:
           - name: dataworks-aws-data-ingress-userdata
       params:
