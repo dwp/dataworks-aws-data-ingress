@@ -10,8 +10,8 @@ variable "region" {
 }
 
 variable "test_trend_micro" {
-  type    = bool
-  default = false
+  type    = string
+  default = ""
 }
 
 variable "data_ingress_server_ec2_instance_type" {

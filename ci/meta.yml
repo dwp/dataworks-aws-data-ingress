@@ -124,7 +124,7 @@
             - -exc
             - |
               export TF_VAR_test_trend_micro=true
-          dir: dataworks-aws-data-ingress
+          dir: dataworks-aws-data-ingress-userdata
         inputs:
           - name: dataworks-aws-data-ingress-userdata
       params:

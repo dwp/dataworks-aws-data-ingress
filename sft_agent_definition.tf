@@ -131,7 +131,7 @@ data "template_file" "sft_agent_receiver_definition" {
       },
       {
         name : "TEST_TREND_MICRO",
-        value : "false"
+        value : var.test_trend_micro
       },
 //      {
 //        name : "NI_ID",
@@ -230,7 +230,7 @@ data "template_file" "sft_agent_sender_definition" {
       },
       {
         name : "TEST_TREND_MICRO",
-        value : "false"
+        value : var.test_trend_micro
       },
       {
         name : "TYPE",
