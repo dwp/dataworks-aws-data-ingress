@@ -22,7 +22,7 @@ resources:
       branch: sft-task
       uri: https://github.com/dwp/dataworks-aws-data-ingress.git
       access_token: ((dataworks-secrets.concourse_github_pat))
-      paths: files/data_ingress_cluster_userdata.tpl
+      paths: [files/data_ingress_cluster_userdata.tpl]
     webhook_token: ((dataworks.concourse_github_webhook_token))
     check_every: 30s
 
