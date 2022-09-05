@@ -123,8 +123,8 @@
           args:
             - -exc
             - |
-              export TF_VAR_test_trend_micro="abcd"
-          dir: dataworks-aws-data-ingress-userdata
+              aws sns publish --topic-arn --message "Hello World!"
+            dir: dataworks-aws-data-ingress-userdata
         inputs:
           - name: dataworks-aws-data-ingress-userdata
       params:

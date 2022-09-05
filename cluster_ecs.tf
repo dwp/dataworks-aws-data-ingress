@@ -60,6 +60,19 @@ resource "aws_ecs_capacity_provider" "data_ingress_cluster" {
 //  tags            = merge(local.common_repo_tags, { Name = "di-ni-receiver" })
 //}
 
+resource "aws_sns_topic" "email_trend_micro_team" {
+  name = "email_trend_micro_team"
+  tags = {
+    Name = "email_trend_micro_team_topic"
+  }
+}
+
+resource "aws_sns_topic_subscription" "email_trend_micro_team" {
+  topic_arn = aws_sns_topic.email_trend_micro_team.arn
+  protocol  = "email"
+  endpoint  = "camilla.scuffi@engineering.digital.dwp.gov.uk"
+}
+
 resource "aws_autoscaling_group" "data_ingress_server" {
   name                  = local.autoscaling_group_name
 //  min_size              = local.asg_instance_count.off
