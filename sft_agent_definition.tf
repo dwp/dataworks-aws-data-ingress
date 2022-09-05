@@ -133,10 +133,10 @@ data "template_file" "sft_agent_receiver_definition" {
         name : "TEST_TREND_MICRO",
         value : "false"
       },
-      {
-        name : "NI_ID",
-        value : aws_network_interface.di_ni_receiver.id
-      },
+//      {
+//        name : "NI_ID",
+//        value : aws_network_interface.di_ni_receiver.id
+//      },
       {
         name : "RENAME",
         value : "yes"

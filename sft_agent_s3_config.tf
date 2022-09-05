@@ -43,7 +43,8 @@ data "template_file" "data_ingress_sft_agent_application_config_tpl_receiver" {
 data "template_file" "data_ingress_sft_agent_application_config_tpl_sender" {
   template = file("${path.module}/sft_config/agent-application-config-sender.tpl")
   vars = {
-    ip = aws_network_interface.di_ni_receiver.private_ip
+//    ip = aws_network_interface.di_ni_receiver.private_ip
+    ip = "aws_network_interface.di_ni_receiver.private_ip"
     port = local.sft_port
   }
 }
