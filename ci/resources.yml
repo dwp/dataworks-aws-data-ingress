@@ -4,7 +4,6 @@ resources:
     source:
       repository: dwp/dataworks-aws-data-ingress
       access_token: ((dataworks-secrets.concourse_github_pat))
-      ignore_paths: files/data_ingress_cluster_userdata
     webhook_token: ((dataworks.concourse_github_webhook_token))
     check_every: 5m
 
@@ -14,19 +13,18 @@ resources:
       branch: master
       uri: https://github.com/dwp/dataworks-aws-data-ingress.git
       access_token: ((dataworks-secrets.concourse_github_pat))
-      ignore_paths: files/data_ingress_cluster_userdata
     webhook_token: ((dataworks.concourse_github_webhook_token))
     check_every: 5m
 
   - name: dataworks-aws-data-ingress-userdata
     type: git
     source:
-      branch: master
+      branch: sft-task
       uri: https://github.com/dwp/dataworks-aws-data-ingress.git
       access_token: ((dataworks-secrets.concourse_github_pat))
       paths: files/data_ingress_cluster_userdata
     webhook_token: ((dataworks.concourse_github_webhook_token))
-    check_every: 5m
+    check_every: 30s
 
   - name: dataworks-aws-data-ingress-update-pipeline
     type: git

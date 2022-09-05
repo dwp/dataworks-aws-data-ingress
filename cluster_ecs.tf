@@ -54,7 +54,7 @@ resource "aws_ecs_capacity_provider" "data_ingress_cluster" {
 }
 
 resource "aws_network_interface" "di_ni_receiver" {
-  private_ips = [""]
+  private_ips = [data.terraform_remote_state.aws_sdx.outputs]
   security_groups = [aws_security_group.data_ingress_server.id]
   subnet_id       = data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity.0.id
   tags            = merge(local.common_repo_tags, { Name = "di-ni-receiver" })
@@ -66,12 +66,12 @@ resource "aws_autoscaling_group" "data_ingress_server" {
 //  max_size              = local.asg_instance_count.off
 //  desired_capacity      = local.asg_instance_count.off
   min_size              = 0
-  max_size              = 2
-  desired_capacity      = 2
+  max_size              = 0
+  desired_capacity      = 0
   protect_from_scale_in = false
   default_cooldown      = 30
   force_delete          = true
-  vpc_zone_identifier   = [data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity[0].id]
+  vpc_zone_identifier   = [data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity[0].id, data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity[1].id]
   launch_template {
     id      = aws_launch_template.data_ingress_server.id
     version = aws_launch_template.data_ingress_server.latest_version

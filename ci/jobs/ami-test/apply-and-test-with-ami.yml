@@ -38,15 +38,19 @@ jobs:
             TEST_AMI_RUN: true
           inputs:
             - name: previous_success
-#      - .: (( inject meta.plan.e2e-test-sft))
-#        config:
-#          params:
-#            TF_WORKSPACE: qa
-#            TEST_AMI_RUN: true
-#            AWS_ACC: ((aws_account.qa))
-#            AWS_ROLE_ARN: arn:aws:iam::((aws_account.qa)):role/ci
-#          inputs:
-#            - name: previous_success
+      #      - .: (( inject meta.plan.e2e-test-sft))
+      #        config:
+      #          params:
+      #            TF_WORKSPACE: qa
+      #            TEST_AMI_RUN: true
+      #            AWS_ACC: ((aws_account.qa))
+      #            AWS_ROLE_ARN: arn:aws:iam::((aws_account.qa)):role/ci
+      #          inputs:
+      #            - name: previous_success
+      - .: (( inject meta.plan.check-userdata ))
+        input_mapping:
+          userdata_changed: test_trendmicro
+
       - .: (( inject meta.plan.terminate-ecs-instances ))
       - .: (( inject meta.plan.test-ecs-ami ))
         on_failure:

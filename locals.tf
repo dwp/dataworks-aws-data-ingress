@@ -15,6 +15,7 @@ locals {
   time_zone = "Europe/London"
 
   az_ni = "[eu-west-2a]"
+  az_sender = "[eu-west-2b]"
 
   today_date = formatdate("YYYY-MM-DD hh:mm:ss", timestamp())
 
@@ -42,7 +43,7 @@ locals {
       preprod = 0
       production = 0
     }
-    off = 0
+    off = 2
     test_desired = 2
     test_max = 2
   }
@@ -57,7 +58,7 @@ locals {
 
   crypto_workspace = {
     management-dev = "management-dev"
-    management = "management"
+    management     = "management"
   }
 
   management_account = {

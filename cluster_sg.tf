@@ -51,6 +51,26 @@ resource "aws_security_group_rule" "s3_http_egress" {
   security_group_id = aws_security_group.data_ingress_server.id
 }
 
+resource "aws_security_group_rule" "s3_https_ingress" {
+  description       = "Access to S3 https"
+  type              = "ingress"
+  prefix_list_ids   = [data.terraform_remote_state.aws_sdx.outputs.vpc.prefix_list_ids.s3]
+  protocol          = "tcp"
+  from_port         = 443
+  to_port           = 443
+  security_group_id = aws_security_group.data_ingress_server.id
+}
+
+resource "aws_security_group_rule" "s3_http_ingress" {
+  description       = "Access to S3 http"
+  type              = "ingress"
+  prefix_list_ids   = [data.terraform_remote_state.aws_sdx.outputs.vpc.prefix_list_ids.s3]
+  protocol          = "tcp"
+  from_port         = 80
+  to_port           = 80
+  security_group_id = aws_security_group.data_ingress_server.id
+}
+
 resource "aws_security_group_rule" "route_ports_egress" {
   type              = "egress"
   from_port         = 8080

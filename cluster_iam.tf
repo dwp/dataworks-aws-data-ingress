@@ -94,9 +94,19 @@ data "aws_iam_policy_document" "kms_key_use" {
       "kms:DescribeKey"
     ]
     resources = [data.terraform_remote_state.common.outputs.config_bucket_cmk.arn,
-                 data.terraform_remote_state.common.outputs.published_bucket_cmk.arn,
-                 data.terraform_remote_state.common.outputs.stage_data_ingress_bucket_cmk.arn]
+                 data.terraform_remote_state.common.outputs.published_bucket_cmk.arn]
   }
+
+    statement {
+    sid = "diBucketKMSDecryptDI"
+    actions = [
+      "kms:*"
+    ]
+        resources = ["*"]
+
+//    resources = [data.terraform_remote_state.common.outputs.published_bucket_cmk.arn, data.terraform_remote_state.common.outputs.stage_data_ingress_bucket_cmk.arn]
+  }
+
 }
 
 resource "aws_iam_role_policy_attachment" "kms_key_use" {
@@ -147,16 +157,15 @@ data "aws_iam_policy_document" "data_ingress_server_ni" {
       "ec2:DescribeNetworkInterfaces",
       "ec2:TerminateInstances"
     ]
-    condition {
-      test = "StringEquals"
-      variable = "ec2:ResourceTag/Owner"
-      values = [local.name]
-    }
+//    condition {
+//      test = "ForAnyValue:StringEquals"
+//      variable = "ec2:ResourceTag/Owner"
+//      values = [local.name]
+//    }
     resources = [
       "*"
     ]
   }
-
 }
 
 data "aws_iam_role" "AWSServiceRoleForAutoScaling" {
@@ -215,7 +224,9 @@ data "aws_iam_policy_document" "stage_bucket_all" {
     actions = [
       "s3:*"
     ]
-    resources = [data.terraform_remote_state.common.outputs.data_ingress_stage_bucket.arn, "${data.terraform_remote_state.common.outputs.data_ingress_stage_bucket.arn}/*"]
+//    resources = [data.terraform_remote_state.common.outputs.data_ingress_stage_bucket.arn, "${data.terraform_remote_state.common.outputs.data_ingress_stage_bucket.arn}/*"]
+    resources = ["*"]
+
   }
 }
 
