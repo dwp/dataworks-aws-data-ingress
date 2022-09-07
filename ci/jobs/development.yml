@@ -7,6 +7,8 @@ jobs:
         resource: meta-development
       - get: dataworks-aws-data-ingress
         trigger: true
+      - load_var: test-trend-micro
+        file: files/test-trend-micro.txt
       - get: dataworks-behavioural-framework
         trigger: false
       - .: (( inject meta.plan.get-dw-al2-ecs-ami ))
@@ -14,15 +16,16 @@ jobs:
     - .: (( inject meta.plan.terraform-apply ))
       params:
         TF_WORKSPACE: default
+        TTM: ((.:test-trend-micro))
     - .: (( inject meta.plan.terraform-plan ))
       params:
         TF_WORKSPACE: default
+
     - .: (( inject meta.plan.e2e-test-sft))
       params:
         TF_WORKSPACE: development
         AWS_ACC: ((aws_account.development))
         AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
-
 - name: userdata-changed
   max_in_flight: 1
   plan:
@@ -34,7 +37,6 @@ jobs:
         TF_WORKSPACE: development
         AWS_ACC: ((aws_account.development))
         AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
-
 - name: cycle-data-ingress-development
   plan:
     - .: (( inject meta.plan.cycle-containers ))

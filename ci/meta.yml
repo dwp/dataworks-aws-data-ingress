@@ -91,6 +91,7 @@
                 source ../previous_success/exit-if-succeeded.sh
               fi
               export TF_VAR_ecs_hardened_ami_id=$(cat ../dw-al2-ecs-ami/id)
+              export TF_VAR_test_trend_micro=$TTM
               terraform workspace show
               cp ../terraform-bootstrap/terraform.tf .
               terraform init
@@ -123,12 +124,15 @@
           args:
             - -exc
             - |
-              aws sns publish --topic-arn --message "Hello World!"
-            dir: dataworks-aws-data-ingress-userdata
+              echo "just cheign structure"
+              ls
+              echo "abcd" > "files/test-trend-micro.txt"
+              cat files/test-trend-micro.txt
+          dir: dataworks-aws-data-ingress-userdata
         inputs:
           - name: dataworks-aws-data-ingress-userdata
       params:
-        AWS_REGION: eu-west-2
+        AWS_REGION: eu-west-2x
 
     e2e-test-sft:
       task: e2e-test-sft
