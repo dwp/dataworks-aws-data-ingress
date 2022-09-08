@@ -74,13 +74,13 @@ resource "aws_sns_topic_subscription" "email_trend_micro_team" {
 }
 
 resource "aws_autoscaling_group" "data_ingress_server" {
-  name                  = local.autoscaling_group_name
-//  min_size              = local.asg_instance_count.off
-//  max_size              = local.asg_instance_count.off
-//  desired_capacity      = local.asg_instance_count.off
+  name = local.autoscaling_group_name
+  //  min_size              = local.asg_instance_count.off
+  //  max_size              = local.asg_instance_count.off
+  //  desired_capacity      = local.asg_instance_count.off
   min_size              = 0
-  max_size              = 0
-  desired_capacity      = 0
+  max_size              = 2
+  desired_capacity      = 2
   protect_from_scale_in = false
   default_cooldown      = 30
   force_delete          = true

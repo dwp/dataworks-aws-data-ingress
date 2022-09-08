@@ -36,7 +36,7 @@ resource "aws_ecs_task_definition" "sft_agent_receiver" {
 
 resource "aws_ecs_task_definition" "sft_agent_sender" {
   family                   = "sft_agent_sender"
-  count = local.test_sft[local.environment] == "true" ? 1 : 0
+  count                    = local.test_sft[local.environment] == "true" ? 1 : 0
   network_mode             = "host"
   requires_compatibilities = ["EC2"]
   cpu                      = var.task_definition_cpu[local.environment]
@@ -133,10 +133,10 @@ data "template_file" "sft_agent_receiver_definition" {
         name : "TEST_TREND_MICRO",
         value : var.test_trend_micro
       },
-//      {
-//        name : "NI_ID",
-//        value : aws_network_interface.di_ni_receiver.id
-//      },
+      //      {
+      //        name : "NI_ID",
+      //        value : aws_network_interface.di_ni_receiver.id
+      //      },
       {
         name : "RENAME",
         value : "yes"
@@ -155,7 +155,7 @@ data "template_file" "sft_agent_receiver_definition" {
 
 data "template_file" "sft_agent_sender_definition" {
   template = file("${path.module}/reserved_container_definition.tpl")
-  count = local.test_sft[local.environment] == "true" ? 1 : 0
+  count    = local.test_sft[local.environment] == "true" ? 1 : 0
   vars = {
     name               = "sft_agent_sender"
     group_name         = "sft_agent_sender"
@@ -256,7 +256,7 @@ resource "aws_ecs_service" "sft_agent_receiver" {
   }
 
   placement_constraints {
-    type = "memberOf"
+    type       = "memberOf"
     expression = "attribute:ecs.availability-zone in ${local.az_ni}"
   }
 
@@ -266,7 +266,7 @@ resource "aws_ecs_service" "sft_agent_receiver" {
 
 resource "aws_ecs_service" "sft_agent_sender" {
   name            = "sft_agent_sender"
-  count = local.test_sft[local.environment] == "true" ? 1 : 0
+  count           = local.test_sft[local.environment] == "true" ? 1 : 0
   cluster         = aws_ecs_cluster.data_ingress_cluster.id
   task_definition = aws_ecs_task_definition.sft_agent_sender[0].arn
   desired_count   = 1
@@ -277,7 +277,7 @@ resource "aws_ecs_service" "sft_agent_sender" {
   }
 
   placement_constraints {
-    type = "memberOf"
+    type       = "memberOf"
     expression = "attribute:ecs.availability-zone in ${local.az_sender}"
   }
   tags = merge(local.common_repo_tags, { Name = "data-ingress-sender-service" })
