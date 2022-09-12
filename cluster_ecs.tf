@@ -99,6 +99,9 @@ resource "aws_autoscaling_group" "data_ingress_server" {
       propagate_at_launch = true
     }
   }
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_autoscaling_schedule" "on" {
@@ -172,9 +175,6 @@ resource "aws_launch_template" "data_ingress_server" {
   instance_initiated_shutdown_behavior = "terminate"
   iam_instance_profile {
     arn = aws_iam_instance_profile.data_ingress_server.arn
-  }
-  lifecycle {
-    create_before_destroy = true
   }
   tags = merge(
     local.common_repo_tags,
