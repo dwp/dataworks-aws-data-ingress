@@ -1,6 +1,6 @@
 resource "aws_cloudwatch_event_rule" "sft_stopped" {
-  name          = "sft_stopped_rule_nnNAnb"
-  description   = "sft_stopped error"
+  name          = "ch_sft_receiver_container_stopped_rule"
+  description   = "ch sft receiver container stopped"
   event_pattern = <<EOF
 {
   "source": ["aws.ecs"],
@@ -13,24 +13,24 @@ EOF
 }
 
 resource "aws_cloudwatch_metric_alarm" "sft_stopped" {
-  alarm_name                = "sft_stopped_nn"
+  alarm_name                = "ch_sft_receiver_container_stopped"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = "1"
   metric_name               = "TriggeredRules"
   namespace                 = "AWS/Events"
-  period                    = "30"
+  period                    = "60"
   statistic                 = "Sum"
   threshold                 = "1"
   alarm_description         = "This metric monitors cluster termination with errors"
   insufficient_data_actions = []
-  alarm_actions             = [""]
+  alarm_actions             = [local.monitoring_topic_arn]
   dimensions = {
     RuleName = aws_cloudwatch_event_rule.sft_stopped.name
   }
   tags = merge(
     local.common_repo_tags,
     {
-      Name              = "sft_stopped",
+      Name              = "ch_sft_receiver_container_stopped",
       notification_type = "Error"
       severity          = "Critical"
     },
@@ -38,72 +38,49 @@ resource "aws_cloudwatch_metric_alarm" "sft_stopped" {
 }
 
 
-//
-//resource "aws_ssm_document" "enable_rule" {
-//  name            = "enable_rule"
-//  document_type   = "Command"
-//  document_format = "JSON"
-//  tags = merge(
-//    local.common_repo_tags,
-//    {
-//      Name = "data_ingress_EnableRule_ssm"
-//    }
-//  )
-//  content = <<DOC
-//  {
-//     "schemaVersion": "2.2",
-//     "description": "State Manager Bootstrap ddd",
-//     "parameters": {},
-//     "mainSteps": [
-//        {
-//           "action": "aws:runShellScript",
-//           "name": "configureServer",
-//           "inputs": {
-//              "runCommand": [
-//                 "aws ec2 create-tags --resources  "
-//              ]
-//           }
-//        }
-//     ]
-//  }
-//DOC
-//}
-//
-//resource "aws_cloudwatch_event_rule" "enable_rule" {
-//  name                = "EnableRuleTwo"
-//  description         = "Stop instances nightly"
-//  schedule_expression = "cron(16 14 * * ? *)"
-//
-//  tags = merge(
-//    local.common_repo_tags,
-//    {
-//      Name = "data_ingress_EnableRule"
-//    }
-//  )
-//}
-//
-//
-//resource "aws_cloudwatch_event_target" "enable_rule" {
-//  target_id = "EnableRule"
-//  arn       = aws_ssm_document.enable_rule.arn
-//  rule      = aws_cloudwatch_event_rule.enable_rule.name
-//  role_arn  = aws_iam_role.data_ingress_server.arn
-//  run_command_targets {
-//    key    = "InstanceIds"
-//    values = [""]
-//  }
-//
-//}
+resource "aws_cloudwatch_event_rule" "file_landed" {
+  name          = "file_landed_on_staging_rule"
+  description   = "checks that file landed on staging bucket"
+  event_pattern = <<EOF
+{
+  "source": ["aws.s3"],
+  "detail-type": ["Object Created"],
+  "detail": {
+    "bucket": {
+      "name":["${local.stage_bucket.id}"]},
+    "object": {
+       "key": [{"prefix":"${local.companies_s3_prefix}/${local.filename_prefix}-"}]}
+  }
+}
+EOF
+}
 
+resource "aws_s3_bucket_notification" "bucket_notification" {
+  bucket      = local.stage_bucket.id
+  eventbridge = true
+}
 
-//resource "aws_cloudwatch_event_target" "stop_instances" {
-//  target_id = "StopInstance"
-//  arn       = "arn:aws:ssm:${var.region}::document/AWS-RunShellScript"
-//  input     = "{\"commands\":[\"halt\"]}"
-//  rule      = aws_cloudwatch_event_rule.enable_rule.name
-//  role_arn  = aws_iam_role.data_ingress_server.arn
-//  run_command_targets {
-//    key    = "tag:Terminate"
-//    values = ["midnight"]
-//  }
-//}
+resource "aws_cloudwatch_metric_alarm" "file_landed" {
+  alarm_name                = "file_landed_on_staging"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = "1"
+  metric_name               = "TriggeredRules"
+  namespace                 = "AWS/Events"
+  period                    = "60"
+  statistic                 = "Sum"
+  threshold                 = "1"
+  alarm_description         = "Monitoring stage bucket"
+  insufficient_data_actions = []
+  alarm_actions             = [local.monitoring_topic_arn]
+  dimensions = {
+    RuleName = aws_cloudwatch_event_rule.file_landed.name
+  }
+  tags = merge(
+    local.common_repo_tags,
+    {
+      Name              = "ch_completed_all_steps",
+      notification_type = "Information",
+      severity          = "Critical"
+    },
+  )
+}

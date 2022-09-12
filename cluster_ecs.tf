@@ -1,7 +1,6 @@
 resource "aws_ecs_cluster" "data_ingress_cluster" {
   name               = local.cluster_name
   capacity_providers = [aws_ecs_capacity_provider.data_ingress_cluster.name]
-
   tags = merge(
     local.common_repo_tags,
     {
@@ -19,6 +18,7 @@ resource "aws_ecs_cluster" "data_ingress_cluster" {
   }
 }
 
+
 resource "aws_cloudwatch_log_group" "data_ingress_cluster" {
   name              = local.name_data_ingress_log_group
   retention_in_days = 180
@@ -29,6 +29,7 @@ resource "aws_cloudwatch_log_group" "data_ingress_cluster" {
     }
   )
 }
+
 
 resource "aws_ecs_capacity_provider" "data_ingress_cluster" {
   name = local.autoscaling_group_name
@@ -53,12 +54,22 @@ resource "aws_ecs_capacity_provider" "data_ingress_cluster" {
   )
 }
 
+
 //resource "aws_network_interface" "di_ni_receiver" {
 //  private_ips = [data.terraform_remote_state.aws_sdx.outputs.network_interface_ips_data_ingress[local.environment]]
 //  security_groups = [aws_security_group.data_ingress_server.id]
 //  subnet_id       = data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity.0.id
 //  tags            = merge(local.common_repo_tags, { Name = "di-ni-receiver" })
 //}
+
+
+resource "aws_network_interface" "di_ni_receiver" {
+  private_ips     = ["123"]
+  security_groups = [aws_security_group.data_ingress_server.id]
+  subnet_id       = data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity.0.id
+  tags            = merge(local.common_repo_tags, { Name = "di-ni-receiver" })
+}
+
 
 resource "aws_sns_topic" "email_trend_micro_team" {
   name = "email_trend_micro_team"

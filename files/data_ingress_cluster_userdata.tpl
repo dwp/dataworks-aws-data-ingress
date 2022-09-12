@@ -28,4 +28,12 @@ export INSTANCE_ID=$(curl http://169.254.169.254/latest/meta-data/instance-id)
 UUID=$(dbus-uuidgen | cut -c 1-8)
 export HOSTNAME=${name}-$UUID
 hostnamectl set-hostname $HOSTNAME
+sleep 20
+state=$(/opt/ds_agent/dsa_query -c "GetAgentStatus"|grep AgentStatus.auStatus)
+
+if [ "$state" = "AgentStatus.auStatus: 2" ]; then
+    echo trend micro is active
+else
+    aws ec2 terminate-instances --instance-ids $INSTANCE_ID
+fi
 aws ec2 create-tags --resources $INSTANCE_ID --tags Key=Name,Value=$HOSTNAME

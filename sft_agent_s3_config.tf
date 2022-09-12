@@ -35,7 +35,7 @@ data "template_file" "data_ingress_sft_agent_config_tpl_receiver" {
 data "template_file" "data_ingress_sft_agent_application_config_tpl_receiver" {
   template = file("${path.module}/sft_config/agent-application-config-receiver.tpl")
   vars = {
-    destination     = "${local.mount_path}/data-ingress/companies"
+    destination     = "${local.mount_path}/${local.companies_s3_prefix}"
     source_filename = "prod217.csv"
   }
 }
