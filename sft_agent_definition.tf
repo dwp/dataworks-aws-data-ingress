@@ -31,6 +31,11 @@ resource "aws_ecs_task_definition" "sft_agent_receiver" {
     name      = local.source_volume
     host_path = local.mount_path
   }
+
+  lifecycle {
+    ignore_changes = all
+  }
+
   tags = merge(local.common_repo_tags, { Name = local.name })
 }
 
@@ -51,6 +56,9 @@ resource "aws_ecs_task_definition" "sft_agent_sender" {
   volume {
     name      = local.source_volume
     host_path = local.mount_path
+  }
+  lifecycle {
+    ignore_changes = all
   }
   tags = merge(local.common_repo_tags, { Name = "sft_agent_sender" })
 }
