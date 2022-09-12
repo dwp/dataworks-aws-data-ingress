@@ -64,7 +64,7 @@ resource "aws_ecs_capacity_provider" "data_ingress_cluster" {
 
 
 resource "aws_network_interface" "di_ni_receiver" {
-  private_ips     = ["123"]
+  private_ips = [data.terraform_remote_state.aws_sdx.outputs.network_interface_ips_data_ingress[local.environment]]
   security_groups = [aws_security_group.data_ingress_server.id]
   subnet_id       = data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity.0.id
   tags            = merge(local.common_repo_tags, { Name = "di-ni-receiver" })

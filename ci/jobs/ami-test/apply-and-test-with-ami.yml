@@ -47,9 +47,6 @@ jobs:
       #            AWS_ROLE_ARN: arn:aws:iam::((aws_account.qa)):role/ci
       #          inputs:
       #            - name: previous_success
-      - .: (( inject meta.plan.check-userdata ))
-        input_mapping:
-          userdata_changed: test_trendmicro
 
       - .: (( inject meta.plan.terminate-ecs-instances ))
       - .: (( inject meta.plan.test-ecs-ami ))

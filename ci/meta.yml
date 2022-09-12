@@ -91,7 +91,6 @@
                 source ../previous_success/exit-if-succeeded.sh
               fi
               export TF_VAR_ecs_hardened_ami_id=$(cat ../dw-al2-ecs-ami/id)
-              export TF_VAR_test_trend_micro=$TTM
               terraform workspace show
               cp ../terraform-bootstrap/terraform.tf .
               terraform init
@@ -105,35 +104,6 @@
       params:
         AWS_REGION: eu-west-2
 
-    check-userdata:
-      task: check-userdata
-      config:
-        platform: linux
-        image_resource:
-          type: docker-image
-          source:
-            repository: ((dataworks.terraform_repository))
-            tag: ((dataworks.terraform_14_version))
-        params:
-          AWS_DEFAULT_REGION: ((dataworks.aws_region))
-          GIT_USERNAME: ((dataworks.concourse_github_username))
-          GIT_EMAIL: ((dataworks.concourse_github_email))
-          GITHUB_TOKEN: ((dataworks-secrets.concourse_github_pat))
-        run:
-          path: sh
-          args:
-            - -exc
-            - |
-              echo "just cheign structure"
-              ls
-              echo "abcd" > "files/test-trend-micro.txt"
-              cat files/test-trend-micro.txt
-          dir: dataworks-aws-data-ingress-userdata
-        inputs:
-          - name: dataworks-aws-data-ingress-userdata
-      params:
-        AWS_REGION: eu-west-2x
-
     e2e-test-sft:
       task: e2e-test-sft
       config:
@@ -145,9 +115,37 @@
             tag: ((dataworks.docker_python_boto_behave_version))
         params:
           AWS_DEFAULT_REGION: ((dataworks.aws_region))
-          NUMBER_OF_TOPICS_TO_USE: "3"
           E2E_TEST_TIMEOUT: 300
-          E2E_FEATURE_TAG_FILTER: "@data-ingress-s3"
+          E2E_FEATURE_TAG_FILTER: "@data-ingress-sft"
+          ASSUME_DURATION: 3600
+        run:
+          path: sh
+          dir: dataworks-behavioural-framework
+          args:
+            - -exc
+            - |
+              source /assume-role
+              cd src/runners
+              ./run-ci.sh \
+              "../../../meta"
+        inputs:
+          - name: dataworks-behavioural-framework
+          - name: dataworks-aws-data-ingress
+          - name: meta
+
+    e2e-test-scaling:
+      task: e2e-test-scaling
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((dataworks.docker_python_boto_behave_repository))
+            tag: ((dataworks.docker_python_boto_behave_version))
+        params:
+          AWS_DEFAULT_REGION: ((dataworks.aws_region))
+          E2E_TEST_TIMEOUT: 300
+          E2E_FEATURE_TAG_FILTER: "@data-ingress-scaling"
           ASSUME_DURATION: 3600
         run:
           path: sh
