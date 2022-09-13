@@ -32,10 +32,6 @@ resource "aws_ecs_task_definition" "sft_agent_receiver" {
     host_path = local.mount_path
   }
 
-  lifecycle {
-    ignore_changes = all
-  }
-
   tags = merge(local.common_repo_tags, { Name = local.name })
 }
 
@@ -57,9 +53,7 @@ resource "aws_ecs_task_definition" "sft_agent_sender" {
     name      = local.source_volume
     host_path = local.mount_path
   }
-  lifecycle {
-    ignore_changes = all
-  }
+
   tags = merge(local.common_repo_tags, { Name = "sft_agent_sender" })
 }
 
@@ -258,9 +252,7 @@ resource "aws_ecs_service" "sft_agent_receiver" {
   task_definition = aws_ecs_task_definition.sft_agent_receiver.arn
   desired_count   = 1
   launch_type     = "EC2"
-  lifecycle {
-    ignore_changes = all
-  }
+
   placement_constraints {
     type = "distinctInstance"
   }
@@ -281,9 +273,7 @@ resource "aws_ecs_service" "sft_agent_sender" {
   task_definition = aws_ecs_task_definition.sft_agent_sender[0].arn
   desired_count   = 1
   launch_type     = "EC2"
-  lifecycle {
-    ignore_changes = all
-  }
+
   placement_constraints {
     type = "distinctInstance"
   }

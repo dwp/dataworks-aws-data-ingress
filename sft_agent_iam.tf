@@ -80,9 +80,7 @@ resource "aws_iam_role_policy_attachment" "sft_agent" {
 resource "aws_iam_role" "data_ingress_server_task" {
   name               = "DataIngressServer"
   assume_role_policy = data.aws_iam_policy_document.data_ingress_server_task_assume_role.json
-  lifecycle {
-    ignore_changes = all
-  }
+
 }
 
 data "aws_iam_policy_document" "data_ingress_server_task_assume_role" {

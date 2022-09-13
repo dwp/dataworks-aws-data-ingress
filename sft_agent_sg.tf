@@ -2,9 +2,7 @@ resource "aws_security_group" "sft_agent_service" {
   name        = "ingress_sft_agent_service"
   description = "Control access to and from ingress sft agent service"
   vpc_id      = data.terraform_remote_state.aws_sdx.outputs.vpc.vpc.id
-  lifecycle {
-    ignore_changes = all
-  }
+
   tags = merge(
     local.common_repo_tags,
     {

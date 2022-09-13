@@ -3,10 +3,7 @@ resource "aws_security_group" "data_ingress_server" {
   description = "Rules necesary for pulling container image, accessing vpc endpoints"
   vpc_id      = data.terraform_remote_state.aws_sdx.outputs.vpc.vpc.id
   tags        = merge(local.common_repo_tags, { Name = "data_ingress_cluster" })
-  lifecycle {
-    create_before_destroy = true
-    ignore_changes = all
-  }
+
 }
 
 resource "aws_security_group_rule" "server_ingress" {

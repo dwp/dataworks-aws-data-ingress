@@ -12,7 +12,9 @@ resource "aws_ecs_cluster" "data_ingress_cluster" {
     value = "enabled"
   }
   lifecycle {
-    ignore_changes = all
+    ignore_changes = [
+      setting,
+    ]
   }
 }
 
@@ -20,9 +22,7 @@ resource "aws_ecs_cluster" "data_ingress_cluster" {
 resource "aws_cloudwatch_log_group" "data_ingress_cluster" {
   name              = local.name_data_ingress_log_group
   retention_in_days = 180
-  lifecycle {
-    ignore_changes = all
-  }
+
   tags = merge(
     local.common_repo_tags,
     {
@@ -101,7 +101,6 @@ resource "aws_autoscaling_group" "data_ingress_server" {
     }
   }
   lifecycle {
-    ignore_changes = all
     create_before_destroy = true
   }
 }
@@ -115,9 +114,7 @@ resource "aws_autoscaling_schedule" "on" {
   start_time             = timeadd(timestamp(), "5m")
   time_zone              = local.time_zone
   autoscaling_group_name = aws_autoscaling_group.data_ingress_server.name
-  lifecycle {
-    ignore_changes = all
-  }
+
 }
 
 resource "aws_autoscaling_schedule" "off" {
@@ -129,9 +126,7 @@ resource "aws_autoscaling_schedule" "off" {
   time_zone              = local.time_zone
   start_time             = timeadd(timestamp(), "7m")
   autoscaling_group_name = aws_autoscaling_group.data_ingress_server.name
-  lifecycle {
-    ignore_changes = all
-  }
+
 }
 
 resource "aws_autoscaling_schedule" "test_on" {
@@ -144,9 +139,7 @@ resource "aws_autoscaling_schedule" "test_on" {
   end_time               = timeadd(timestamp(), "1h")
   time_zone              = local.time_zone
   autoscaling_group_name = aws_autoscaling_group.data_ingress_server.name
-  lifecycle {
-    ignore_changes = all
-  }
+
 }
 
 resource "aws_autoscaling_schedule" "test_off" {
@@ -159,9 +152,7 @@ resource "aws_autoscaling_schedule" "test_off" {
   start_time             = timeadd(timestamp(), "6m")
   end_time               = timeadd(timestamp(), "1h")
   autoscaling_group_name = aws_autoscaling_group.data_ingress_server.name
-  lifecycle {
-    ignore_changes = all
-  }
+
 }
 
 resource "aws_launch_template" "data_ingress_server" {
@@ -170,7 +161,7 @@ resource "aws_launch_template" "data_ingress_server" {
   instance_type           = var.data_ingress_server_ec2_instance_type[local.environment]
   disable_api_termination = false
   lifecycle {
-    ignore_changes = all
+    create_before_destroy = true
   }
   network_interfaces {
     associate_public_ip_address = false
