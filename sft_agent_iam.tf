@@ -27,7 +27,6 @@ data "aws_iam_policy_document" "sft_agent_task" {
       "${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.arn}/*"
     ]
   }
-
   statement {
     sid = "ListConfigBucketDI"
     actions = ["s3:ListBucket"]
