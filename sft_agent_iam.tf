@@ -85,7 +85,7 @@ resource "aws_iam_role" "data_ingress_server_task" {
 
 data "aws_iam_policy_document" "data_ingress_server_task_assume_role" {
   statement {
-    sid = "data_ingress_server_task_assume_role"
+    sid = "dataIngressServerTaskAssumeRole"
     actions = [
       "sts:AssumeRole",
     ]
