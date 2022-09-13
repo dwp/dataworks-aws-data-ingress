@@ -138,7 +138,7 @@ resource "aws_autoscaling_schedule" "test_on" {
   scheduled_action_name  = "test_on"
   desired_capacity       = local.asg_instance_count.test_desired
   max_size               = local.asg_instance_count.test_max
-  recurrence             = format("%s %s", formatdate("mm hh DD MM", timeadd(timestamp(), "4m")), " *")
+  recurrence             = format("%s %s", formatdate("mm hh DD MM", timeadd(timestamp(), "7m")), " *")
   start_time             = timeadd(timestamp(), "3m")
   end_time               = timeadd(timestamp(), "1h")
   time_zone              = local.time_zone
@@ -153,7 +153,7 @@ resource "aws_autoscaling_schedule" "test_off" {
   scheduled_action_name  = "test_off"
   desired_capacity       = local.asg_instance_count.off
   max_size               = local.asg_instance_count.off
-  recurrence             = format("%s %s", formatdate("mm hh DD MM", timeadd(timestamp(), "10m")), " *")
+  recurrence             = format("%s %s", formatdate("mm hh DD MM", timeadd(timestamp(), "12m")), " *")
   time_zone              = local.time_zone
   start_time             = timeadd(timestamp(), "6m")
   end_time               = timeadd(timestamp(), "1h")
