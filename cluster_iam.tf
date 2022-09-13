@@ -75,6 +75,9 @@ data "aws_iam_policy_document" "data_ingress_server_tagging_policy" {
       "*"
     ]
   }
+  lifecycle {
+    ignore_changes = all
+  }
 }
 
 data "aws_iam_policy_document" "data_ingress_server_assume_role" {
@@ -87,6 +90,9 @@ data "aws_iam_policy_document" "data_ingress_server_assume_role" {
     actions = [
       "sts:AssumeRole"
     ]
+  }
+  lifecycle {
+    ignore_changes = all
   }
 }
 
@@ -102,6 +108,9 @@ data "aws_iam_policy_document" "data_ingress_cluster_monitoring_logging" {
     ]
 
     resources = [aws_cloudwatch_log_group.data_ingress_cluster.arn]
+  }
+  lifecycle {
+    ignore_changes = all
   }
 }
 
@@ -129,7 +138,9 @@ data "aws_iam_policy_document" "kms_key_use" {
 
     //    resources = [data.terraform_remote_state.common.outputs.published_bucket_cmk.arn, data.terraform_remote_state.common.outputs.stage_data_ingress_bucket_cmk.arn]
   }
-
+  lifecycle {
+    ignore_changes = all
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "kms_key_use" {
@@ -171,7 +182,6 @@ data "aws_iam_policy_document" "data_ingress_server_ni" {
     ]
     resources = [aws_acm_certificate.data_ingress_server.arn]
   }
-
   statement {
 
     effect = "Allow"
@@ -189,6 +199,9 @@ data "aws_iam_policy_document" "data_ingress_server_ni" {
     resources = [
       "*"
     ]
+  }
+  lifecycle {
+    ignore_changes = all
   }
 }
 

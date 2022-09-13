@@ -18,9 +18,7 @@ data "aws_iam_policy_document" "sft_agent_task" {
 
   statement {
     sid = "PullSFTAgentConfigS3dataIngress"
-    actions = [
-      "s3:GetObject"
-    ]
+    actions = ["s3:GetObject"]
     resources = [
       "${data.terraform_remote_state.common.outputs.config_bucket.arn}/${aws_s3_bucket_object.data_ingress_sft_agent_config_receiver.key}",
       "${data.terraform_remote_state.common.outputs.config_bucket.arn}/${aws_s3_bucket_object.data_ingress_sft_agent_config_sender.key}",
@@ -32,9 +30,7 @@ data "aws_iam_policy_document" "sft_agent_task" {
 
   statement {
     sid = "ListConfigBucketDI"
-    actions = [
-      "s3:ListBucket"
-    ]
+    actions = ["s3:ListBucket"]
     resources = [
       data.terraform_remote_state.common.outputs.config_bucket.arn,
       "${data.terraform_remote_state.common.outputs.config_bucket.arn}/*"
@@ -44,43 +40,20 @@ data "aws_iam_policy_document" "sft_agent_task" {
   statement {
     sid    = "CertificateExportDI"
     effect = "Allow"
-    actions = [
-      "acm:ExportCertificate",
-      "acm:GetCertificate"
-
-    ]
+    actions = ["acm:ExportCertificate",
+               "acm:GetCertificate"]
     resources = [aws_acm_certificate.data_ingress_server.arn]
   }
 }
 
-
 data "aws_iam_policy_document" "sft_task_ni" {
   statement {
+    sid = "niAttachmentPerission"
     effect = "Allow"
-
-    actions = [
-      "ecs:DescribeContainerInstances"
-    ]
-    resources = [
-      "*"
-    ]
-  }
-  statement {
-
-    effect = "Allow"
-
-    //    condition {
-    //        test = "ForAnyValue:StringEquals"
-    //        variable = "ec2:ResourceTag/Owner"
-    //        values = [local.name]
-    //    }
-    actions = [
-      "ec2:AttachNetworkInterface",
-      "ec2:DescribeNetworkInterfaces",
-    ]
-    resources = [
-      "*"
-    ]
+    actions = ["ecs:DescribeContainerInstances",
+               "ec2:AttachNetworkInterface",
+               "ec2:DescribeNetworkInterfaces"]
+    resources = ["*"]
   }
 }
 
@@ -94,12 +67,12 @@ resource "aws_iam_policy" "sft_task_ni" {
   policy = data.aws_iam_policy_document.sft_task_ni.json
 }
 
-
 resource "aws_iam_policy" "sft_agent_task" {
   name        = "IngressSFTAgentTask"
   description = "Custom policy for the ingress sft agent task"
   policy      = data.aws_iam_policy_document.sft_agent_task.json
 }
+
 resource "aws_iam_role_policy_attachment" "sft_agent" {
   role       = aws_iam_role.data_ingress_server_task.name
   policy_arn = aws_iam_policy.sft_agent_task.arn
@@ -115,10 +88,10 @@ resource "aws_iam_role" "data_ingress_server_task" {
 
 data "aws_iam_policy_document" "data_ingress_server_task_assume_role" {
   statement {
+    sid = "data_ingress_server_task_assume_role"
     actions = [
       "sts:AssumeRole",
     ]
-
     principals {
       type        = "Service"
       identifiers = ["ecs-tasks.amazonaws.com"]
@@ -140,9 +113,7 @@ data "aws_iam_policy_document" "data_ingress_server_task" {
 
   statement {
     sid = "PublishedBucketKMSDecryptDI"
-    actions = [
-      "kms:*"
-    ]
+    actions = ["kms:*"]
     resources = ["*"]
 
     //    resources = [data.terraform_remote_state.common.outputs.published_bucket_cmk.arn, data.terraform_remote_state.common.outputs.stage_data_ingress_bucket_cmk.arn]
@@ -169,6 +140,7 @@ resource "aws_iam_policy" "data_ingress_server_task" {
   description = "Custom policy for data ingress server"
   policy      = data.aws_iam_policy_document.data_ingress_server_task.json
 }
+
 resource "aws_iam_role_policy_attachment" "data_ingress_server" {
   role       = aws_iam_role.data_ingress_server_task.name
   policy_arn = aws_iam_policy.data_ingress_server_task.arn
