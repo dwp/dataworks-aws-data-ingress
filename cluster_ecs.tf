@@ -20,6 +20,9 @@ resource "aws_ecs_cluster" "data_ingress_cluster" {
 resource "aws_cloudwatch_log_group" "data_ingress_cluster" {
   name              = local.name_data_ingress_log_group
   retention_in_days = 180
+  lifecycle {
+    ignore_changes = all
+  }
   tags = merge(
     local.common_repo_tags,
     {
