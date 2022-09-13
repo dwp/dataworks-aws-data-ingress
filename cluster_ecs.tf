@@ -13,16 +13,15 @@ resource "aws_ecs_cluster" "data_ingress_cluster" {
   }
   lifecycle {
     ignore_changes = [
-      setting,
+      setting, tags
     ]
   }
 }
 
-
 resource "aws_cloudwatch_log_group" "data_ingress_cluster" {
   name              = local.name_data_ingress_log_group
   retention_in_days = 180
-
+  lifecycle {ignore_changes = [tags]}
   tags = merge(
     local.common_repo_tags,
     {
@@ -102,6 +101,7 @@ resource "aws_autoscaling_group" "data_ingress_server" {
   }
   lifecycle {
     create_before_destroy = true
+    ignore_changes = [tags]
   }
 }
 
@@ -114,7 +114,9 @@ resource "aws_autoscaling_schedule" "on" {
   start_time             = timeadd(timestamp(), "5m")
   time_zone              = local.time_zone
   autoscaling_group_name = aws_autoscaling_group.data_ingress_server.name
-
+  lifecycle {
+    ignore_changes = [start_time, end_time, recurrence]
+  }
 }
 
 resource "aws_autoscaling_schedule" "off" {
@@ -126,11 +128,13 @@ resource "aws_autoscaling_schedule" "off" {
   time_zone              = local.time_zone
   start_time             = timeadd(timestamp(), "7m")
   autoscaling_group_name = aws_autoscaling_group.data_ingress_server.name
-
+  lifecycle {
+    ignore_changes = [start_time, end_time, recurrence]
+  }
 }
 
 resource "aws_autoscaling_schedule" "test_on" {
-  count = contains(["development","qa"], local.environment) ? 1 : 0
+  count                  = contains(["development", "qa"], local.environment) ? 1 : 0
   scheduled_action_name  = "test_on"
   desired_capacity       = local.asg_instance_count.test_desired
   max_size               = local.asg_instance_count.test_max
@@ -139,11 +143,13 @@ resource "aws_autoscaling_schedule" "test_on" {
   end_time               = timeadd(timestamp(), "1h")
   time_zone              = local.time_zone
   autoscaling_group_name = aws_autoscaling_group.data_ingress_server.name
-
+  lifecycle {
+    ignore_changes = [start_time, end_time, recurrence]
+  }
 }
 
 resource "aws_autoscaling_schedule" "test_off" {
-  count = contains(["development","qa"], local.environment) ? 1 : 0
+  count                  = contains(["development", "qa"], local.environment) ? 1 : 0
   scheduled_action_name  = "test_off"
   desired_capacity       = local.asg_instance_count.off
   max_size               = local.asg_instance_count.off
@@ -152,7 +158,9 @@ resource "aws_autoscaling_schedule" "test_off" {
   start_time             = timeadd(timestamp(), "6m")
   end_time               = timeadd(timestamp(), "1h")
   autoscaling_group_name = aws_autoscaling_group.data_ingress_server.name
-
+  lifecycle {
+    ignore_changes = [start_time, end_time, recurrence]
+  }
 }
 
 resource "aws_launch_template" "data_ingress_server" {
@@ -162,6 +170,7 @@ resource "aws_launch_template" "data_ingress_server" {
   disable_api_termination = false
   lifecycle {
     create_before_destroy = true
+    ignore_changes = [latest_version, tags]
   }
   network_interfaces {
     associate_public_ip_address = false

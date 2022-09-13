@@ -24,6 +24,7 @@ resource "aws_cloudwatch_metric_alarm" "sft_stopped" {
   alarm_description         = "This metric monitors cluster termination with errors"
   insufficient_data_actions = []
   alarm_actions             = [local.monitoring_topic_arn]
+  lifecycle {ignore_changes = [tags]}
   dimensions = {
     RuleName = aws_cloudwatch_event_rule.sft_stopped.name
   }
@@ -72,6 +73,7 @@ resource "aws_cloudwatch_metric_alarm" "file_landed" {
   alarm_description         = "Monitoring stage bucket"
   insufficient_data_actions = []
   alarm_actions             = [local.monitoring_topic_arn]
+  lifecycle {ignore_changes = [tags]}
   dimensions = {
     RuleName = aws_cloudwatch_event_rule.file_landed.name
   }
