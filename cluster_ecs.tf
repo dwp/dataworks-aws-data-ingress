@@ -99,8 +99,6 @@ resource "aws_autoscaling_group" "data_ingress_server" {
   }
   lifecycle {
     ignore_changes = all
-  }
-  lifecycle {
     create_before_destroy = true
   }
 }
