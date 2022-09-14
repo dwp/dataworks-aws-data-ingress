@@ -112,7 +112,7 @@ resource "aws_autoscaling_schedule" "on" {
   max_size               = local.asg_instance_count.max[local.environment]
   min_size               = local.asg_instance_count.min[local.environment]
   recurrence             = "30 23 2 * *"
-  start_time             = timeadd(timestamp(), "15m")
+  start_time             = timeadd(timestamp(), "6m")
   time_zone              = local.time_zone
   autoscaling_group_name = aws_autoscaling_group.data_ingress_server.name
   lifecycle {
@@ -127,7 +127,7 @@ resource "aws_autoscaling_schedule" "off" {
   min_size               = local.asg_instance_count.off
   recurrence             = "30 23 4 * *"
   time_zone              = local.time_zone
-  start_time             = timeadd(timestamp(), "17m")
+  start_time             = timeadd(timestamp(), "8m")
   autoscaling_group_name = aws_autoscaling_group.data_ingress_server.name
   lifecycle {
     ignore_changes = [start_time, end_time, recurrence]
@@ -136,12 +136,12 @@ resource "aws_autoscaling_schedule" "off" {
 
 resource "aws_autoscaling_schedule" "test_on" {
   count                  = contains(["development", "qa"], local.environment) ? 1 : 0
-  scheduled_action_name  = "test_on"
+  scheduled_action_name  = "test_scaling_on"
   desired_capacity       = local.asg_instance_count.test_desired
   max_size               = local.asg_instance_count.test_max
-  recurrence             = format("%s %s", formatdate("mm hh DD MM", timeadd(timestamp(), "5m")), " *")
+  recurrence             = format("%s %s", formatdate("mm hh DD MM", timeadd(timestamp(), "64m")), " *")
   start_time             = timeadd(timestamp(), "2m")
-  end_time               = timeadd(timestamp(), "1h")
+  end_time               = timeadd(timestamp(), "80m")
   time_zone              = local.time_zone
   autoscaling_group_name = aws_autoscaling_group.data_ingress_server.name
   lifecycle {
@@ -151,13 +151,13 @@ resource "aws_autoscaling_schedule" "test_on" {
 
 resource "aws_autoscaling_schedule" "test_off" {
   count                  = contains(["development", "qa"], local.environment) ? 1 : 0
-  scheduled_action_name  = "test_off"
+  scheduled_action_name  = "test_scaling_off"
   desired_capacity       = local.asg_instance_count.off
   max_size               = local.asg_instance_count.off
-  recurrence             = format("%s %s", formatdate("mm hh DD MM", timeadd(timestamp(), "12m")), " *")
+  recurrence             = format("%s %s", formatdate("mm hh DD MM", timeadd(timestamp(), "70m")), " *")
   time_zone              = local.time_zone
-  start_time             = timeadd(timestamp(), "5m")
-  end_time               = timeadd(timestamp(), "1h")
+  start_time             = timeadd(timestamp(), "4m")
+  end_time               = timeadd(timestamp(), "80m")
   autoscaling_group_name = aws_autoscaling_group.data_ingress_server.name
   lifecycle {
     ignore_changes = [start_time, end_time, recurrence]

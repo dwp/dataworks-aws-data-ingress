@@ -27,17 +27,17 @@ locals {
   asg_instance_count = {
     desired = {
       development = 2
-      qa          = 0
-      integration = 0
-      preprod     = 0
-      production  = 0
+      qa          = 2
+      integration = 1
+      preprod     = 1
+      production  = 1
     }
     max = {
       development = 2
-      qa          = 0
-      integration = 0
-      preprod     = 0
-      production  = 0
+      qa          = 2
+      integration = 1
+      preprod     = 1
+      production  = 1
     }
     min = {
       development = 0
@@ -46,7 +46,7 @@ locals {
       preprod     = 0
       production  = 0
     }
-    off          = 2
+    off          = 0
     test_desired = 2
     test_max     = 2
   }
