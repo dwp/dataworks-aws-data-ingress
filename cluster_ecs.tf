@@ -154,7 +154,7 @@ resource "aws_autoscaling_schedule" "test_off" {
   scheduled_action_name  = "test_off"
   desired_capacity       = local.asg_instance_count.off
   max_size               = local.asg_instance_count.off
-  recurrence             = format("%s %s", formatdate("mm hh DD MM", timeadd(timestamp(), "10m")), " *")
+  recurrence             = format("%s %s", formatdate("mm hh DD MM", timeadd(timestamp(), "12m")), " *")
   time_zone              = local.time_zone
   start_time             = timeadd(timestamp(), "5m")
   end_time               = timeadd(timestamp(), "1h")
