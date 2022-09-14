@@ -112,7 +112,7 @@ resource "aws_autoscaling_schedule" "on" {
   max_size               = local.asg_instance_count.max[local.environment]
   min_size               = local.asg_instance_count.min[local.environment]
   recurrence             = "30 23 2 * *"
-  start_time             = timeadd(timestamp(), "5m")
+  start_time             = timeadd(timestamp(), "15m")
   time_zone              = local.time_zone
   autoscaling_group_name = aws_autoscaling_group.data_ingress_server.name
   lifecycle {
@@ -127,7 +127,7 @@ resource "aws_autoscaling_schedule" "off" {
   min_size               = local.asg_instance_count.off
   recurrence             = "30 23 4 * *"
   time_zone              = local.time_zone
-  start_time             = timeadd(timestamp(), "7m")
+  start_time             = timeadd(timestamp(), "17m")
   autoscaling_group_name = aws_autoscaling_group.data_ingress_server.name
   lifecycle {
     ignore_changes = [start_time, end_time, recurrence]
@@ -140,7 +140,7 @@ resource "aws_autoscaling_schedule" "test_on" {
   desired_capacity       = local.asg_instance_count.test_desired
   max_size               = local.asg_instance_count.test_max
   recurrence             = format("%s %s", formatdate("mm hh DD MM", timeadd(timestamp(), "5m")), " *")
-  start_time             = timeadd(timestamp(), "3m")
+  start_time             = timeadd(timestamp(), "2m")
   end_time               = timeadd(timestamp(), "1h")
   time_zone              = local.time_zone
   autoscaling_group_name = aws_autoscaling_group.data_ingress_server.name
@@ -156,7 +156,7 @@ resource "aws_autoscaling_schedule" "test_off" {
   max_size               = local.asg_instance_count.off
   recurrence             = format("%s %s", formatdate("mm hh DD MM", timeadd(timestamp(), "10m")), " *")
   time_zone              = local.time_zone
-  start_time             = timeadd(timestamp(), "6m")
+  start_time             = timeadd(timestamp(), "5m")
   end_time               = timeadd(timestamp(), "1h")
   autoscaling_group_name = aws_autoscaling_group.data_ingress_server.name
   lifecycle {
