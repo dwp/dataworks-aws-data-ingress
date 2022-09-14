@@ -111,7 +111,7 @@ resource "aws_autoscaling_schedule" "on" {
   desired_capacity       = local.asg_instance_count.desired[local.environment]
   max_size               = local.asg_instance_count.max[local.environment]
   min_size               = local.asg_instance_count.min[local.environment]
-  recurrence             = "30 23 2 * *"
+  recurrence             = "00 23 2 * *"
   start_time             = timeadd(timestamp(), "6m")
   time_zone              = local.time_zone
   autoscaling_group_name = aws_autoscaling_group.data_ingress_server.name
@@ -125,7 +125,7 @@ resource "aws_autoscaling_schedule" "off" {
   desired_capacity       = local.asg_instance_count.off
   max_size               = local.asg_instance_count.off
   min_size               = local.asg_instance_count.off
-  recurrence             = "30 23 4 * *"
+  recurrence             = "00 23 4 * *"
   time_zone              = local.time_zone
   start_time             = timeadd(timestamp(), "8m")
   autoscaling_group_name = aws_autoscaling_group.data_ingress_server.name
