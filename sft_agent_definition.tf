@@ -116,6 +116,14 @@ data "template_file" "sft_agent_receiver_definition" {
         value = "data_ingress"
       },
       {
+        name : "TEST_TREND_MICRO_ENV",
+        value : contains(["development", "qa"], local.environment) ? "lower_env" : "higher_env"
+      },
+      {
+        name : "TEST_TREND_MICRO_ON",
+        value : var.test_trend_micro_on
+      },
+      {
         name  = "internet_proxy",
         value = data.terraform_remote_state.aws_sdx.outputs.internet_proxy.host
       },
@@ -131,14 +139,10 @@ data "template_file" "sft_agent_receiver_definition" {
         name : "FILENAME_PREFIX",
         value : local.filename_prefix
       },
-      {
-        name : "TEST_TREND_MICRO",
-        value : var.test_trend_micro
-      },
-      //      {
-      //        name : "NI_ID",
-      //        value : aws_network_interface.di_ni_receiver.id
-      //      },
+//      {
+//        name : "NI_ID",
+//        value : aws_network_interface.di_ni_receiver.id
+//      },
       {
         name : "RENAME",
         value : "yes"
@@ -231,8 +235,12 @@ data "template_file" "sft_agent_sender_definition" {
         value : local.filename_prefix
       },
       {
-        name : "TEST_TREND_MICRO",
-        value : var.test_trend_micro
+        name : "TEST_TREND_MICRO_ENV",
+        value : contains(["development", "qa"], local.environment) ? "lower_env" : "higher_env"
+      },
+      {
+        name : "TEST_TREND_MICRO_ON",
+        value : var.test_trend_micro_on
       },
       {
         name : "TYPE",

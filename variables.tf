@@ -9,10 +9,11 @@ variable "region" {
   default = "eu-west-2"
 }
 
-variable "test_trend_micro" {
+variable "test_trend_micro_on" {
   type    = string
   default = ""
 }
+
 
 variable "data_ingress_server_ec2_instance_type" {
   type = map(string)
