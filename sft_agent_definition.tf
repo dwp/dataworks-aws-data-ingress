@@ -232,7 +232,7 @@ data "template_file" "sft_agent_sender_definition" {
       },
       {
         name : "FILENAME_PREFIX",
-        value : local.filename_prefix
+        value : local.filename_prefix,
       },
       {
         name : "TEST_TREND_MICRO_ENV",
@@ -242,14 +242,13 @@ data "template_file" "sft_agent_sender_definition" {
         name : "TEST_TREND_MICRO_ON",
         value : var.test_trend_micro_on
       },
-
-        name : "TYPE",
+      {  name : "TYPE",
         value : "sender"
       },
       {
         name  = "dks_fqdn",
         value = local.dks_fqdn
-      },
+      }
     ])
   }
 }
