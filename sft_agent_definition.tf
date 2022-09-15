@@ -22,7 +22,7 @@ resource "aws_ecs_task_definition" "sft_agent_receiver" {
   task_role_arn            = aws_iam_role.data_ingress_server_task.arn
   execution_role_arn       = data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
   container_definitions    = "[${data.template_file.sft_agent_receiver_definition.rendered}]"
-//  lifecycle {ignore_changes = [all]}
+  lifecycle {ignore_changes = [all]}
   placement_constraints {
     type       = "memberOf"
     expression = "attribute:ecs.availability-zone in ${local.az_ni}"
@@ -45,7 +45,7 @@ resource "aws_ecs_task_definition" "sft_agent_sender" {
   task_role_arn            = aws_iam_role.data_ingress_server_task.arn
   execution_role_arn       = data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
   container_definitions    = "[${data.template_file.sft_agent_sender_definition[0].rendered}]"
-//  lifecycle {ignore_changes = [all]}
+  lifecycle {ignore_changes = [all]}
   placement_constraints {
     type       = "memberOf"
     expression = "attribute:ecs.availability-zone in ${local.az_sender}"
