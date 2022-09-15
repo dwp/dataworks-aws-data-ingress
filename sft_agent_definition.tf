@@ -91,9 +91,13 @@ data "template_file" "sft_agent_receiver_definition" {
         name : "LOG_LEVEL",
         value : "DEBUG"
       },
+//      {
+//        name  = "STAGE_BUCKET",
+//        value = data.terraform_remote_state.common.outputs.data_ingress_stage_bucket.id
+//      },
       {
         name  = "STAGE_BUCKET",
-        value = data.terraform_remote_state.common.outputs.data_ingress_stage_bucket.id
+        value = "test-ab-test-ab"
       },
       {
         name  = "KMS_KEY_ARN",
