@@ -67,7 +67,7 @@ data "template_file" "sft_agent_receiver_definition" {
     image_url          = format("%s:%s", "${local.account[local.management_account[local.environment]]}.dkr.ecr.${var.region}.amazonaws.com/${local.ecr_repository_name}", "latest")
     memory             = var.task_definition_memory[local.environment]
     memory_reservation = var.task_definition_memory[local.environment]
-    user               = "root"
+    user               = "0"
     ports              = jsonencode([8080, 8081, local.sft_port])
     ulimits            = jsonencode([])
     log_group          = aws_cloudwatch_log_group.data_ingress_cluster.name
@@ -169,7 +169,7 @@ data "template_file" "sft_agent_sender_definition" {
     image_url          = format("%s:%s", "${local.account[local.management_account[local.environment]]}.dkr.ecr.${var.region}.amazonaws.com/${local.ecr_repository_name}", "latest")
     memory             = var.task_definition_memory[local.environment]
     memory_reservation = var.task_definition_memory[local.environment]
-    user               = "root"
+    user               = "0"
     ports              = jsonencode([8080, 8081, local.sft_port])
     ulimits            = jsonencode([])
     log_group          = aws_cloudwatch_log_group.data_ingress_cluster.name
