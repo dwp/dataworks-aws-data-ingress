@@ -22,7 +22,7 @@ resource "aws_ecs_task_definition" "sft_agent_receiver" {
   task_role_arn            = aws_iam_role.data_ingress_server_task.arn
   execution_role_arn       = data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
   container_definitions    = "[${data.template_file.sft_agent_receiver_definition.rendered}]"
-  lifecycle {ignore_changes = [tags,container_definitions]}
+//  lifecycle {ignore_changes = [all]}
   placement_constraints {
     type       = "memberOf"
     expression = "attribute:ecs.availability-zone in ${local.az_ni}"
@@ -45,7 +45,7 @@ resource "aws_ecs_task_definition" "sft_agent_sender" {
   task_role_arn            = aws_iam_role.data_ingress_server_task.arn
   execution_role_arn       = data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
   container_definitions    = "[${data.template_file.sft_agent_sender_definition[0].rendered}]"
-  lifecycle {ignore_changes = [tags, container_definitions]}
+//  lifecycle {ignore_changes = [all]}
   placement_constraints {
     type       = "memberOf"
     expression = "attribute:ecs.availability-zone in ${local.az_sender}"
@@ -91,13 +91,9 @@ data "template_file" "sft_agent_receiver_definition" {
         name : "LOG_LEVEL",
         value : "DEBUG"
       },
-//      {
-//        name  = "STAGE_BUCKET",
-//        value = data.terraform_remote_state.common.outputs.data_ingress_stage_bucket.id
-//      },
       {
         name  = "STAGE_BUCKET",
-        value = "test-ab-test-ab"
+        value = data.terraform_remote_state.common.outputs.data_ingress_stage_bucket.id
       },
       {
         name  = "KMS_KEY_ARN",
@@ -264,7 +260,7 @@ resource "aws_ecs_service" "sft_agent_receiver" {
   desired_count   = 1
   launch_type     = "EC2"
   lifecycle {
-    ignore_changes = [tags, task_definition]
+    ignore_changes = [tags]
   }
   placement_constraints {
     type = "distinctInstance"
@@ -287,7 +283,7 @@ resource "aws_ecs_service" "sft_agent_sender" {
   desired_count   = 1
   launch_type     = "EC2"
   lifecycle {
-    ignore_changes = [tags, task_definition]
+    ignore_changes = [tags]
   }
   placement_constraints {
     type = "distinctInstance"
