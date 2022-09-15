@@ -260,7 +260,7 @@ resource "aws_ecs_service" "sft_agent_receiver" {
   desired_count   = 1
   launch_type     = "EC2"
   lifecycle {
-    ignore_changes = [tags]
+    ignore_changes = [tags, task_definition]
   }
   placement_constraints {
     type = "distinctInstance"
@@ -283,7 +283,7 @@ resource "aws_ecs_service" "sft_agent_sender" {
   desired_count   = 1
   launch_type     = "EC2"
   lifecycle {
-    ignore_changes = [tags]
+    ignore_changes = [tags, task_definition]
   }
   placement_constraints {
     type = "distinctInstance"
