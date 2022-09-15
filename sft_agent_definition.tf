@@ -242,7 +242,7 @@ data "template_file" "sft_agent_sender_definition" {
         name : "TEST_TREND_MICRO_ON",
         value : var.test_trend_micro_on
       },
-      {
+
         name : "TYPE",
         value : "sender"
       },
