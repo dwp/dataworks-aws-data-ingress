@@ -64,7 +64,7 @@ data "template_file" "sft_agent_receiver_definition" {
     name               = "sft_agent_receiver"
     group_name         = "sft_agent_receiver"
     cpu                = var.task_definition_cpu[local.environment]
-    image_url          = format("%s:%s", "${local.account[local.management_account[local.environment]]}.dkr.ecr.${var.region}.amazonaws.com/${local.ecr_repository_name}", "latest")
+    image_url          = format("%s:%s", "${local.account[local.management_account[local.environment]]}.dkr.ecr.${var.region}.amazonaws.com/${local.ecr_repository_name}", "0.0.1")
     memory             = var.task_definition_memory[local.environment]
     memory_reservation = var.task_definition_memory[local.environment]
     user               = "0"
@@ -166,7 +166,7 @@ data "template_file" "sft_agent_sender_definition" {
     name               = "sft_agent_sender"
     group_name         = "sft_agent_sender"
     cpu                = var.task_definition_cpu[local.environment]
-    image_url          = format("%s:%s", "${local.account[local.management_account[local.environment]]}.dkr.ecr.${var.region}.amazonaws.com/${local.ecr_repository_name}", "latest")
+    image_url          = format("%s:%s", "${local.account[local.management_account[local.environment]]}.dkr.ecr.${var.region}.amazonaws.com/${local.ecr_repository_name}", "0.0.1")
     memory             = var.task_definition_memory[local.environment]
     memory_reservation = var.task_definition_memory[local.environment]
     user               = "0"

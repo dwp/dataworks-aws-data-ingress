@@ -63,18 +63,6 @@ variable "data_ingress_port" {
   default = 8080
 }
 
-variable "sft_agent_image_version" {
-  description = "image version for the SFT agent"
-  type        = map(string)
-  default = {
-    development = "0.0.37"
-    qa          = "0.0.37"
-    integration = "0.0.37"
-    preprod     = "0.0.37"
-    production  = "0.0.37"
-  }
-}
-
 variable "test_ami" {
   description = "Defines if cluster should test untested ECS AMI"
   type        = bool
