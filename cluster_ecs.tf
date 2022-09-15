@@ -82,8 +82,8 @@ resource "aws_autoscaling_group" "data_ingress_server" {
   //  max_size              = local.asg_instance_count.off
   //  desired_capacity      = local.asg_instance_count.off
   min_size              = 0
-  max_size              = 0
-  desired_capacity      = 0
+  max_size              = 2
+  desired_capacity      = 2
   protect_from_scale_in = false
   default_cooldown      = 30
   force_delete          = true
@@ -133,37 +133,37 @@ resource "aws_autoscaling_schedule" "off" {
     ignore_changes = [start_time, end_time, recurrence]
   }
 }
-
-resource "aws_autoscaling_schedule" "test_on" {
-  count                  = contains(["development", "qa"], local.environment) ? 1 : 0
-  scheduled_action_name  = "test_scaling_on"
-  desired_capacity       = local.asg_instance_count.test_desired
-  max_size               = local.asg_instance_count.test_max
-  recurrence             = format("%s %s", formatdate("mm hh DD MM", timeadd(timestamp(), "64m")), " *")
-  start_time             = timeadd(timestamp(), "2m")
-  end_time               = timeadd(timestamp(), "80m")
-  time_zone              = local.time_zone
-  autoscaling_group_name = aws_autoscaling_group.data_ingress_server.name
-  lifecycle {
-    ignore_changes = [start_time, end_time, recurrence]
-  }
-}
-
-resource "aws_autoscaling_schedule" "test_off" {
-  count                  = contains(["development", "qa"], local.environment) ? 1 : 0
-  scheduled_action_name  = "test_scaling_off"
-  desired_capacity       = local.asg_instance_count.off
-  max_size               = local.asg_instance_count.off
-  recurrence             = format("%s %s", formatdate("mm hh DD MM", timeadd(timestamp(), "70m")), " *")
-  time_zone              = local.time_zone
-  start_time             = timeadd(timestamp(), "4m")
-  end_time               = timeadd(timestamp(), "80m")
-  autoscaling_group_name = aws_autoscaling_group.data_ingress_server.name
-  lifecycle {
-    ignore_changes = [start_time, end_time, recurrence]
-  }
-}
-
+//
+//resource "aws_autoscaling_schedule" "test_on" {
+//  count                  = contains(["development", "qa"], local.environment) ? 1 : 0
+//  scheduled_action_name  = "test_scaling_on"
+//  desired_capacity       = local.asg_instance_count.test_desired
+//  max_size               = local.asg_instance_count.test_max
+//  recurrence             = format("%s %s", formatdate("mm hh DD MM", timeadd(timestamp(), "64m")), " *")
+//  start_time             = timeadd(timestamp(), "2m")
+//  end_time               = timeadd(timestamp(), "80m")
+//  time_zone              = local.time_zone
+//  autoscaling_group_name = aws_autoscaling_group.data_ingress_server.name
+//  lifecycle {
+//    ignore_changes = [start_time, end_time, recurrence]
+//  }
+//}
+//
+//resource "aws_autoscaling_schedule" "test_off" {
+//  count                  = contains(["development", "qa"], local.environment) ? 1 : 0
+//  scheduled_action_name  = "test_scaling_off"
+//  desired_capacity       = local.asg_instance_count.off
+//  max_size               = local.asg_instance_count.off
+//  recurrence             = format("%s %s", formatdate("mm hh DD MM", timeadd(timestamp(), "70m")), " *")
+//  time_zone              = local.time_zone
+//  start_time             = timeadd(timestamp(), "4m")
+//  end_time               = timeadd(timestamp(), "80m")
+//  autoscaling_group_name = aws_autoscaling_group.data_ingress_server.name
+//  lifecycle {
+//    ignore_changes = [start_time, end_time, recurrence]
+//  }
+//}
+//
 resource "aws_launch_template" "data_ingress_server" {
   name                    = local.launch_template_name
   image_id                = var.ecs_hardened_ami_id
