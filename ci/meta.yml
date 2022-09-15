@@ -30,7 +30,7 @@
               export TF_VAR_test_trend_micro_on=ci
               cp ../terraform-bootstrap/terraform.tf .
               terraform workspace show
-              terraform init
+              terraform init -upgrade
               terraform plan $DETAILED_EXITCODE
           dir: dataworks-aws-data-ingress
         inputs:
@@ -94,7 +94,7 @@
               export TF_VAR_ecs_hardened_ami_id=$(cat ../dw-al2-ecs-ami/id)
               terraform workspace show
               cp ../terraform-bootstrap/terraform.tf .
-              terraform init
+              terraform init -upgrade
               terraform plan -out terraform.plan
               terraform apply -auto-approve terraform.plan
           dir: dataworks-aws-data-ingress
