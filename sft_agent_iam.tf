@@ -111,6 +111,12 @@ data "aws_iam_policy_document" "data_ingress_server_task" {
   }
 
   statement {
+    sid       = "PublishMessageTrendMicro"
+    actions   = ["sns:Publish"]
+    resources = [aws_sns_topic.email_trend_micro_team.arn]
+  }
+
+    statement {
     sid       = "PublishedBucketKMSDecryptDI"
     actions   = ["kms:*"]
     resources = ["*"]
