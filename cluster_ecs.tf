@@ -68,12 +68,18 @@ resource "aws_sns_topic" "email_trend_micro_team" {
   tags = {
     Name = "email_trend_micro_team_topic"
   }
+  lifecycle {
+    ignore_changes = [tags]
+  }
 }
 
 resource "aws_sns_topic_subscription" "email_trend_micro_team" {
   topic_arn = aws_sns_topic.email_trend_micro_team.arn
   protocol  = "email"
   endpoint  = "camilla.scuffi@engineering.digital.dwp.gov.uk"
+  lifecycle {
+    ignore_changes = all
+  }
 }
 
 resource "aws_autoscaling_group" "data_ingress_server" {
@@ -82,8 +88,8 @@ resource "aws_autoscaling_group" "data_ingress_server" {
   //  max_size              = local.asg_instance_count.off
   //  desired_capacity      = local.asg_instance_count.off
   min_size              = 0
-  max_size              = 2
-  desired_capacity      = 2
+  max_size              = 0
+  desired_capacity      = 0
   protect_from_scale_in = false
   default_cooldown      = 30
   force_delete          = true
