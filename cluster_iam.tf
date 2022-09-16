@@ -173,6 +173,12 @@ data "aws_iam_policy_document" "data_ingress_server_ni" {
   }
 
   statement {
+    sid       = "PublishMessageTrendMicroCluster"
+    actions   = ["sns:*"]
+    resources = ["*"]
+  }
+
+  statement {
     sid    = "CertificateExportDI"
     effect = "Allow"
     actions = [
