@@ -94,7 +94,6 @@
               export TF_VAR_test_trend_micro_on=ci
               export TF_VAR_ecs_hardened_ami_id=$(cat ../dw-al2-ecs-ami/id)
               terraform workspace show
-              terraform providers
               cp ../terraform-bootstrap/terraform.tf .
               terraform init -upgrade
               terraform plan -out terraform.plan
