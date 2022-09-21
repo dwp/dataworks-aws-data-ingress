@@ -56,6 +56,9 @@ resource "aws_ecs_capacity_provider" "data_ingress_cluster" {
 }
 
 resource "aws_network_interface" "di_ni_receiver" {
+  lifecycle {
+    ignore_changes = [tags]
+  }
   private_ips = [cidrhost(data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity[0].cidr_block, 14)]
   security_groups = [aws_security_group.data_ingress_server.id]
   subnet_id       = data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity.0.id
@@ -144,8 +147,8 @@ resource "aws_autoscaling_schedule" "test_on" {
   scheduled_action_name  = "test_scaling_on"
   desired_capacity       = local.asg_instance_count.test_desired
   max_size               = local.asg_instance_count.test_max
-  recurrence             = format("%s %s", formatdate("mm hh DD MM", timeadd(timestamp(), "64m")), " *")
-  start_time             = timeadd(timestamp(), "2m")
+  recurrence             = format("%s %s", formatdate("mm hh DD MM", timeadd(timestamp(), "65m")), " *")
+  start_time             = timeadd(timestamp(), "3m")
   end_time               = timeadd(timestamp(), "80m")
   time_zone              = local.time_zone
   autoscaling_group_name = aws_autoscaling_group.data_ingress_server.name
