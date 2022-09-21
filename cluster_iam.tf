@@ -40,7 +40,7 @@ resource "aws_iam_policy" "data_ingress_server_tagging" {
   description = "Allow Data Ingress EC2s modify their tags"
   policy      = data.aws_iam_policy_document.data_ingress_server_tagging_policy.json
   lifecycle {
-    ignore_changes = [tags,policy]
+    ignore_changes = [tags]
   }
 }
 
@@ -149,7 +149,7 @@ resource "aws_iam_policy" "kms_key_use" {
   description = "Allow data ingress cluster to log"
   policy      = data.aws_iam_policy_document.kms_key_use.json
   lifecycle {
-    ignore_changes = [tags,policy]
+    ignore_changes = [tags]
   }
 }
 
@@ -221,7 +221,7 @@ resource "aws_iam_policy" "data_ingress_ni" {
   name        = "DataIngressClusterni"
   description = "Allow data ingress cluster to log"
   policy      = data.aws_iam_policy_document.data_ingress_server_ni.json
-  lifecycle {ignore_changes = [tags, policy]}
+  lifecycle {ignore_changes = [tags]}
 
 }
 
@@ -229,7 +229,7 @@ resource "aws_iam_policy" "data_ingress_cluster_monitoring_logging" {
   name        = "DataIngressClusterLoggingPolicy"
   description = "Allow data ingress cluster to log"
   policy      = data.aws_iam_policy_document.data_ingress_cluster_monitoring_logging.json
-  lifecycle {ignore_changes = [tags, policy]}
+  lifecycle {ignore_changes = [tags]}
 
 }
 
@@ -254,7 +254,7 @@ resource "aws_iam_policy" "data_ingress_get_secret" {
   name        = "DataIngressGetSecret"
   description = "Allow data ingress instances to get secret"
   policy      = data.aws_iam_policy_document.data_ingress_get_secret.json
-  lifecycle {ignore_changes = [tags, policy]}
+  lifecycle {ignore_changes = [tags]}
 }
 
 resource "aws_iam_role_policy_attachment" "data_ingress_get_secret" {
@@ -279,7 +279,7 @@ resource "aws_iam_policy" "stage_bucket_all" {
   name        = "stageBucketAll"
   description = "Allow data ingress instances to read and write to test bucket"
   policy      = data.aws_iam_policy_document.stage_bucket_all.json
-  lifecycle {ignore_changes = [tags, policy]}
+  lifecycle {ignore_changes = [tags]}
 }
 
 resource "aws_iam_role_policy_attachment" "stage_bucket_all" {

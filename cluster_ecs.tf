@@ -55,13 +55,12 @@ resource "aws_ecs_capacity_provider" "data_ingress_cluster" {
   )
 }
 
-//resource "aws_network_interface" "di_ni_receiver" {
-////  private_ips = [data.terraform_remote_state.aws_sdx.outputs.network_interface_ips_data_ingress[local.environment]]
-//  security_groups = [aws_security_group.data_ingress_server.id]
-//  subnet_id       = data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity.0.id
-//  tags            = merge(local.common_repo_tags, { Name = "di-ni-receiver" })
-//}
-
+resource "aws_network_interface" "di_ni_receiver" {
+  private_ips = [cidrhost(data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity[0].cidr_block, 1)]
+  security_groups = [aws_security_group.data_ingress_server.id]
+  subnet_id       = data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity.0.id
+  tags            = merge(local.common_repo_tags, { Name = "di-ni-receiver" })
+}
 
 resource "aws_sns_topic" "email_trend_micro_team" {
   name = "email_trend_micro_team"
@@ -75,11 +74,11 @@ resource "aws_sns_topic" "email_trend_micro_team" {
 
 resource "aws_sns_topic_subscription" "email_trend_micro_team" {
   topic_arn = aws_sns_topic.email_trend_micro_team.arn
-  protocol  = "email"
+  protocol  = "email-json"
   endpoint  = "camilla.scuffi@engineering.digital.dwp.gov.uk"
-  lifecycle {
-    ignore_changes = all
-  }
+//  lifecycle {
+//    ignore_changes = [tags]
+//  }
 }
 
 resource "aws_autoscaling_group" "data_ingress_server" {
@@ -111,34 +110,34 @@ resource "aws_autoscaling_group" "data_ingress_server" {
     ignore_changes = [tags]
   }
 }
-
-resource "aws_autoscaling_schedule" "on" {
-  scheduled_action_name  = "on"
-  desired_capacity       = local.asg_instance_count.desired[local.environment]
-  max_size               = local.asg_instance_count.max[local.environment]
-  min_size               = local.asg_instance_count.min[local.environment]
-  recurrence             = "00 23 2 * *"
-  start_time             = timeadd(timestamp(), "6m")
-  time_zone              = local.time_zone
-  autoscaling_group_name = aws_autoscaling_group.data_ingress_server.name
-  lifecycle {
-    ignore_changes = [start_time, end_time, recurrence]
-  }
-}
-
-resource "aws_autoscaling_schedule" "off" {
-  scheduled_action_name  = "off"
-  desired_capacity       = local.asg_instance_count.off
-  max_size               = local.asg_instance_count.off
-  min_size               = local.asg_instance_count.off
-  recurrence             = "00 23 4 * *"
-  time_zone              = local.time_zone
-  start_time             = timeadd(timestamp(), "8m")
-  autoscaling_group_name = aws_autoscaling_group.data_ingress_server.name
-  lifecycle {
-    ignore_changes = [start_time, end_time, recurrence]
-  }
-}
+//
+//resource "aws_autoscaling_schedule" "on" {
+//  scheduled_action_name  = "on"
+//  desired_capacity       = local.asg_instance_count.desired[local.environment]
+//  max_size               = local.asg_instance_count.max[local.environment]
+//  min_size               = local.asg_instance_count.min[local.environment]
+//  recurrence             = "00 23 2 * *"
+//  start_time             = timeadd(timestamp(), "6m")
+//  time_zone              = local.time_zone
+//  autoscaling_group_name = aws_autoscaling_group.data_ingress_server.name
+//  lifecycle {
+//    ignore_changes = [start_time, end_time, recurrence]
+//  }
+//}
+//
+//resource "aws_autoscaling_schedule" "off" {
+//  scheduled_action_name  = "off"
+//  desired_capacity       = local.asg_instance_count.off
+//  max_size               = local.asg_instance_count.off
+//  min_size               = local.asg_instance_count.off
+//  recurrence             = "00 23 4 * *"
+//  time_zone              = local.time_zone
+//  start_time             = timeadd(timestamp(), "8m")
+//  autoscaling_group_name = aws_autoscaling_group.data_ingress_server.name
+//  lifecycle {
+//    ignore_changes = [start_time, end_time, recurrence]
+//  }
+//}
 
 resource "aws_autoscaling_schedule" "test_on" {
   count                  = contains(["development", "qa"], local.environment) ? 1 : 0

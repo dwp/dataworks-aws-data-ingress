@@ -25,7 +25,6 @@ resource "aws_ecs_task_definition" "sft_agent_receiver" {
   lifecycle {
     ignore_changes = [tags]
   }
-//  lifecycle {ignore_changes =all}
   placement_constraints {
     type       = "memberOf"
     expression = "attribute:ecs.availability-zone in ${local.az_ni}"
@@ -51,7 +50,6 @@ resource "aws_ecs_task_definition" "sft_agent_sender" {
   lifecycle {
     ignore_changes = [tags]
   }
-//  lifecycle {ignore_changes = all}
   placement_constraints {
     type       = "memberOf"
     expression = "attribute:ecs.availability-zone in ${local.az_sender}"
