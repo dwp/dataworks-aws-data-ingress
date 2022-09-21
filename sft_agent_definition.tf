@@ -147,10 +147,10 @@ data "template_file" "sft_agent_receiver_definition" {
         name : "FILENAME_PREFIX",
         value : local.filename_prefix
       },
-//      {
-//        name : "NI_ID",
-//        value : aws_network_interface.di_ni_receiver.id
-//      },
+      {
+        name : "NI_ID",
+        value : aws_network_interface.di_ni_receiver.id
+      },
       {
         name : "RENAME",
         value : "yes"
