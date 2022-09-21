@@ -17,11 +17,6 @@ jobs:
     - .: (( inject meta.plan.terraform-plan ))
       params:
         TF_WORKSPACE: default
-#    - .: (( inject meta.plan.e2e-test-scaling))
-#      params:
-#        TF_WORKSPACE: development
-#        AWS_ACC: ((aws_account.development))
-#        AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
     - .: (( inject meta.plan.e2e-test))
       params:
         TF_WORKSPACE: development

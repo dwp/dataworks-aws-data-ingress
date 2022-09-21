@@ -23,11 +23,6 @@ jobs:
           TF_WORKSPACE: qa
           AWS_ACC: ((aws_account.qa))
           AWS_ROLE_ARN: arn:aws:iam::((aws_account.qa)):role/ci
-#      - .: (( inject meta.plan.e2e-test-trend-micro))
-#        params:
-#          TF_WORKSPACE: qa
-#          AWS_ACC: ((aws_account.qa))
-#          AWS_ROLE_ARN: arn:aws:iam::((aws_account.qa)):role/ci
 
   - name: cycle-data-ingress-qa
     plan:
