@@ -56,7 +56,7 @@ resource "aws_ecs_capacity_provider" "data_ingress_cluster" {
 }
 
 resource "aws_network_interface" "di_ni_receiver" {
-  private_ips = [cidrhost(data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity[0].cidr_block, 1)]
+  private_ips = [cidrhost(data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity[3].cidr_block, 1)]
   security_groups = [aws_security_group.data_ingress_server.id]
   subnet_id       = data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity.0.id
   tags            = merge(local.common_repo_tags, { Name = "di-ni-receiver" })
