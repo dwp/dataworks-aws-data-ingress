@@ -92,7 +92,8 @@ resource "aws_autoscaling_group" "data_ingress_server" {
   protect_from_scale_in = false
   default_cooldown      = 30
   force_delete          = true
-  vpc_zone_identifier   = contains(["qa"], local.environment) ? [data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity[0].id, data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity[1].id] : [data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity[0].id]
+  vpc_zone_identifier   = contains(["development","qa"], local.environment) ? [data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity[0].id, data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity[1].id] : [data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity[0].id]
+  # set mono subnet in higher envs to ensure the instance is started in the required az when capacity is equal to 1
   launch_template {
     id      = aws_launch_template.data_ingress_server.id
     version = aws_launch_template.data_ingress_server.latest_version
