@@ -86,16 +86,13 @@ resource "aws_sns_topic_subscription" "email_trend_micro_team" {
 
 resource "aws_autoscaling_group" "data_ingress_server" {
   name = local.autoscaling_group_name
-  //  min_size              = local.asg_instance_count.off
-  //  max_size              = local.asg_instance_count.off
-  //  desired_capacity      = local.asg_instance_count.off
-  min_size              = 0
-  max_size              = 0
-  desired_capacity      = 0
+  min_size              = local.asg_instance_count.off
+  max_size              = local.asg_instance_count.off
+  desired_capacity      = local.asg_instance_count.off
   protect_from_scale_in = false
   default_cooldown      = 30
   force_delete          = true
-  vpc_zone_identifier   = [data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity[0].id, data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity[1].id]
+  vpc_zone_identifier   = contains(["qa"], local.environment) ? [data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity[0].id, data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity[1].id] : [data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity[0].id]
   launch_template {
     id      = aws_launch_template.data_ingress_server.id
     version = aws_launch_template.data_ingress_server.latest_version
