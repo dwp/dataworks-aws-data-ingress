@@ -8,4 +8,4 @@ receiver:
             rename_replacement: FILENAME
         - name: writeFile
           properties:
-            destination: ${destination_e2e}
+            destination: ${destination}
