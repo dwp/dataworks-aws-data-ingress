@@ -23,6 +23,7 @@ locals {
   publish_bucket         = data.terraform_remote_state.common.outputs.published_bucket
   stage_bucket           = data.terraform_remote_state.common.outputs.data_ingress_stage_bucket
   companies_s3_prefix    = "data-ingress/companies"
+  companies_s3_prefix_route_test    = "route-test/data-ingress/companies"
   config_bucket          = data.terraform_remote_state.common.outputs.config_bucket
   asg_instance_count = {
     desired = {
@@ -139,6 +140,7 @@ locals {
   sft_port                   = "8091"
   api_key                    = "Te5tAp1Key"
   secret_trendmicro          = "/concourse/dataworks/data_ingress/trendmicro"
+
   test_sft = {
     development    = "true"
     qa             = "true"

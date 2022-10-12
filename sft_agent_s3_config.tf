@@ -42,8 +42,9 @@ data "template_file" "data_ingress_sft_agent_config_tpl_receiver" {
 data "template_file" "data_ingress_sft_agent_application_config_tpl_receiver" {
   template = file("${path.module}/sft_config/agent-application-config-receiver.tpl")
   vars = {
-    destination     = "${local.mount_path}/${local.companies_s3_prefix}"
-    source_filename = "prod217.csv"
+    destination                = "${local.mount_path}/${local.companies_s3_prefix}"
+    destination_route_test     = "${local.mount_path}/${local.companies_s3_prefix}"
+    source_filename            = "prod217.csv"
   }
 }
 
@@ -51,14 +52,14 @@ data "template_file" "data_ingress_sft_agent_application_config_tpl_receiver_e2e
   template = file("${path.module}/sft_config/agent-application-config-receiver-e2e.tpl")
   vars = {
     destination_e2e     = "e2e/sft/${local.mount_path}/${local.companies_s3_prefix}"
-    source_filename = "prod217.csv"
+    source_filename     = "prod217.csv"
   }
 }
 
 data "template_file" "data_ingress_sft_agent_application_config_tpl_sender" {
   template = file("${path.module}/sft_config/agent-application-config-sender.tpl")
   vars = {
-    ip = aws_network_interface.di_ni_receiver.private_ip
+    ip   = aws_network_interface.di_ni_receiver.private_ip
     port = local.sft_port
   }
 }
