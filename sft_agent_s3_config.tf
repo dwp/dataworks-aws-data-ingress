@@ -20,7 +20,7 @@ resource "aws_s3_bucket_object" "data_ingress_sft_agent_application_config_recei
 
 resource "aws_s3_bucket_object" "data_ingress_sft_agent_application_config_receiver_e2e" {
   bucket     = data.terraform_remote_state.common.outputs.config_bucket.id
-  key        = "${local.sft_agent_config_s3_prefix}/agent-application-config-receiver.yml"
+  key        = "${local.sft_agent_config_s3_prefix}/agent-application-config-receiver-e2e.yml"
   content    = data.template_file.data_ingress_sft_agent_application_config_tpl_receiver_e2e.rendered
   kms_key_id = data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
 }
