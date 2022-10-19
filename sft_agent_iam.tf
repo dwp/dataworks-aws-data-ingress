@@ -165,7 +165,7 @@ resource "aws_iam_role_policy_attachment" "data_ingress_server_ebs_cmk_instance_
 
 data "aws_iam_policy_document" "sft_get_secret" {
   statement {
-    sid    = "GetTrendMicroSecretSFT"
+    sid    = "GetTrendMicroSecret"
     effect = "Allow"
     actions = [
       "secretsmanager:GetSecretValue",
@@ -175,7 +175,7 @@ data "aws_iam_policy_document" "sft_get_secret" {
 }
 
 resource "aws_iam_policy" "sft_get_secret" {
-  name        = "DataIngressGetSecret"
+  name        = "GetTrendMicroSecretSFT"
   description = "Allow data ingress instances to get secret"
   policy      = data.aws_iam_policy_document.sft_get_secret.json
   lifecycle {ignore_changes = [tags]}
