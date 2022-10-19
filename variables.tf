@@ -11,7 +11,7 @@ variable "region" {
 
 variable "test_trend_micro_on" {
   type    = string
-  default = "ci"
+  default = ""
 }
 
 
