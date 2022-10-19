@@ -75,9 +75,6 @@ resource "aws_sns_topic" "email_trend_micro_team" {
   }
 }
 
-resource "aws_ses_email_identity" "trend_micro" {
-  email = "camilla.scuffi@engineering.digital.dwp.gov.uk"
-}
 
 resource "aws_autoscaling_group" "data_ingress_server" {
   name = local.autoscaling_group_name
