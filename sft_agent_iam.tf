@@ -161,3 +161,27 @@ resource "aws_iam_role_policy_attachment" "data_ingress_server_ebs_cmk_instance_
   role       = aws_iam_role.data_ingress_server_task.name
   policy_arn = "arn:aws:iam::${local.account[local.environment]}:policy/EBSCMKInstanceEncryptDecrypt"
 }
+
+
+data "aws_iam_policy_document" "sft_get_secret" {
+  statement {
+    sid    = "GetDataIngressSecret"
+    effect = "Allow"
+    actions = [
+      "secretsmanager:GetSecretValue",
+    ]
+    resources = [data.aws_secretsmanager_secret.trendmicro.arn]
+  }
+}
+
+resource "aws_iam_policy" "sft_get_secret" {
+  name        = "DataIngressGetSecret"
+  description = "Allow data ingress instances to get secret"
+  policy      = data.aws_iam_policy_document.sft_get_secret.json
+  lifecycle {ignore_changes = [tags]}
+}
+
+resource "aws_iam_role_policy_attachment" "sft_get_secret" {
+  role       = aws_iam_role.data_ingress_server_task.name
+  policy_arn = aws_iam_policy.sft_get_secret.arn
+}
