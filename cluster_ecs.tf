@@ -75,11 +75,8 @@ resource "aws_sns_topic" "email_trend_micro_team" {
   }
 }
 
-resource "aws_sns_topic_subscription" "email_trend_micro_team" {
-  topic_arn = aws_sns_topic.email_trend_micro_team.arn
-  protocol  = "email-json"
-  endpoint  = "camilla.scuffi@engineering.digital.dwp.gov.uk"
-
+resource "aws_ses_email_identity" "trend_micro" {
+  email = "camilla.scuffi@engineering.digital.dwp.gov.uk"
 }
 
 resource "aws_autoscaling_group" "data_ingress_server" {

@@ -10,7 +10,7 @@ receiver:
           properties:
             destination: ${destination}
 
-    - name: app_route_test
+    - name: app-route-test
       actions:
         - name: renameFile
           properties:
