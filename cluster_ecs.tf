@@ -67,36 +67,6 @@ resource "aws_network_interface" "di_ni_receiver" {
   tags            = merge(local.common_repo_tags, { Name = "di-ni-receiver" })
 }
 
-resource "aws_sns_topic" "email_trend_micro_team" {
-  name = "email_trend_micro_team"
-  tags = {
-    Name = "email_trend_micro_team_topic"
-  }
-  lifecycle {
-    ignore_changes = [tags]
-  }
-}
-
-
-resource "aws_sns_topic_subscription" "email_trend_micro_team" {
-  topic_arn = aws_sns_topic.email_trend_micro_team.arn
-  protocol  = "email-json"
-  endpoint  = "camilla.scuffi@engineering.digital.dwp.gov.uk"
-//  lifecycle {
-//    ignore_changes = [tags]
-//  }
-}
-
-
-resource "aws_sns_topic_subscription" "email_trend_micro_team_two" {
-  topic_arn = aws_sns_topic.email_trend_micro_team.arn
-  protocol  = "email"
-  endpoint  = "camilla.scuffi@credera.co.uk"
-//  lifecycle {
-//    ignore_changes = [tags]
-//  }
-}
-
 
 resource "aws_autoscaling_group" "data_ingress_server" {
   name = local.autoscaling_group_name
