@@ -78,7 +78,7 @@ resource "aws_sns_topic" "email_trend_micro_team" {
 }
 
 resource "aws_sns_topic" "email_trend_micro_team" {
-  name = "email_trend_micro_team"
+  name = "email_trend_micro_team_new"
   tags = {
     Name = "email_trend_micro_team_topic"
   }
