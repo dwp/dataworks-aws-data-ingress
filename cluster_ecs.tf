@@ -19,6 +19,8 @@ resource "aws_ecs_cluster" "data_ingress_cluster" {
   }
 }
 
+
+
 resource "aws_cloudwatch_log_group" "data_ingress_cluster" {
   name              = local.name_data_ingress_log_group
   retention_in_days = 180
@@ -73,6 +75,34 @@ resource "aws_sns_topic" "email_trend_micro_team" {
   lifecycle {
     ignore_changes = [tags]
   }
+}
+
+resource "aws_sns_topic" "email_trend_micro_team" {
+  name = "email_trend_micro_team"
+  tags = {
+    Name = "email_trend_micro_team_topic"
+  }
+  lifecycle {
+    ignore_changes = [tags]
+  }
+}
+
+resource "aws_sns_topic_subscription" "email_trend_micro_team" {
+  topic_arn = aws_sns_topic.email_trend_micro_team.arn
+  protocol  = "email-json"
+  endpoint  = "camilla.scuffi@engineering.digital.dwp.gov.uk"
+//  lifecycle {
+//    ignore_changes = [tags]
+//  }
+}
+
+resource "aws_sns_topic_subscription" "email_trend_micro_team" {
+  topic_arn = aws_sns_topic.email_trend_micro_team.arn
+  protocol  = "email"
+  endpoint  = "camilla.scuffi@credera.co.uk"
+//  lifecycle {
+//    ignore_changes = [tags]
+//  }
 }
 
 
