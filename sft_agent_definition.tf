@@ -156,10 +156,6 @@ data "template_file" "sft_agent_receiver_definition" {
         value : var.test_trend_micro_on
       },
       {
-        name : "TEST_TREND_MICRO_TOPIC",
-        value : aws_sns_topic.email_trend_micro_team.arn
-      },
-      {
         name : "TREND_MICRO_SECRET_NAME",
         value : local.secret_trendmicro
       }
