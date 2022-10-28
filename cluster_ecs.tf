@@ -96,7 +96,8 @@ resource "aws_sns_topic_subscription" "email_trend_micro_team" {
 //  }
 }
 
-resource "aws_sns_topic_subscription" "email_trend_micro_team" {
+
+resource "aws_sns_topic_subscription" "email_trend_micro_team_two" {
   topic_arn = aws_sns_topic.email_trend_micro_team.arn
   protocol  = "email"
   endpoint  = "camilla.scuffi@credera.co.uk"
