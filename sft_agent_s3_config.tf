@@ -51,7 +51,7 @@ data "template_file" "data_ingress_sft_agent_application_config_tpl_receiver" {
 data "template_file" "data_ingress_sft_agent_application_config_tpl_receiver_e2e" {
   template = file("${path.module}/sft_config/agent-application-config-receiver-e2e.tpl")
   vars = {
-    destination_e2e     = "e2e/sft/${local.mount_path}/${local.companies_s3_prefix}"
+    destination_e2e     = "${local.mount_path}/e2e/${local.companies_s3_prefix}"
     source_filename     = "prod217.csv"
   }
 }
