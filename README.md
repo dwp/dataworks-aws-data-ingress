@@ -20,3 +20,12 @@ In addition, you may want to do the following:
     1. Add/remove jobs in `./ci/jobs` as required 
     1. Create CI pipeline:  
 `aviator`
+
+
+## ECS Cluster 
+
+Data Ingress ECS cluster sits in the sdx VPC.
+
+Trend Micro deep security agent is installed via user data on the EC2 instances. Installation details such as tenant id and token are stored in dataworks-secrets.
+
+Sft agent task runs the [ingress sft agent image](https://github.com/dwp/dataworks-ingress_sft-agent) that imports, scans and uploads files to the data ingress stage bucket.

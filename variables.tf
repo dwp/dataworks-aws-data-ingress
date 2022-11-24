@@ -9,6 +9,12 @@ variable "region" {
   default = "eu-west-2"
 }
 
+variable "test_trend_micro_on" {
+  type    = string
+  default = ""
+}
+
+
 variable "data_ingress_server_ec2_instance_type" {
   type = map(string)
   default = {
@@ -19,6 +25,7 @@ variable "data_ingress_server_ec2_instance_type" {
     production  = "m5.2xlarge"
   }
 }
+
 variable "data_ingress_server_ebs_volume_size" {
   type = map(string)
   default = {
@@ -45,12 +52,16 @@ variable "ecs_hardened_ami_id" {
   default     = "ami-00b441a83d7d7c8f0"
 }
 
+variable "parent_domain_name" {
+  description = "parent domain name for monitoring"
+  type        = string
+  default     = "dataworks.di.dwp.gov.uk"
+}
 
 variable "data_ingress_port" {
   type    = number
   default = 8080
 }
-
 
 variable "test_ami" {
   description = "Defines if cluster should test untested ECS AMI"

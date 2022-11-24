@@ -1,7 +1,8 @@
 locals {
   cluster_name                = "data-ingress"
-  launch_template_name        = "${local.cluster_name}-launch-template"
+  launch_template_name        = "${local.cluster_name}-launch-template" #changing the template name will affect the trend micro test
   name_data_ingress_log_group = "/app/data_ingress"
+
   env_prefix = {
     development = "dev."
     qa          = "qa."
@@ -10,34 +11,45 @@ locals {
     preprod     = "pre."
     production  = ""
   }
-  mytags = merge(
-    local.common_repo_tags,
-    {
-      Name = "dataIngressClusterLogs"
-    }
-  )
-  data_ingress_server_asg_min = {
-    development = 1
-    qa          = 0
-    integration = 0
-    preprod     = 0
-    production  = 0
-  }
-  autoscaling_group_name = "data-ingress-ag"
-  data_ingress_server_asg_desired = {
-    development = 2
-    qa          = 2
-    integration = 2
-    preprod     = 2
-    production  = 2
-  }
 
-  data_ingress_server_asg_max = {
-    development = 2
-    qa          = 2
-    integration = 2
-    preprod     = 2
-    production  = 2
+  time_zone                     = "Europe/London"
+  instance_terminates_rule_name = "abcd-rule-test"
+  az_ni                         = "[eu-west-2a]"
+  az_sender                     = "[eu-west-2b]"
+  monitoring_topic_arn          = data.terraform_remote_state.security-tools.outputs.sns_topic_london_monitoring.arn
+  today_date                    = formatdate("YYYY-MM-DD hh:mm:ss", timestamp())
+
+  autoscaling_group_name = "data-ingress-ag"
+  publish_bucket         = data.terraform_remote_state.common.outputs.published_bucket
+  stage_bucket           = data.terraform_remote_state.common.outputs.data_ingress_stage_bucket
+  companies_s3_prefix    = "data-ingress/companies"
+  companies_s3_prefix_route_test    = "route-test/data-ingress/companies"
+  config_bucket          = data.terraform_remote_state.common.outputs.config_bucket
+  asg_instance_count = {
+    desired = {
+      development = 2
+      qa          = 2
+      integration = 1
+      preprod     = 1
+      production  = 1
+    }
+    max = {
+      development = 2
+      qa          = 2
+      integration = 1
+      preprod     = 1
+      production  = 1
+    }
+    min = {
+      development = 0
+      qa          = 0
+      integration = 0
+      preprod     = 0
+      production  = 0
+    }
+    off          = 0
+    test_desired = 2
+    test_max     = 2
   }
 
   data_ingress_server_ssmenabled = {
@@ -63,6 +75,8 @@ locals {
     management     = "management"
   }
 
+  filename_prefix = "BasicCompanyData"
+
   management_infra_account = {
     development    = "default"
     qa             = "default"
@@ -73,8 +87,24 @@ locals {
     management     = "management"
   }
 
+  truststore_aliases = {
+    development = "dataworks_root_ca,dataworks_mgt_root_ca"
+    qa          = "dataworks_root_ca,dataworks_mgt_root_ca"
+    integration = "dataworks_root_ca,dataworks_mgt_root_ca"
+    preprod     = "dataworks_root_ca,dataworks_mgt_root_ca,sdx1,sdx2"
+    production  = "dataworks_root_ca,dataworks_mgt_root_ca,sdx1,sdx2"
+  }
+  env_certificate_bucket = "dw-${local.environment}-public-certificates"
 
-  data_ingress_server_name = "data-ingress-server"
+  truststore_certs = {
+    development = "s3://${local.env_certificate_bucket}/ca_certificates/dataworks/dataworks_root_ca.pem,s3://${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.id}/ca_certificates/dataworks/dataworks_root_ca.pem"
+    qa          = "s3://${local.env_certificate_bucket}/ca_certificates/dataworks/dataworks_root_ca.pem,s3://${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.id}/ca_certificates/dataworks/dataworks_root_ca.pem"
+    integration = "s3://${local.env_certificate_bucket}/ca_certificates/dataworks/dataworks_root_ca.pem,s3://${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.id}/ca_certificates/dataworks/dataworks_root_ca.pem"
+    preprod     = "s3://${local.env_certificate_bucket}/ca_certificates/dataworks/dataworks_root_ca.pem,s3://${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.id}/ca_certificates/dataworks/dataworks_root_ca.pem,s3://${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.id}/server_certificates/sdx/service_1/sdx_mitm.pem,s3://${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.id}/server_certificates/sdx/service_2/sdx_mitm.pem"
+    production  = "s3://${local.env_certificate_bucket}/ca_certificates/dataworks/dataworks_root_ca.pem,s3://${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.id}/ca_certificates/dataworks/dataworks_root_ca.pem,s3://${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.id}/server_certificates/sdx/service_1/sdx_mitm.pem,s3://${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.id}/server_certificates/sdx/service_2/sdx_mitm.pem"
+  }
+
+  data_ingress_server_name = "data-ingress"
   data_ingress_server_tags_asg = merge(
     local.common_repo_tags,
     {
@@ -91,8 +121,7 @@ locals {
   cw_agent_netstat_metrics_collection_interval          = 60
   dks_endpoint                                          = data.terraform_remote_state.crypto.outputs.dks_endpoint[local.environment]
   dks_fqdn                                              = data.terraform_remote_state.crypto.outputs.dks_fqdn[local.environment]
-
-  service_security_group_rules = [
+  security_group_rules = [
     {
       name : "VPC endpoints"
       port : 443
@@ -100,24 +129,28 @@ locals {
     },
     {
       name : "Internet proxy endpoints"
-      port : 3128
+      port : local.proxy_port
       destination : data.terraform_remote_state.aws_sdx.outputs.internet_proxy.sg
     },
   ]
 
+  ecr_repository_name        = "dataworks-ingress-sft-agent"
+  sft_agent_config_s3_prefix = "component/data-ingress-sft"
+  proxy_port                 = "3128"
+  sft_port                   = "8091"
+  api_key                    = "Te5tAp1Key"
+  secret_trendmicro          = "/concourse/dataworks/data_ingress/trendmicro"
 
-  data-ingress_group_name = "data-ingress"
+  test_sft = {
+    development    = "true"
+    qa             = "true"
+    integration    = "false"
+    management-dev = "false"
+    preprod        = "false"
+    production     = "false"
+    management     = "false"
+  }
 
-  server_security_group_rules = [
-    {
-      name : "VPC endpoints"
-      port : 443
-      destination : data.terraform_remote_state.aws_sdx.outputs.vpc.interface_vpce_sg_id
-    },
-    {
-      name : "Internet proxy endpoints"
-      port : 3128
-      destination : data.terraform_remote_state.aws_sdx.outputs.internet_proxy.sg
-    },
-  ]
+  mount_path    = "/mnt/point"
+  source_volume = "s3fs"
 }

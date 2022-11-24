@@ -7,12 +7,43 @@
           type: docker-image
           source:
             repository: ((dataworks.terraform_repository))
-            tag: ((dataworks.terraform_14_version))
+            tag: ((dataworks.terraform_version))
         params:
           TF_INPUT: false
           TF_CLI_ARGS_apply: -lock-timeout=300s
           TF_CLI_ARGS_plan: -lock-timeout=300s
           TF_VAR_costcode: ((dataworks.costcode))
+
+    terraform-plan:
+      task: terraform-plan
+      .: (( inject meta.plan.terraform-common-config ))
+      config:
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              if [ -f ../previous_success/exit-if-succeeded.sh ]; then
+                source ../previous_success/exit-if-succeeded.sh
+              fi
+              export TF_VAR_ecs_hardened_ami_id=$(cat ../dw-al2-ecs-ami/id)
+              export TF_VAR_test_trend_micro_on=ci
+              cp ../terraform-bootstrap/terraform.tf .
+              terraform workspace show
+              terraform init -upgrade
+              terraform plan $DETAILED_EXITCODE
+          dir: dataworks-aws-data-ingress
+        inputs:
+          - name: dataworks-aws-data-ingress
+          - name: terraform-bootstrap
+          - name: dw-al2-ecs-ami
+      params:
+        DETAILED_EXITCODE: -detailed-exitcode
+        AWS_REGION: eu-west-2
+
+    get-dw-al2-ecs-ami:
+      get: dw-al2-ecs-ami
+      trigger: true
 
     terraform-bootstrap:
       task: terraform-bootstrap
@@ -60,10 +91,11 @@
               if [ -f ../previous_success/exit-if-succeeded.sh ]; then
                 source ../previous_success/exit-if-succeeded.sh
               fi
+              export TF_VAR_test_trend_micro_on=ci
               export TF_VAR_ecs_hardened_ami_id=$(cat ../dw-al2-ecs-ami/id)
               terraform workspace show
               cp ../terraform-bootstrap/terraform.tf .
-              terraform init
+              terraform init -upgrade
               terraform plan -out terraform.plan
               terraform apply -auto-approve terraform.plan
           dir: dataworks-aws-data-ingress
@@ -74,65 +106,34 @@
       params:
         AWS_REGION: eu-west-2
 
-    terraform-plan:
-      task: terraform-plan
-      .: (( inject meta.plan.terraform-common-config ))
+    e2e-test:
+      task: e2e-test
       config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((dataworks.docker_python_boto_behave_repository))
+            tag: ((dataworks.docker_python_boto_behave_version))
+        params:
+          AWS_DEFAULT_REGION: ((dataworks.aws_region))
+          E2E_TEST_TIMEOUT: 300
+          E2E_FEATURE_TAG_FILTER: "@data-ingress"
+          ASSUME_DURATION: 3600
         run:
           path: sh
+          dir: dataworks-behavioural-framework
           args:
             - -exc
             - |
-              if [ -f ../previous_success/exit-if-succeeded.sh ]; then
-                source ../previous_success/exit-if-succeeded.sh
-              fi
-              export TF_VAR_ecs_hardened_ami_id=$(cat ../dw-al2-ecs-ami/id)
-              cp ../terraform-bootstrap/terraform.tf .
-              terraform workspace show
-              terraform init
-              terraform plan $DETAILED_EXITCODE
-          dir: dataworks-aws-data-ingress
+              source /assume-role
+              cd src/runners
+              ./run-ci.sh \
+              "../../../meta"
         inputs:
+          - name: dataworks-behavioural-framework
           - name: dataworks-aws-data-ingress
-          - name: terraform-bootstrap
-          - name: dw-al2-ecs-ami
-      params:
-        DETAILED_EXITCODE: -detailed-exitcode
-        AWS_REGION: eu-west-2
-
-    get-dw-al2-ecs-ami:
-      get: dw-al2-ecs-ami
-      trigger: true
-#
-#    e2e-tests:
-#      task: e2e-tests
-#      config:
-#        platform: linux
-#        image_resource:
-#          type: docker-image
-#          source:
-#            repository: ((dataworks.docker_python_boto_behave_repository))
-#            tag: ((dataworks.docker_python_boto_behave_version))
-#        params:
-#          AWS_DEFAULT_REGION: ((dataworks.aws_region))
-#          NUMBER_OF_TOPICS_TO_USE: "3"
-#          E2E_TEST_TIMEOUT: 300
-#          E2E_FEATURE_TAG_FILTER: "@data-ingress-s3"
-#          ASSUME_DURATION: 3600
-#        run:
-#          path: sh
-#          dir: dataworks-behavioural-framework
-#          args:
-#            - -exc
-#            - |
-#              source /assume-role
-#              cd src/runners
-#              ./run-ci.sh \
-#              "../../../meta"
-#        inputs:
-#          - name: dataworks-behavioural-framework
-#          - name: dataworks-aws-data-ingress
-#          - name: meta
+          - name: meta
 
     cycle-containers:
       task: cycle-containers
@@ -272,7 +273,7 @@
           type: docker-image
           source:
             repository: ((dataworks.terraform_repository))
-            tag: ((dataworks.terraform_14_version))
+            tag: ((dataworks.terraform_version))
         params:
           AWS_DEFAULT_REGION: ((dataworks.aws_region))
           GIT_USERNAME: ((dataworks.concourse_github_username))
@@ -314,7 +315,7 @@
           type: docker-image
           source:
             repository: ((dataworks.terraform_repository))
-            tag: ((dataworks.terraform_14_version))
+            tag: ((dataworks.terraform_version))
         params:
           AWS_DEFAULT_REGION: ((dataworks.aws_region))
           GIT_USERNAME: ((dataworks.concourse_github_username))
