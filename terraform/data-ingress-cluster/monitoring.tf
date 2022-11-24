@@ -24,12 +24,11 @@ resource "aws_cloudwatch_metric_alarm" "sft_stopped" {
   alarm_description         = "This metric monitors container termination"
   insufficient_data_actions = []
   alarm_actions             = [local.monitoring_topic_arn]
-  lifecycle {ignore_changes = [tags]}
   dimensions = {
     RuleName = aws_cloudwatch_event_rule.sft_stopped.name
   }
   tags = merge(
-    local.common_repo_tags,
+    var.common_repo_tags,
     {
       Name              = "ch_sft_receiver_container_stopped",
       notification_type = "Information"
@@ -64,12 +63,11 @@ resource "aws_cloudwatch_metric_alarm" "sft_running" {
   alarm_description         = "This metric monitors when the container starts"
   insufficient_data_actions = []
   alarm_actions             = [local.monitoring_topic_arn]
-  lifecycle {ignore_changes = [tags]}
   dimensions = {
     RuleName = aws_cloudwatch_event_rule.sft_running.name
   }
   tags = merge(
-    local.common_repo_tags,
+    var.common_repo_tags,
     {
       Name              = "ch_sft_receiver_container_running",
       notification_type = "Information"
@@ -112,12 +110,11 @@ resource "aws_cloudwatch_metric_alarm" "file_landed" {
   alarm_description         = "Monitoring stage bucket"
   insufficient_data_actions = []
   alarm_actions             = [local.monitoring_topic_arn]
-  lifecycle {ignore_changes = [tags]}
   dimensions = {
     RuleName = aws_cloudwatch_event_rule.file_landed.name
   }
   tags = merge(
-    local.common_repo_tags,
+    var.common_repo_tags,
     {
       Name              = "ch_completed_all_steps",
       notification_type = "Information",

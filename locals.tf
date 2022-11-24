@@ -1,6 +1,5 @@
 locals {
-  cluster_name                = "data-ingress"
-  launch_template_name        = "${local.cluster_name}-launch-template" #changing the template name will affect the trend micro test
+  launch_template_name        = "${local.cluster_name}-launch-template"
   name_data_ingress_log_group = "/app/data_ingress"
 
   env_prefix = {
@@ -18,7 +17,6 @@ locals {
   az_sender                     = "[eu-west-2b]"
   monitoring_topic_arn          = data.terraform_remote_state.security-tools.outputs.sns_topic_london_monitoring.arn
   today_date                    = formatdate("YYYY-MM-DD hh:mm:ss", timestamp())
-
   autoscaling_group_name = "data-ingress-ag"
   publish_bucket         = data.terraform_remote_state.common.outputs.published_bucket
   stage_bucket           = data.terraform_remote_state.common.outputs.data_ingress_stage_bucket

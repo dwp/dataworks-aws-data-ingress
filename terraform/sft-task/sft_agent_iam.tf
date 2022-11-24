@@ -64,14 +64,12 @@ resource "aws_iam_role_policy_attachment" "sft_task_ni" {
 resource "aws_iam_policy" "sft_task_ni" {
   name   = "SFTni"
   policy = data.aws_iam_policy_document.sft_task_ni.json
-  lifecycle {ignore_changes = [tags]}
 }
 
 resource "aws_iam_policy" "sft_agent_task" {
   name        = "IngressSFTAgentTask"
   description = "Custom policy for the ingress sft agent task"
   policy      = data.aws_iam_policy_document.sft_agent_task.json
-  lifecycle {ignore_changes = [tags]}
 }
 
 resource "aws_iam_role_policy_attachment" "sft_agent" {
@@ -82,7 +80,6 @@ resource "aws_iam_role_policy_attachment" "sft_agent" {
 resource "aws_iam_role" "data_ingress_server_task" {
   name               = "DataIngressServer"
   assume_role_policy = data.aws_iam_policy_document.data_ingress_server_task_assume_role.json
-  lifecycle {ignore_changes = [tags]}
 }
 
 data "aws_iam_policy_document" "data_ingress_server_task_assume_role" {
@@ -144,7 +141,6 @@ resource "aws_iam_policy" "data_ingress_server_task" {
   name        = "DataIngressServer"
   description = "Custom policy for data ingress server"
   policy      = data.aws_iam_policy_document.data_ingress_server_task.json
-  lifecycle {ignore_changes = [tags]}
 }
 
 resource "aws_iam_role_policy_attachment" "data_ingress_server" {
@@ -178,7 +174,6 @@ resource "aws_iam_policy" "sft_get_secret" {
   name        = "GetTrendMicroSecretSFT"
   description = "Allow data ingress instances to get secret"
   policy      = data.aws_iam_policy_document.sft_get_secret.json
-  lifecycle {ignore_changes = [tags]}
 }
 
 resource "aws_iam_role_policy_attachment" "sft_get_secret" {

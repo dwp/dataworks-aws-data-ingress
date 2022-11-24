@@ -1,7 +1,6 @@
 resource "aws_acm_certificate" "data_ingress_server" {
   certificate_authority_arn = data.terraform_remote_state.aws_certificate_authority.outputs.root_ca.arn
   domain_name               = "${local.data_ingress_server_name}.${local.env_prefix[local.environment]}dataworks.dwp.gov.uk"
-  lifecycle {ignore_changes = [tags]}
   options {
     certificate_transparency_logging_preference = "ENABLED"
   }
@@ -22,9 +21,7 @@ resource "aws_ecs_task_definition" "sft_agent_receiver" {
   task_role_arn            = aws_iam_role.data_ingress_server_task.arn
   execution_role_arn       = data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
   container_definitions    = "[${data.template_file.sft_agent_receiver_definition.rendered}]"
-  lifecycle {
-    ignore_changes = [tags]
-  }
+
   placement_constraints {
     type       = "memberOf"
     expression = "attribute:ecs.availability-zone in ${local.az_ni}"
@@ -47,9 +44,7 @@ resource "aws_ecs_task_definition" "sft_agent_sender" {
   task_role_arn            = aws_iam_role.data_ingress_server_task.arn
   execution_role_arn       = data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
   container_definitions    = "[${data.template_file.sft_agent_sender_definition[0].rendered}]"
-  lifecycle {
-    ignore_changes = [tags]
-  }
+
   placement_constraints {
     type       = "memberOf"
     expression = "attribute:ecs.availability-zone in ${local.az_sender}"
@@ -255,9 +250,7 @@ resource "aws_ecs_service" "sft_agent_receiver" {
   task_definition = aws_ecs_task_definition.sft_agent_receiver.arn
   desired_count   = 1
   launch_type     = "EC2"
-  lifecycle {
-    ignore_changes = [tags]
-  }
+
   placement_constraints {
     type = "distinctInstance"
   }
@@ -278,9 +271,7 @@ resource "aws_ecs_service" "sft_agent_sender" {
   task_definition = aws_ecs_task_definition.sft_agent_sender[0].arn
   desired_count   = 1
   launch_type     = "EC2"
-  lifecycle {
-    ignore_changes = [tags]
-  }
+
   placement_constraints {
     type = "distinctInstance"
   }
