@@ -113,12 +113,12 @@ resource "aws_launch_template" "data_ingress_server" {
   user_data = base64encode(templatefile("files/data_ingress_cluster_userdata.tpl", {
     cluster_name  = var.cluster_name
     instance_role = aws_iam_instance_profile.data_ingress_server.name
-    region        = data.aws_region.current.name
+    region        = var.current_region
     folder        = "/mnt/config"
     mnt_bucket    = var.config_bucket.id
     name          = "data-ingress-launch-template"
-    proxy_host    = data.terraform_remote_state.aws_sdx.outputs.internet_proxy.host
-    proxy_port    = var.proxy_port
+    proxy_host    = var.proxy.host
+    proxy_port    = var.proxy.port
     secret_name   = var.secret_trendmicro
   }))
   instance_initiated_shutdown_behavior = "terminate"

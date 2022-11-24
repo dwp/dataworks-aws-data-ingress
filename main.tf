@@ -10,6 +10,9 @@ module "data-ingress-cluster" {
     ecs_hardened_ami_id                     = var.ecs_hardened_ami_id
     data_ingress_server_ec2_instance_type   = var.data_ingress_server_ec2_instance_type
     config_bucket                           = data.terraform_remote_state.common.outputs.config_bucket
+    current_region                          = data.aws_region.current.name
+    secret_trendmicro = local.secret_trendmicro
+    proxy = data.terraform_remote_state.aws_sdx.outputs.internet_proxy
 }
 
 module "data-ingress-scaling" {

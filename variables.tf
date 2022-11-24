@@ -36,6 +36,7 @@ variable "data_ingress_server_ebs_volume_size" {
     production  = "15000"
   }
 }
+
 variable "data_ingress_server_ebs_volume_type" {
   type = map(string)
   default = {
@@ -46,6 +47,7 @@ variable "data_ingress_server_ebs_volume_type" {
     production  = "gp3"
   }
 }
+
 variable "ecs_hardened_ami_id" {
   description = "The AMI ID of the latest/pinned ECS Hardened AMI Image"
   type        = string
