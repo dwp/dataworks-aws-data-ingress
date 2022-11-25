@@ -3,7 +3,7 @@ resource "aws_security_group" "sft_agent_service" {
   description = "Control access to and from ingress sft agent service"
   vpc_id      = data.terraform_remote_state.aws_sdx.outputs.vpc.vpc.id
   tags = merge(
-    local.common_repo_tags,
+    var.common_repo_tags,
     {
       Name = "ingress_sft_agent_service"
     }
@@ -52,7 +52,7 @@ resource "aws_security_group_rule" "sft_agent_service_s3_http_ingress" {
 
 
 resource "aws_security_group_rule" "service_ingress" {
-  for_each                 = { for security_group_rule in local.security_group_rules : security_group_rule.name => security_group_rule }
+  for_each                 = { for security_group_rule in var.security_group_rules : security_group_rule.name => security_group_rule }
   description              = "Allow inbound requests from ${each.value.name}"
   type                     = "ingress"
   from_port                = each.value.port
@@ -63,7 +63,7 @@ resource "aws_security_group_rule" "service_ingress" {
 }
 
 resource "aws_security_group_rule" "service_egress" {
-  for_each                 = { for security_group_rule in local.security_group_rules : security_group_rule.name => security_group_rule }
+  for_each                 = { for security_group_rule in var.security_group_rules : security_group_rule.name => security_group_rule }
   description              = "Allow outbound requests to ${each.value.name}"
   type                     = "egress"
   from_port                = each.value.port
@@ -94,8 +94,8 @@ resource "aws_security_group_rule" "examssspeled" {
 
 resource "aws_security_group_rule" "exaddmeple" {
   type              = "egress"
-  from_port         = local.sft_port
-  to_port           = local.sft_port
+  from_port         = var.sft_port
+  to_port           = var.sft_port
   protocol          = "tcp"
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.sft_agent_service.id
@@ -103,8 +103,8 @@ resource "aws_security_group_rule" "exaddmeple" {
 
 resource "aws_security_group_rule" "exaddddmpeled" {
   type              = "ingress"
-  from_port         = local.sft_port
-  to_port           = local.sft_port
+  from_port         = var.sft_port
+  to_port           = var.sft_port
   protocol          = "tcp"
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.sft_agent_service.id

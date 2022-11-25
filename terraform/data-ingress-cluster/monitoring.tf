@@ -23,7 +23,7 @@ resource "aws_cloudwatch_metric_alarm" "sft_stopped" {
   threshold                 = "1"
   alarm_description         = "This metric monitors container termination"
   insufficient_data_actions = []
-  alarm_actions             = [local.monitoring_topic_arn]
+  alarm_actions             = [var.monitoring_topic_arn]
   dimensions = {
     RuleName = aws_cloudwatch_event_rule.sft_stopped.name
   }
@@ -62,7 +62,7 @@ resource "aws_cloudwatch_metric_alarm" "sft_running" {
   threshold                 = "1"
   alarm_description         = "This metric monitors when the container starts"
   insufficient_data_actions = []
-  alarm_actions             = [local.monitoring_topic_arn]
+  alarm_actions             = [var.monitoring_topic_arn]
   dimensions = {
     RuleName = aws_cloudwatch_event_rule.sft_running.name
   }
@@ -85,16 +85,16 @@ resource "aws_cloudwatch_event_rule" "file_landed" {
   "detail-type": ["Object Created"],
   "detail": {
     "bucket": {
-      "name":["${local.stage_bucket.id}"]},
+      "name":["${var.stage_bucket.id}"]},
     "object": {
-       "key": [{"prefix":"${local.companies_s3_prefix}/${local.filename_prefix}-"}]}
+       "key": [{"prefix":"${var.companies_s3_prefix}/${var.filename_prefix}-"}]}
   }
 }
 EOF
 }
 
 resource "aws_s3_bucket_notification" "bucket_notification" {
-  bucket      = local.stage_bucket.id
+  bucket      = var.stage_bucket.id
   eventbridge = true
 }
 
@@ -109,7 +109,7 @@ resource "aws_cloudwatch_metric_alarm" "file_landed" {
   threshold                 = "1"
   alarm_description         = "Monitoring stage bucket"
   insufficient_data_actions = []
-  alarm_actions             = [local.monitoring_topic_arn]
+  alarm_actions             = [var.monitoring_topic_arn]
   dimensions = {
     RuleName = aws_cloudwatch_event_rule.file_landed.name
   }

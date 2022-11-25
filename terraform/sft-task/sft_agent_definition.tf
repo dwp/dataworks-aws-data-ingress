@@ -1,13 +1,13 @@
 resource "aws_acm_certificate" "data_ingress_server" {
-  certificate_authority_arn = data.terraform_remote_state.aws_certificate_authority.outputs.root_ca.arn
-  domain_name               = "${local.data_ingress_server_name}.${local.env_prefix[local.environment]}dataworks.dwp.gov.uk"
+  certificate_authority_arn = var.certificate_authority_arn
+  domain_name               = "${var.data_ingress_server_name}.${var.env_prefix[var.environment]}dataworks.dwp.gov.uk"
   options {
     certificate_transparency_logging_preference = "ENABLED"
   }
   tags = merge(
-    local.common_repo_tags,
+    var.common_repo_tags,
     {
-      Name = local.data_ingress_server_name
+      Name = var.data_ingress_server_name
     },
   )
 }
@@ -16,44 +16,44 @@ resource "aws_ecs_task_definition" "sft_agent_receiver" {
   family                   = "sft_agent_receiver"
   network_mode             = "host"
   requires_compatibilities = ["EC2"]
-  cpu                      = var.task_definition_cpu[local.environment]
-  memory                   = var.task_definition_memory[local.environment]
+  cpu                      = var.task_definition_cpu[var.environment]
+  memory                   = var.task_definition_memory[var.environment]
   task_role_arn            = aws_iam_role.data_ingress_server_task.arn
-  execution_role_arn       = data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
+  execution_role_arn       = var.ecs_execution_role
   container_definitions    = "[${data.template_file.sft_agent_receiver_definition.rendered}]"
 
   placement_constraints {
     type       = "memberOf"
-    expression = "attribute:ecs.availability-zone in ${local.az_ni}"
+    expression = "attribute:ecs.availability-zone in ${var.az_ni}"
   }
   volume {
-    name      = local.source_volume
-    host_path = local.mount_path
+    name      = var.source_volume
+    host_path = var.mount_path
   }
 
-  tags = merge(local.common_repo_tags, { Name = local.name })
+  tags = merge(var.common_repo_tags, { Name = "sft-task-definition" })
 }
 
 resource "aws_ecs_task_definition" "sft_agent_sender" {
   family                   = "sft_agent_sender"
-  count                    = local.test_sft[local.environment] == "true" ? 1 : 0
+  count                    = var.test_sft[var.environment] == "true" ? 1 : 0
   network_mode             = "host"
   requires_compatibilities = ["EC2"]
-  cpu                      = var.task_definition_cpu[local.environment]
-  memory                   = var.task_definition_memory[local.environment]
+  cpu                      = var.task_definition_cpu[var.environment]
+  memory                   = var.task_definition_memory[var.environment]
   task_role_arn            = aws_iam_role.data_ingress_server_task.arn
-  execution_role_arn       = data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn
+  execution_role_arn       = var.ecs_execution_role
   container_definitions    = "[${data.template_file.sft_agent_sender_definition[0].rendered}]"
 
   placement_constraints {
     type       = "memberOf"
-    expression = "attribute:ecs.availability-zone in ${local.az_sender}"
+    expression = "attribute:ecs.availability-zone in ${var.az_sender}"
   }
   volume {
-    name      = local.source_volume
-    host_path = local.mount_path
+    name      = var.source_volume
+    host_path = var.mount_path
   }
-  tags = merge(local.common_repo_tags, { Name = "sft_agent_sender" })
+  tags = merge(var.common_repo_tags, { Name = "sft_agent_sender" })
 }
 
 
@@ -62,23 +62,23 @@ data "template_file" "sft_agent_receiver_definition" {
   vars = {
     name               = "sft_agent_receiver"
     group_name         = "sft_agent_receiver"
-    cpu                = var.task_definition_cpu[local.environment]
-    image_url          = format("%s:%s", "${local.account[local.management_account[local.environment]]}.dkr.ecr.${var.region}.amazonaws.com/${local.ecr_repository_name}", "latest")
-    memory             = var.task_definition_memory[local.environment]
-    memory_reservation = var.task_definition_memory[local.environment]
+    cpu                = var.task_definition_cpu[var.environment]
+    image_url          = format("%s:%s", "${var.account[var.management_account[var.environment]]}.dkr.ecr.${var.region}.amazonaws.com/${var.ecr_repository_name}", "latest")
+    memory             = var.task_definition_memory[var.environment]
+    memory_reservation = var.task_definition_memory[var.environment]
     user               = "0"
-    ports              = jsonencode([8080, 8081, local.sft_port])
+    ports              = jsonencode([8080, 8081, var.sft_port])
     ulimits            = jsonencode([])
     log_group          = aws_cloudwatch_log_group.data_ingress_cluster.name
     region             = var.region
     config_bucket      = data.terraform_remote_state.common.outputs.config_bucket.id
-    s3_prefix          = local.sft_agent_config_s3_prefix
+    s3_prefix          = var.sft_agent_config_s3_prefix
     essential          = true
     privileged         = true
     mount_points = jsonencode([
       {
-        "container_path" : local.mount_path,
-        "source_volume" : local.source_volume
+        "container_path" : var.mount_path,
+        "source_volume" : var.source_volume
       }
     ])
     environment_variables = jsonencode([
@@ -104,11 +104,11 @@ data "template_file" "sft_agent_receiver_definition" {
       },
       {
         name  = "truststore_aliases",
-        value = local.truststore_aliases[local.environment]
+        value = var.truststore_aliases[var.environment]
       },
       {
         name  = "truststore_certs",
-        value = local.truststore_certs[local.environment]
+        value = var.truststore_certs[var.environment]
       },
       {
         name  = "private_key_alias",
@@ -124,11 +124,11 @@ data "template_file" "sft_agent_receiver_definition" {
       },
       {
         name  = "MNT_POINT",
-        value = local.mount_path
+        value = var.mount_path
       },
       {
         name : "FILENAME_PREFIX",
-        value : local.filename_prefix
+        value : var.filename_prefix
       },
       {
         name : "NI_ID",
@@ -140,11 +140,11 @@ data "template_file" "sft_agent_receiver_definition" {
       },
       {
         name  = "dks_fqdn",
-        value = local.dks_fqdn
+        value = var.dks_fqdn
       },
       {
         name : "TEST_TREND_MICRO_ENV",
-        value : local.environment
+        value : var.environment
       },
       {
         name : "TEST_TREND_MICRO_ON",
@@ -152,7 +152,7 @@ data "template_file" "sft_agent_receiver_definition" {
       },
       {
         name : "TREND_MICRO_SECRET_NAME",
-        value : local.secret_trendmicro
+        value : var.secret_trendmicro
       }
     ])
   }
@@ -160,28 +160,28 @@ data "template_file" "sft_agent_receiver_definition" {
 
 data "template_file" "sft_agent_sender_definition" {
   template = file("${path.module}/reserved_container_definition.tpl")
-  count    = local.test_sft[local.environment] == "true" ? 1 : 0
+  count    = var.test_sft[var.environment] == "true" ? 1 : 0
   vars = {
     name               = "sft_agent_sender"
     group_name         = "sft_agent_sender"
-    cpu                = var.task_definition_cpu[local.environment]
-    image_url          = format("%s:%s", "${local.account[local.management_account[local.environment]]}.dkr.ecr.${var.region}.amazonaws.com/${local.ecr_repository_name}", "latest")
-    memory             = var.task_definition_memory[local.environment]
-    memory_reservation = var.task_definition_memory[local.environment]
+    cpu                = var.task_definition_cpu[var.environment]
+    image_url          = format("%s:%s", "${var.account[var.management_account[var.environment]]}.dkr.ecr.${var.region}.amazonaws.com/${var.ecr_repository_name}", "latest")
+    memory             = var.task_definition_memory[var.environment]
+    memory_reservation = var.task_definition_memory[var.environment]
     user               = "0"
-    ports              = jsonencode([8080, 8081, local.sft_port])
+    ports              = jsonencode([8080, 8081, var.sft_port])
     ulimits            = jsonencode([])
     log_group          = aws_cloudwatch_log_group.data_ingress_cluster.name
     region             = var.region
     config_bucket      = data.terraform_remote_state.common.outputs.config_bucket.id
-    s3_prefix          = local.sft_agent_config_s3_prefix
+    s3_prefix          = var.sft_agent_config_s3_prefix
     essential          = true
     privileged         = true
 
     mount_points = jsonencode([
       {
-        "container_path" : local.mount_path,
-        "source_volume" : local.source_volume
+        "container_path" : var.mount_path,
+        "source_volume" : var.source_volume
       }
     ])
     environment_variables = jsonencode([
@@ -207,11 +207,11 @@ data "template_file" "sft_agent_sender_definition" {
       },
       {
         name  = "truststore_aliases",
-        value = local.truststore_aliases[local.environment]
+        value = var.truststore_aliases[var.environment]
       },
       {
         name  = "truststore_certs",
-        value = local.truststore_certs[local.environment]
+        value = var.truststore_certs[var.environment]
       },
       {
         name  = "private_key_alias",
@@ -227,18 +227,18 @@ data "template_file" "sft_agent_sender_definition" {
       },
       {
         name  = "MNT_POINT",
-        value = local.mount_path
+        value = var.mount_path
       },
       {
         name : "FILENAME_PREFIX",
-        value : local.filename_prefix,
+        value : var.filename_prefix,
       },
       {  name : "TYPE",
         value : "sender"
       },
       {
         name  = "dks_fqdn",
-        value = local.dks_fqdn
+        value = var.dks_fqdn
       }
     ])
   }
@@ -257,16 +257,16 @@ resource "aws_ecs_service" "sft_agent_receiver" {
 
   placement_constraints {
     type       = "memberOf"
-    expression = "attribute:ecs.availability-zone in ${local.az_ni}"
+    expression = "attribute:ecs.availability-zone in ${var.az_ni}"
   }
 
-  tags = merge(local.common_repo_tags, { Name = "data-ingress-receiver-service" })
+  tags = merge(var.common_repo_tags, { Name = "data-ingress-receiver-service" })
 
 }
 
 resource "aws_ecs_service" "sft_agent_sender" {
   name            = "sft_agent_sender"
-  count           = local.test_sft[local.environment] == "true" ? 1 : 0
+  count           = var.test_sft[var.environment] == "true" ? 1 : 0
   cluster         = aws_ecs_cluster.data_ingress_cluster.id
   task_definition = aws_ecs_task_definition.sft_agent_sender[0].arn
   desired_count   = 1
@@ -278,7 +278,7 @@ resource "aws_ecs_service" "sft_agent_sender" {
 
   placement_constraints {
     type       = "memberOf"
-    expression = "attribute:ecs.availability-zone in ${local.az_sender}"
+    expression = "attribute:ecs.availability-zone in ${var.az_sender}"
   }
-  tags = merge(local.common_repo_tags, { Name = "data-ingress-sender-service" })
+  tags = merge(var.common_repo_tags, { Name = "data-ingress-sender-service" })
 }

@@ -7,7 +7,7 @@ data "aws_iam_policy_document" "sft_agent_task" {
       "ecr:GetDownloadUrlForLayer",
       "ecr:BatchGetImage",
     ]
-    resources = ["arn:aws:ecr:${var.region}:${local.account[local.management_account[local.environment]]}:repository/${local.ecr_repository_name}"]
+    resources = ["arn:aws:ecr:${var.region}:${var.account[var.management_account[var.environment]]}:repository/${var.ecr_repository_name}"]
   }
 
   statement {
@@ -150,12 +150,12 @@ resource "aws_iam_role_policy_attachment" "data_ingress_server" {
 
 resource "aws_iam_role_policy_attachment" "data_ingress_server_export_certificate_bucket_read" {
   role       = aws_iam_role.data_ingress_server_task.name
-  policy_arn = "arn:aws:iam::${local.account[local.environment]}:policy/CertificatesBucketRead"
+  policy_arn = "arn:aws:iam::${var.account[var.environment]}:policy/CertificatesBucketRead"
 }
 
 resource "aws_iam_role_policy_attachment" "data_ingress_server_ebs_cmk_instance_encrypt_decrypt" {
   role       = aws_iam_role.data_ingress_server_task.name
-  policy_arn = "arn:aws:iam::${local.account[local.environment]}:policy/EBSCMKInstanceEncryptDecrypt"
+  policy_arn = "arn:aws:iam::${var.account[var.environment]}:policy/EBSCMKInstanceEncryptDecrypt"
 }
 
 

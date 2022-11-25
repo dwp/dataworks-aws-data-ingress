@@ -19,8 +19,6 @@ resource "aws_ecs_cluster" "data_ingress_cluster" {
   }
 }
 
-
-
 resource "aws_cloudwatch_log_group" "data_ingress_cluster" {
   name              = var.name_data_ingress_log_group
   retention_in_days = 180
@@ -31,7 +29,6 @@ resource "aws_cloudwatch_log_group" "data_ingress_cluster" {
     }
   )
 }
-
 
 resource "aws_ecs_capacity_provider" "data_ingress_cluster" {
   name = var.autoscaling_group_name
@@ -60,7 +57,6 @@ resource "aws_network_interface" "di_ni_receiver" {
   subnet_id       = var.subnet_id
   tags            = merge(var.common_repo_tags, { Name = "di-ni-receiver" })
 }
-
 
 resource "aws_autoscaling_group" "data_ingress_server" {
   name = var.autoscaling_group_name

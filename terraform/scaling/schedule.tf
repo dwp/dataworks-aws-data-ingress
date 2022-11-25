@@ -6,8 +6,7 @@ resource "aws_autoscaling_schedule" "on" {
   recurrence             = "00 23 1 * *"
   start_time             = timeadd(timestamp(), "6m")
   time_zone              = var.time_zone
-  autoscaling_group_name = aws_autoscaling_group.data_ingress_server.name
-
+  autoscaling_group_name = var.data_ingress_autoscaling_group
 }
 
 resource "aws_autoscaling_schedule" "off" {
@@ -18,8 +17,7 @@ resource "aws_autoscaling_schedule" "off" {
   recurrence             = "00 23 4 * *"
   time_zone              = var.time_zone
   start_time             = timeadd(timestamp(), "8m")
-  autoscaling_group_name = aws_autoscaling_group.data_ingress_server.name
-
+  autoscaling_group_name = var.data_ingress_autoscaling_group.name
 }
 
 resource "aws_autoscaling_schedule" "test_on" {
@@ -31,7 +29,7 @@ resource "aws_autoscaling_schedule" "test_on" {
   start_time             = timeadd(timestamp(), "3m")
   end_time               = timeadd(timestamp(), "80m")
   time_zone              = var.time_zone
-  autoscaling_group_name = aws_autoscaling_group.data_ingress_server.name
+  autoscaling_group_name = var.data_ingress_autoscaling_group.name
 }
 
 resource "aws_autoscaling_schedule" "test_off" {
@@ -43,5 +41,5 @@ resource "aws_autoscaling_schedule" "test_off" {
   time_zone              = var.time_zone
   start_time             = timeadd(timestamp(), "4m")
   end_time               = timeadd(timestamp(), "80m")
-  autoscaling_group_name = aws_autoscaling_group.data_ingress_server.name
+  autoscaling_group_name = var.data_ingress_autoscaling_group.name
 }

@@ -12,9 +12,7 @@ locals {
   }
 
   time_zone                     = "Europe/London"
-  instance_terminates_rule_name = "abcd-rule-test"
-  az_ni                         = "[eu-west-2a]"
-  az_sender                     = "[eu-west-2b]"
+
   monitoring_topic_arn          = data.terraform_remote_state.security-tools.outputs.sns_topic_london_monitoring.arn
   today_date                    = formatdate("YYYY-MM-DD hh:mm:ss", timestamp())
   autoscaling_group_name = "data-ingress-ag"
@@ -132,23 +130,10 @@ locals {
     },
   ]
 
-  ecr_repository_name        = "dataworks-ingress-sft-agent"
   sft_agent_config_s3_prefix = "component/data-ingress-sft"
   proxy_port                 = "3128"
   sft_port                   = "8091"
   api_key                    = "Te5tAp1Key"
   secret_trendmicro          = "/concourse/dataworks/data_ingress/trendmicro"
 
-  test_sft = {
-    development    = "true"
-    qa             = "true"
-    integration    = "false"
-    management-dev = "false"
-    preprod        = "false"
-    production     = "false"
-    management     = "false"
-  }
-
-  mount_path    = "/mnt/point"
-  source_volume = "s3fs"
 }

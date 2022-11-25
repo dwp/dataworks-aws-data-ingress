@@ -178,7 +178,7 @@ data "aws_iam_policy_document" "data_ingress_server_ni" {
       "acm:ExportCertificate",
       "acm:GetCertificate",
     ]
-    resources = [aws_acm_certificate.data_ingress_server.arn]
+    resources = [var.acm_cert_arn]
   }
   statement {
 
@@ -192,7 +192,7 @@ data "aws_iam_policy_document" "data_ingress_server_ni" {
     //    condition {
     //      test = "ForAnyValue:StringEquals"
     //      variable = "ec2:ResourceTag/Owner"
-    //      values = [local.name]
+    //      values = [var.name]
     //    }
     resources = [
       "*"
