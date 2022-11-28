@@ -56,7 +56,8 @@ module "data-ingress-sft-task" {
     internet_proxy_host                     = data.terraform_remote_state.aws_sdx.outputs.internet_proxy.host
     non_proxied_endpoints                   = data.terraform_remote_state.aws_sdx.outputs.vpc.no_proxy_list
     filename_prefix                         = local.filename_prefix
-    network_interface_id                    = module.data-ingress-cluster.network_interface_id
+    network_interface_id                    = module.data-ingress-cluster.network_interface.id
+    network_interface_ip                    = module.data-ingress-cluster.network_interface.ip
     dks_fqdn                                = local.dks_fqdn
     secret_trendmicro                       = local.secret_trendmicro
     ecs_cluster_id                          = module.data-ingress-cluster.ecs_cluster_id

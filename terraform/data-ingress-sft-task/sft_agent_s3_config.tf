@@ -59,7 +59,7 @@ data "template_file" "data_ingress_sft_agent_application_config_tpl_receiver_e2e
 data "template_file" "data_ingress_sft_agent_application_config_tpl_sender" {
   template = file("${path.module}/sft_config/agent-application-config-sender.tpl")
   vars = {
-    ip   = network_interface_id
+    ip   = var.network_interface_ip
     port = var.sft_port
   }
 }

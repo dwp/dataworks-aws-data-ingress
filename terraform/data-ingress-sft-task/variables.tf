@@ -17,6 +17,8 @@ variable "sdx_vpc_id" {}
 variable "ecs_cluster_id" {}
 variable "common_repo_tags" {}
 variable "network_interface_id" {}
+variable "network_interface_ip" {}
+
 variable "config_bucket_kms_key" {}
 variable "cert_bucket" {}
 variable "environment" {}
