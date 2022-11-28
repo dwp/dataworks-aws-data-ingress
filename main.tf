@@ -14,7 +14,7 @@ module "data-ingress-cluster" {
     current_region                          = data.aws_region.current.name
     secret_trendmicro                       = local.secret_trendmicro
     proxy                                   = data.terraform_remote_state.aws_sdx.outputs.internet_proxy
-    acm_cert_arn                            = module.data-ingress-sft.acm_cert_arn
+    acm_cert_arn                            = module.data-ingress-sft-task.acm_cert_arn
     name                                    = local.name
     security_group_rules                    = local.security_group_rules
     sft_port                                = local.sft_port
@@ -36,8 +36,8 @@ module "data-ingress-scaling" {
     data_ingress_autoscaling_group          = module.data-ingress-cluster.data_ingress_autoscaling_group
 }
 
-module "data-ingress-sft" {
-    source                                  = "./terraform/data-ingress-sft"
+module "data-ingress-sft-task" {
+    source                                  = "./terraform/data-ingress-sft-task"
     environment                             = local.environment
     common_repo_tags                        = local.common_repo_tags
     env_prefix                              = local.env_prefix

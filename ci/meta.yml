@@ -30,8 +30,10 @@
               export TF_VAR_test_trend_micro_on=ci
               cp ../terraform-bootstrap/terraform.tf .
               terraform workspace show
-              terraform init -upgrade
-              terraform plan $DETAILED_EXITCODE
+              terraform init
+              terraform plan -target=module.data-ingress-cluster $DETAILED_EXITCODE
+              terraform plan -target=module.data-ingress-sft-task $DETAILED_EXITCODE
+
           dir: dataworks-aws-data-ingress
         inputs:
           - name: dataworks-aws-data-ingress
