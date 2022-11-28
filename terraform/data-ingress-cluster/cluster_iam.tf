@@ -119,8 +119,8 @@ data "aws_iam_policy_document" "kms_key_use" {
       "kms:GenerateDataKey",
       "kms:DescribeKey"
     ]
-    resources = [data.terraform_remote_state.common.outputs.config_bucket_cmk.arn,
-    data.terraform_remote_state.common.outputs.published_bucket_cmk.arn]
+    resources = [var.config_bucket_key_arn, var.published_bucket_key_arn]
+
   }
 
   statement {
@@ -128,9 +128,7 @@ data "aws_iam_policy_document" "kms_key_use" {
     actions = [
       "kms:*"
     ]
-    resources = ["*"]
-
-    //    resources = [data.terraform_remote_state.common.outputs.published_bucket_cmk.arn, data.terraform_remote_state.common.outputs.stage_data_ingress_bucket_cmk.arn]
+    resources = [var.stage_bucket_key_arn]
   }
 
 }
@@ -189,14 +187,19 @@ data "aws_iam_policy_document" "data_ingress_server_ni" {
       "ec2:DescribeNetworkInterfaces",
       "ec2:TerminateInstances"
     ]
-    //    condition {
-    //      test = "ForAnyValue:StringEquals"
-    //      variable = "ec2:ResourceTag/Owner"
-    //      values = [var.name]
-    //    }
-    resources = [
-      "*"
-    ]
+
+    condition {
+      test = "ForAnyValue:StringEquals"
+      variable = "ec2:ResourceTag/Owner"
+      values = [var.name]
+    }
+
+    principals {
+      type        = "AWS"
+      identifiers = ["*"]
+    }
+
+    resources = [aws_network_interface.di_ni_receiver.outpost_arn]
   }
 
 }
@@ -237,7 +240,7 @@ data "aws_iam_policy_document" "data_ingress_get_secret" {
     sid       = "DataIngressGetCAMgmtCertS3"
     effect    = "Allow"
     actions   = ["s3:GetObject"]
-    resources = ["${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.arn}/*"]
+    resources = ["${var.cert_bucket.arn}/*"]
   }
 }
 
@@ -255,13 +258,24 @@ resource "aws_iam_role_policy_attachment" "data_ingress_get_secret" {
 data "aws_iam_policy_document" "stage_bucket_all" {
 
   statement {
-    sid = "StageBucketS3All"
-    actions = [
-      "s3:*"
-    ]
-    //    resources = [data.terraform_remote_state.common.outputs.data_ingress_stage_bucket.arn, "${data.terraform_remote_state.common.outputs.data_ingress_stage_bucket.arn}/*"]
-    resources = ["*"]
+    effect = "Allow"
 
+    actions = [
+      "s3:GetBucketLocation",
+      "s3:ListBucket"
+    ]
+    resources = [
+      var.stage_bucket.arn
+    ]
+  }
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:*Object*",
+    ]
+    resources = [
+      "${var.stage_bucket.arn}/*",
+    ]
   }
 }
 

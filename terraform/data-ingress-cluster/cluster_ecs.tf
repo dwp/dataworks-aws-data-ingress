@@ -7,6 +7,7 @@ resource "aws_ecs_cluster" "data_ingress_cluster" {
       Name = "data-ingress-cluster"
     }
   )
+
   setting {
     name  = "containerInsights"
     value = "enabled"

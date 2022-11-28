@@ -13,7 +13,6 @@ locals {
 
   time_zone                     = "Europe/London"
 
-  monitoring_topic_arn          = data.terraform_remote_state.security-tools.outputs.sns_topic_london_monitoring.arn
   today_date                    = formatdate("YYYY-MM-DD hh:mm:ss", timestamp())
   autoscaling_group_name = "data-ingress-ag"
   publish_bucket         = data.terraform_remote_state.common.outputs.published_bucket
@@ -70,9 +69,7 @@ locals {
     production     = "management"
     management     = "management"
   }
-
   filename_prefix = "BasicCompanyData"
-
   management_infra_account = {
     development    = "default"
     qa             = "default"

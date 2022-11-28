@@ -1,7 +1,7 @@
 resource "aws_security_group" "sft_agent_service" {
   name        = "ingress_sft_agent_service"
   description = "Control access to and from ingress sft agent service"
-  vpc_id      = data.terraform_remote_state.aws_sdx.outputs.vpc.vpc.id
+  vpc_id      = var.sdx_vpc_id
   tags = merge(
     var.common_repo_tags,
     {
@@ -13,7 +13,7 @@ resource "aws_security_group" "sft_agent_service" {
 resource "aws_security_group_rule" "sft_agent_service_s3_https" {
   description       = "Access to S3 https"
   type              = "egress"
-  prefix_list_ids   = [data.terraform_remote_state.aws_sdx.outputs.vpc.prefix_list_ids.s3]
+  prefix_list_ids   = [var.sdx_prefix_list_id_s3]
   protocol          = "tcp"
   from_port         = 443
   to_port           = 443
@@ -23,7 +23,7 @@ resource "aws_security_group_rule" "sft_agent_service_s3_https" {
 resource "aws_security_group_rule" "sft_agent_service_s3_http" {
   description       = "Access to S3 http"
   type              = "egress"
-  prefix_list_ids   = [data.terraform_remote_state.aws_sdx.outputs.vpc.prefix_list_ids.s3]
+  prefix_list_ids   = [var.sdx_prefix_list_id_s3]
   protocol          = "tcp"
   from_port         = 80
   to_port           = 80
@@ -33,7 +33,7 @@ resource "aws_security_group_rule" "sft_agent_service_s3_http" {
 resource "aws_security_group_rule" "sft_agent_service_s3_https_ingress" {
   description       = "Access to S3 https"
   type              = "ingress"
-  prefix_list_ids   = [data.terraform_remote_state.aws_sdx.outputs.vpc.prefix_list_ids.s3]
+  prefix_list_ids   = [var.sdx_prefix_list_id_s3]
   protocol          = "tcp"
   from_port         = 443
   to_port           = 443
@@ -43,7 +43,7 @@ resource "aws_security_group_rule" "sft_agent_service_s3_https_ingress" {
 resource "aws_security_group_rule" "sft_agent_service_s3_http_ingress" {
   description       = "Access to S3 http"
   type              = "ingress"
-  prefix_list_ids   = [data.terraform_remote_state.aws_sdx.outputs.vpc.prefix_list_ids.s3]
+  prefix_list_ids   = [var.sdx_prefix_list_id_s3]
   protocol          = "tcp"
   from_port         = 80
   to_port           = 80
@@ -73,39 +73,39 @@ resource "aws_security_group_rule" "service_egress" {
   security_group_id        = aws_security_group.sft_agent_service.id
 }
 
-
-resource "aws_security_group_rule" "exameple" {
-  type              = "egress"
-  from_port         = 8080
-  to_port           = 8081
-  protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.sft_agent_service.id
-}
-
-resource "aws_security_group_rule" "examssspeled" {
-  type              = "ingress"
-  from_port         = 8080
-  to_port           = 8081
-  protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.sft_agent_service.id
-}
-
-resource "aws_security_group_rule" "exaddmeple" {
-  type              = "egress"
-  from_port         = var.sft_port
-  to_port           = var.sft_port
-  protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.sft_agent_service.id
-}
-
-resource "aws_security_group_rule" "exaddddmpeled" {
-  type              = "ingress"
-  from_port         = var.sft_port
-  to_port           = var.sft_port
-  protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.sft_agent_service.id
-}
+//
+//resource "aws_security_group_rule" "exameple" {
+//  type              = "egress"
+//  from_port         = 8080
+//  to_port           = 8081
+//  protocol          = "tcp"
+//  cidr_blocks       = ["0.0.0.0/0"]
+//  security_group_id = aws_security_group.sft_agent_service.id
+//}
+//
+//resource "aws_security_group_rule" "examssspeled" {
+//  type              = "ingress"
+//  from_port         = 8080
+//  to_port           = 8081
+//  protocol          = "tcp"
+//  cidr_blocks       = ["0.0.0.0/0"]
+//  security_group_id = aws_security_group.sft_agent_service.id
+//}
+//
+//resource "aws_security_group_rule" "exaddmeple" {
+//  type              = "egress"
+//  from_port         = var.sft_port
+//  to_port           = var.sft_port
+//  protocol          = "tcp"
+//  cidr_blocks       = ["0.0.0.0/0"]
+//  security_group_id = aws_security_group.sft_agent_service.id
+//}
+//
+//resource "aws_security_group_rule" "exaddddmpeled" {
+//  type              = "ingress"
+//  from_port         = var.sft_port
+//  to_port           = var.sft_port
+//  protocol          = "tcp"
+//  cidr_blocks       = ["0.0.0.0/0"]
+//  security_group_id = aws_security_group.sft_agent_service.id
+//}

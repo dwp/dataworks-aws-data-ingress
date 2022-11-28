@@ -69,9 +69,9 @@ data "template_file" "sft_agent_receiver_definition" {
     user               = "0"
     ports              = jsonencode([8080, 8081, var.sft_port])
     ulimits            = jsonencode([])
-    log_group          = aws_cloudwatch_log_group.data_ingress_cluster.name
+    log_group          = var.data_ingress_log_group_name
     region             = var.region
-    config_bucket      = data.terraform_remote_state.common.outputs.config_bucket.id
+    config_bucket      = var.config_bucket.id
     s3_prefix          = var.sft_agent_config_s3_prefix
     essential          = true
     privileged         = true
@@ -92,11 +92,11 @@ data "template_file" "sft_agent_receiver_definition" {
       },
       {
         name  = "STAGE_BUCKET",
-        value = data.terraform_remote_state.common.outputs.data_ingress_stage_bucket.id
+        value = var.stage_bucket.id
       },
       {
         name  = "KMS_KEY_ARN",
-        value = data.terraform_remote_state.common.outputs.stage_data_ingress_bucket_cmk.arn
+        value = var.stage_bucket_kms_key_arn
       },
       {
         name  = "acm_cert_arn",
@@ -116,11 +116,11 @@ data "template_file" "sft_agent_receiver_definition" {
       },
       {
         name  = "internet_proxy",
-        value = data.terraform_remote_state.aws_sdx.outputs.internet_proxy.host
+        value = var.internet_proxy_host
       },
       {
         name  = "non_proxied_endpoints",
-        value = join(",", data.terraform_remote_state.aws_sdx.outputs.vpc.no_proxy_list)
+        value = join(",", var.non_proxied_endpoints)
       },
       {
         name  = "MNT_POINT",
@@ -132,7 +132,7 @@ data "template_file" "sft_agent_receiver_definition" {
       },
       {
         name : "NI_ID",
-        value : aws_network_interface.di_ni_receiver.id
+        value : var.network_interface_id
       },
       {
         name : "TYPE",
@@ -171,9 +171,9 @@ data "template_file" "sft_agent_sender_definition" {
     user               = "0"
     ports              = jsonencode([8080, 8081, var.sft_port])
     ulimits            = jsonencode([])
-    log_group          = aws_cloudwatch_log_group.data_ingress_cluster.name
+    log_group          = var.data_ingress_log_group_name
     region             = var.region
-    config_bucket      = data.terraform_remote_state.common.outputs.config_bucket.id
+    config_bucket      = var.config_bucket.id
     s3_prefix          = var.sft_agent_config_s3_prefix
     essential          = true
     privileged         = true
@@ -195,11 +195,11 @@ data "template_file" "sft_agent_sender_definition" {
       },
       {
         name  = "STAGE_BUCKET",
-        value = data.terraform_remote_state.common.outputs.data_ingress_stage_bucket.id
+        value = var.stage_bucket.id
       },
       {
         name  = "KMS_KEY_ARN",
-        value = data.terraform_remote_state.common.outputs.stage_data_ingress_bucket_cmk.arn
+        value = var.stage_bucket_kms_key_arn
       },
       {
         name  = "acm_cert_arn",
@@ -219,11 +219,11 @@ data "template_file" "sft_agent_sender_definition" {
       },
       {
         name  = "internet_proxy",
-        value = data.terraform_remote_state.aws_sdx.outputs.internet_proxy.host
+        value = var.internet_proxy_host
       },
       {
         name  = "non_proxied_endpoints",
-        value = join(",", data.terraform_remote_state.aws_sdx.outputs.vpc.no_proxy_list)
+        value = join(",", var.non_proxied_endpoints)
       },
       {
         name  = "MNT_POINT",
@@ -246,7 +246,7 @@ data "template_file" "sft_agent_sender_definition" {
 
 resource "aws_ecs_service" "sft_agent_receiver" {
   name            = "sft_agent_receiver"
-  cluster         = aws_ecs_cluster.data_ingress_cluster.id
+  cluster         = var.ecs_cluster_id
   task_definition = aws_ecs_task_definition.sft_agent_receiver.arn
   desired_count   = 1
   launch_type     = "EC2"
@@ -267,7 +267,7 @@ resource "aws_ecs_service" "sft_agent_receiver" {
 resource "aws_ecs_service" "sft_agent_sender" {
   name            = "sft_agent_sender"
   count           = var.test_sft[var.environment] == "true" ? 1 : 0
-  cluster         = aws_ecs_cluster.data_ingress_cluster.id
+  cluster         = var.ecs_cluster_id
   task_definition = aws_ecs_task_definition.sft_agent_sender[0].arn
   desired_count   = 1
   launch_type     = "EC2"

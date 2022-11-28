@@ -13,26 +13,26 @@ data "aws_iam_policy_document" "sft_agent_task" {
   statement {
     sid       = "AllowKMSDecryptdataIngress"
     actions   = ["kms:Decrypt"]
-    resources = [data.terraform_remote_state.common.outputs.config_bucket_cmk.arn]
+    resources = [var.config_bucket_kms_key.arn]
   }
 
   statement {
     sid     = "PullSFTAgentConfigS3dataIngress"
     actions = ["s3:GetObject"]
     resources = [
-      "${data.terraform_remote_state.common.outputs.config_bucket.arn}/${aws_s3_bucket_object.data_ingress_sft_agent_config_receiver.key}",
-      "${data.terraform_remote_state.common.outputs.config_bucket.arn}/${aws_s3_bucket_object.data_ingress_sft_agent_config_sender.key}",
-      "${data.terraform_remote_state.common.outputs.config_bucket.arn}/${aws_s3_bucket_object.data_ingress_sft_agent_application_config_receiver.key}",
-      "${data.terraform_remote_state.common.outputs.config_bucket.arn}/${aws_s3_bucket_object.data_ingress_sft_agent_application_config_sender.key}",
-      "${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.arn}/*"
+      "${var.config_bucket.arn}/${aws_s3_bucket_object.data_ingress_sft_agent_config_receiver.key}",
+      "${var.config_bucket.arn}/${aws_s3_bucket_object.data_ingress_sft_agent_config_sender.key}",
+      "${var.config_bucket.arn}/${aws_s3_bucket_object.data_ingress_sft_agent_application_config_receiver.key}",
+      "${var.config_bucket.arn}/${aws_s3_bucket_object.data_ingress_sft_agent_application_config_sender.key}",
+      "${var.config_bucket.arn}/*"
     ]
   }
   statement {
     sid     = "ListConfigBucketDI"
     actions = ["s3:ListBucket"]
     resources = [
-      data.terraform_remote_state.common.outputs.config_bucket.arn,
-      "${data.terraform_remote_state.common.outputs.config_bucket.arn}/*"
+      var.config_bucket.arn,
+      "${var.config_bucket.arn}/*"
     ]
   }
 
@@ -133,7 +133,7 @@ data "aws_iam_policy_document" "data_ingress_server_task" {
     sid       = "DataIngressGetCAMgmtCertS3"
     effect    = "Allow"
     actions   = ["s3:GetObject"]
-    resources = ["${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.arn}/*"]
+    resources = ["${var.cert_bucket.arn}/*"]
   }
 }
 
@@ -158,7 +158,6 @@ resource "aws_iam_role_policy_attachment" "data_ingress_server_ebs_cmk_instance_
   policy_arn = "arn:aws:iam::${var.account[var.environment]}:policy/EBSCMKInstanceEncryptDecrypt"
 }
 
-
 data "aws_iam_policy_document" "sft_get_secret" {
   statement {
     sid    = "GetTrendMicroSecret"
@@ -166,7 +165,7 @@ data "aws_iam_policy_document" "sft_get_secret" {
     actions = [
       "secretsmanager:GetSecretValue",
     ]
-    resources = [data.aws_secretsmanager_secret.trendmicro.arn]
+    resources = [var.secret_trendmicro.arn]
   }
 }
 
