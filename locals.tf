@@ -1,5 +1,5 @@
 locals {
-  launch_template_name        = "${local.cluster_name}-launch-template"
+  launch_template_name        = "data-ingress-launch-template"
   name_data_ingress_log_group = "/app/data_ingress"
 
   env_prefix = {

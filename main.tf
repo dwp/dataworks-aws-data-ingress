@@ -65,5 +65,6 @@ module "data-ingress-sft-task" {
     security_group_rules                    = local.security_group_rules
     config_bucket_kms_key                   = data.terraform_remote_state.common.outputs.config_bucket_cmk
     cert_bucket                             = data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket
-    ecs_hardened_ami_id = var.ecs_hardened_ami_id
+    ecs_hardened_ami_id                     = var.ecs_hardened_ami_id
+    companies_s3_prefix                     = local.companies_s3_prefix
 }
