@@ -11,7 +11,6 @@ output "network_interface" {
     id = aws_network_interface.di_ni_receiver.id
     ip = aws_network_interface.di_ni_receiver.private_ip
   }
-
 }
 
 output "ecs_cluster_id" {

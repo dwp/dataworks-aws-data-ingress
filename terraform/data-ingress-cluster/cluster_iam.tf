@@ -193,12 +193,6 @@ data "aws_iam_policy_document" "data_ingress_server_ni" {
       variable = "ec2:ResourceTag/Owner"
       values = [var.name]
     }
-
-    principals {
-      type        = "AWS"
-      identifiers = ["*"]
-    }
-
     resources = [aws_network_interface.di_ni_receiver.outpost_arn]
   }
 
