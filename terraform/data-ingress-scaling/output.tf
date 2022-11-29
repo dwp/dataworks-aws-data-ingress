@@ -1,9 +1,0 @@
-terraform state mv aws_cloudwatch_log_group.data_ingress_cluster module.data-ingress-cluster.aws_cloudwatch_log_group.data_ingress_cluster
-terraform state mv aws_iam_role.data_ingress_server module.data-ingress-cluster.aws_iam_role.data_ingress_server
-terraform state mv aws_iam_policy.data_ingress_server_tagging module.data-ingress-cluster.aws_iam_policy.data_ingress_server_tagging
-terraform state mv aws_iam_policy.kms_key_use module.data-ingress-cluster.aws_iam_policy.kms_key_use
-terraform state mv aws_security_group.data_ingress_server module.data-ingress-cluster.aws_security_group.data_ingress_server
-terraform state mv aws_iam_policy.sft_task_ni module.data-ingress-sft-task.aws_iam_policy.sft_task_ni
-terraform state mv aws_iam_role.data_ingress_server_task module.data-ingress-sft-task.aws_iam_role.data_ingress_server_task
-terraform state mv aws_iam_policy.sft_get_secret module.data-ingress-sft-task.aws_iam_policy.sft_get_secret
-terraform state mv aws_security_group.sft_agent_service module.data-ingress-sft-task.aws_security_group.sft_agent_service
