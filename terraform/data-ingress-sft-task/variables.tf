@@ -19,7 +19,7 @@ variable "common_repo_tags" {}
 variable "network_interface_id" {}
 variable "network_interface_ip" {}
 
-variable "config_bucket_kms_key" {}
+variable "config_bucket_kms_key_arn" {}
 variable "cert_bucket" {}
 variable "environment" {}
 variable "dks_fqdn" {}
@@ -98,3 +98,4 @@ variable "test_sft" {
     management     = "false"
   }
 }
+variable "trendmicro_secret_arn" {}

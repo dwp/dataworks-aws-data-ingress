@@ -33,7 +33,7 @@ module "data-ingress-scaling" {
     source                                  = "./terraform/data-ingress-scaling"
     asg_instance_count                      = local.asg_instance_count
     environment                             = local.environment
-    data_ingress_autoscaling_group          = module.data-ingress-cluster.data_ingress_autoscaling_group
+    data_ingress_autoscaling_group_name          = module.data-ingress-cluster.data_ingress_autoscaling_group_name
 }
 
 module "data-ingress-sft-task" {
@@ -64,8 +64,9 @@ module "data-ingress-sft-task" {
     sdx_vpc_id                              = data.terraform_remote_state.aws_sdx.outputs.vpc.vpc.id
     sdx_prefix_list_id_s3                   = data.terraform_remote_state.aws_sdx.outputs.vpc.prefix_list_ids.s3
     security_group_rules                    = local.security_group_rules
-    config_bucket_kms_key                   = data.terraform_remote_state.common.outputs.config_bucket_cmk
+    config_bucket_kms_key_arn               = data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
     cert_bucket                             = data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket
     ecs_hardened_ami_id                     = var.ecs_hardened_ami_id
+    trendmicro_secret_arn = module.data-ingress-cluster.trendmicro_secret_arn
     companies_s3_prefix                     = local.companies_s3_prefix
 }

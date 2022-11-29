@@ -165,7 +165,7 @@ data "aws_iam_policy_document" "sft_get_secret" {
     actions = [
       "secretsmanager:GetSecretValue",
     ]
-    resources = [var.secret_trendmicro.arn]
+    resources = [var.trendmicro_secret_arn]
   }
 }
 

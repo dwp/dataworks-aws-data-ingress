@@ -2,27 +2,27 @@ resource "aws_s3_bucket_object" "data_ingress_sft_agent_config_receiver" {
   bucket     = var.config_bucket.id
   key        = "${var.sft_agent_config_s3_prefix}/agent-config-receiver.yml"
   content    = data.template_file.data_ingress_sft_agent_config_tpl_receiver.rendered
-  kms_key_id = var.config_bucket_kms_key
+  kms_key_id = var.config_bucket_kms_key_arn
 }
 resource "aws_s3_bucket_object" "data_ingress_sft_agent_config_sender" {
   bucket     = var.config_bucket.id
   key        = "${var.sft_agent_config_s3_prefix}/agent-config-sender.yml"
   content    = data.template_file.data_ingress_sft_agent_config_tpl_sender.rendered
-  kms_key_id = var.config_bucket_kms_key
+  kms_key_id = var.config_bucket_kms_key_arn
 }
 
 resource "aws_s3_bucket_object" "data_ingress_sft_agent_application_config_receiver" {
   bucket     = var.config_bucket.id
   key        = "${var.sft_agent_config_s3_prefix}/agent-application-config-receiver.yml"
   content    = data.template_file.data_ingress_sft_agent_application_config_tpl_receiver.rendered
-  kms_key_id = var.config_bucket_kms_key
+  kms_key_id = var.config_bucket_kms_key_arn
 }
 
 resource "aws_s3_bucket_object" "data_ingress_sft_agent_application_config_receiver_e2e" {
   bucket     = var.config_bucket.id
   key        = "${var.sft_agent_config_s3_prefix}/agent-application-config-receiver-e2e.yml"
   content    = data.template_file.data_ingress_sft_agent_application_config_tpl_receiver_e2e.rendered
-  kms_key_id = var.config_bucket_kms_key
+  kms_key_id = var.config_bucket_kms_key_arn
 }
 
 data "template_file" "data_ingress_sft_agent_config_tpl_sender" {
@@ -68,5 +68,5 @@ resource "aws_s3_bucket_object" "data_ingress_sft_agent_application_config_sende
   bucket     = var.config_bucket.id
   key        = "${var.sft_agent_config_s3_prefix}/agent-application-config-sender.yml"
   content    = data.template_file.data_ingress_sft_agent_application_config_tpl_sender.rendered
-  kms_key_id = var.config_bucket_kms_key
+  kms_key_id = var.config_bucket_kms_key_arn
 }

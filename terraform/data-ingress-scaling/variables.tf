@@ -3,4 +3,4 @@ variable "environment" {}
 variable "time_zone" {
   default = "Europe/London"
 }
-variable "data_ingress_autoscaling_group" {}
+variable "data_ingress_autoscaling_group_name" {}
