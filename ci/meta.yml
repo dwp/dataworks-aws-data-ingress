@@ -30,7 +30,7 @@
               export TF_VAR_test_trend_micro_on=ci
               cp ../terraform-bootstrap/terraform.tf .
               terraform workspace show
-              terraform init
+              terraform init -upgrade
               terraform plan -target=module.data-ingress-cluster $DETAILED_EXITCODE
               terraform plan -target=module.data-ingress-sft-task $DETAILED_EXITCODE
 

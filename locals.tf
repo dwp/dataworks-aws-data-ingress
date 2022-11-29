@@ -102,7 +102,6 @@ locals {
     local.common_repo_tags,
     {
       Name        = local.data_ingress_server_name,
-      Persistence = "Ignore",
     }
   )
   cw_data_ingress_server_agent_namespace                = "/app/data-ingress"

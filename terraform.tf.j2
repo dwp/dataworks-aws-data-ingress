@@ -42,35 +42,18 @@ locals {
     {%- endfor %}
   }
 
-  persistence_tag_value = {
-    development = "Ignore"
-    qa          = "Ignore"
-    integration = "Ignore"
-    preprod     = "Ignore"
-    production  = "Ignore"
-  }
-
   management_workspace = {
       management-dev = "default"
       management     = "management"
   }
 
-  auto_shutdown_tag_value = {
-    development = "True"
-    qa          = "False"
-    integration = "True"
-    preprod     = "False"
-    production  = "False"
-  }
 
-  overridden_tags = {
-    Role         = "repo_template_terraform"
+  common_repo_tags = {
+    CreatedBy    = "terraform"
     Owner        = local.name
-    Persistence  = local.persistence_tag_value[local.environment]
-    AutoShutdown = local.auto_shutdown_tag_value[local.environment]
+    Persistence  = "Ignore"
+    AutoShutdown = "False"
   }
-
-  common_repo_tags = "${merge(module.dataworks_common.common_tags, local.overridden_tags)}"
 
   cidr_block = {
   {%- for environment, ranges in cidr_block.items() %}
