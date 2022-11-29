@@ -13,7 +13,7 @@ data "aws_iam_policy_document" "sft_agent_task" {
   statement {
     sid       = "AllowKMSDecryptdataIngress"
     actions   = ["kms:Decrypt"]
-    resources = [var.config_bucket_kms_key.arn]
+    resources = [var.config_bucket_kms_key_arn]
   }
 
   statement {
