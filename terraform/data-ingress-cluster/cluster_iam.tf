@@ -7,6 +7,7 @@ resource "aws_iam_role" "data_ingress_server" {
       Name = "data_ingress_server_role"
     }
   )
+  lifecycle {ignore_changes = [tags]}
 }
 
 resource "aws_iam_instance_profile" "data_ingress_server" {

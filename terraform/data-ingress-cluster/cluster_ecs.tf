@@ -107,7 +107,7 @@ resource "aws_launch_template" "data_ingress_server" {
   disable_api_termination = false
   lifecycle {
     create_before_destroy = true
-    ignore_changes = [latest_version]
+    ignore_changes = [latest_version,tags]
   }
   network_interfaces {
     associate_public_ip_address = false
