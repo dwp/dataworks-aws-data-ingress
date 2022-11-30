@@ -10,7 +10,11 @@ resource "aws_acm_certificate" "data_ingress_server" {
       Name = var.data_ingress_server_name
     },
   )
-
+  lifecycle {
+    ignore_changes = [
+      tags
+    ]
+  }
 }
 
 resource "aws_ecs_task_definition" "sft_agent_receiver" {

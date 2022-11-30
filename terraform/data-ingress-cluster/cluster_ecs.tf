@@ -49,6 +49,11 @@ resource "aws_ecs_capacity_provider" "data_ingress_cluster" {
       Name = "data_ingress_cluster_logs"
     }
   )
+  lifecycle {
+    ignore_changes = [
+      tags
+    ]
+  }
 }
 
 resource "aws_network_interface" "di_ni_receiver" {
