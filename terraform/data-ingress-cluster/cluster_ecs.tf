@@ -53,11 +53,13 @@ resource "aws_ecs_capacity_provider" "data_ingress_cluster" {
 }
 
 resource "aws_network_interface" "di_ni_receiver" {
-
   private_ips = [var.private_ips]
   security_groups = [aws_security_group.data_ingress_server.id]
   subnet_id       = var.subnet_id
   tags            = merge(var.common_repo_tags, { Name = "di-ni-receiver" })
+  lifecycle {
+    ignore_changes = [tags]
+  }
 }
 
 resource "aws_autoscaling_group" "data_ingress_server" {
