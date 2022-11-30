@@ -22,11 +22,11 @@ locals {
   config_bucket          = data.terraform_remote_state.common.outputs.config_bucket
   asg_instance_count = {
     desired = {
-      development = 0#2
-      qa          = 0#2
-      integration = 0#1
-      preprod     = 0#1
-      production  = 0#1
+      development = 2
+      qa          = 2
+      integration = 1
+      preprod     = 1
+      production  = 1
     }
     max = {
       development = 2
