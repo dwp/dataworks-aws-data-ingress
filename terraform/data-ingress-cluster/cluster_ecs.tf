@@ -78,7 +78,6 @@ resource "aws_autoscaling_group" "data_ingress_server" {
     var.common_repo_tags,
     {
       Name        = var.cluster_name,
-      Persistence = "Ignore",
     }
   )
     content {
@@ -133,10 +132,7 @@ resource "aws_launch_template" "data_ingress_server" {
     tags = merge(
       var.common_repo_tags,
       {
-        Application  = "data_ingress_server"
         Name         = "data_ingress_server"
-        Persistence  = "Ignore"
-        AutoShutdown = "False"
         SSMEnabled   = var.data_ingress_server_ssmenabled[var.environment]
       }
     )
@@ -147,7 +143,6 @@ resource "aws_launch_template" "data_ingress_server" {
     tags = merge(
       var.common_repo_tags,
       {
-        Application = "data_ingress_server"
         Name        = "data_ingress_server"
       }
     )

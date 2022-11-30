@@ -47,10 +47,9 @@ locals {
       management     = "management"
   }
 
-
   common_repo_tags = {
     CreatedBy    = "terraform"
-    Owner        = local.name
+    Owner        = "dataworks-aws-data-ingress"
     Persistence  = "Ignore"
     AutoShutdown = "False"
   }
