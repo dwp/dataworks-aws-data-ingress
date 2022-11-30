@@ -68,6 +68,6 @@ module "data-ingress-sft-task" {
     config_bucket_kms_key_arn               = data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
     cert_bucket                             = data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket
     ecs_hardened_ami_id                     = var.ecs_hardened_ami_id
-    trendmicro_secret_arn = module.data-ingress-cluster.trendmicro_secret_arn
+    trendmicro_secret_arn                   = module.data-ingress-cluster.trendmicro_secret_arn
     companies_s3_prefix                     = local.companies_s3_prefix
 }
