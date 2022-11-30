@@ -15,7 +15,7 @@ resource "aws_ecs_cluster" "data_ingress_cluster" {
 
   lifecycle {
     ignore_changes = [
-      setting
+      tags
     ]
   }
 }
@@ -23,6 +23,7 @@ resource "aws_ecs_cluster" "data_ingress_cluster" {
 resource "aws_cloudwatch_log_group" "data_ingress_cluster" {
   name              = var.name_data_ingress_log_group
   retention_in_days = 180
+  lifecycle {ignore_changes = [tags]}
   tags = merge(
     var.common_repo_tags,
     {
@@ -88,6 +89,7 @@ resource "aws_autoscaling_group" "data_ingress_server" {
   }
   lifecycle {
     create_before_destroy = true
+    ignore_changes = [tags]
   }
 }
 
