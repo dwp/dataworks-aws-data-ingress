@@ -29,6 +29,11 @@ resource "aws_cloudwatch_log_group" "data_ingress_cluster" {
       Name = "data_ingress_cluster_logs"
     }
   )
+  lifecycle {
+    ignore_changes = [
+      tags
+    ]
+  }
 }
 
 resource "aws_ecs_capacity_provider" "data_ingress_cluster" {

@@ -35,6 +35,11 @@ resource "aws_cloudwatch_metric_alarm" "sft_stopped" {
       severity          = "Critical"
     },
   )
+  lifecycle {
+    ignore_changes = [
+      tags
+    ]
+  }
 }
 
 resource "aws_cloudwatch_event_rule" "sft_running" {
@@ -74,6 +79,11 @@ resource "aws_cloudwatch_metric_alarm" "sft_running" {
       severity          = "Critical"
     },
   )
+  lifecycle {
+    ignore_changes = [
+      tags
+    ]
+  }
 }
 
 resource "aws_cloudwatch_event_rule" "file_landed" {
@@ -121,4 +131,9 @@ resource "aws_cloudwatch_metric_alarm" "file_landed" {
       severity          = "Critical"
     },
   )
+  lifecycle {
+    ignore_changes = [
+      tags
+    ]
+  }
 }

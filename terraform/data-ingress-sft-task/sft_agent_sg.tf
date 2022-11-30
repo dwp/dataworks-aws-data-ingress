@@ -8,6 +8,11 @@ resource "aws_security_group" "sft_agent_service" {
       Name = "ingress_sft_agent_service"
     }
   )
+  lifecycle {
+    ignore_changes = [
+      tags
+    ]
+  }
 }
 
 resource "aws_security_group_rule" "sft_agent_service_s3_https" {
