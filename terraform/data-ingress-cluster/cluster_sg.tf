@@ -3,6 +3,7 @@ resource "aws_security_group" "data_ingress_server" {
   description = "Rules necessary for pulling container image, accessing vpc endpoints"
   vpc_id      = var.sdx_vpc_id
   tags        = merge(var.common_repo_tags, { Name = "data_ingress_cluster" })
+
 }
 
 resource "aws_security_group_rule" "server_ingress" {

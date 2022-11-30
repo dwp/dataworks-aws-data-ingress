@@ -10,6 +10,7 @@ resource "aws_acm_certificate" "data_ingress_server" {
       Name = var.data_ingress_server_name
     },
   )
+
 }
 
 resource "aws_ecs_task_definition" "sft_agent_receiver" {
