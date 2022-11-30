@@ -35,6 +35,10 @@ variable "data_ingress_server_ec2_instance_type" {}
 variable "ecs_hardened_ami_id" {
   default = ""
 }
+variable "region" {
+  default = "eu-west-2"
+}
+variable "account" {}
 variable "data_ingress_server_ssmenabled" {
   default = {
     development = "True"

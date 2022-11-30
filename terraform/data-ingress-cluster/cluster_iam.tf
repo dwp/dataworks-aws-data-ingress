@@ -194,7 +194,7 @@ data "aws_iam_policy_document" "data_ingress_server_ni" {
       variable = "ec2:ResourceTag/Owner"
       values = [var.name]
     }
-    resources = [aws_network_interface.di_ni_receiver.arn]
+    resources = ["arn:aws:ec2:${var.region}:${var.account}:network-interface/*"]
   }
 
 }

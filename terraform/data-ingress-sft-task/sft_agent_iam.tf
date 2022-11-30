@@ -50,8 +50,8 @@ data "aws_iam_policy_document" "sft_task_ni" {
     sid    = "niAttachmentPerission"
     effect = "Allow"
     actions = ["ecs:DescribeContainerInstances",
-      "ec2:AttachNetworkInterface",
-    "ec2:DescribeNetworkInterfaces"]
+              "ec2:AttachNetworkInterface",
+              "ec2:DescribeNetworkInterfaces"]
     resources = ["*"]
   }
 }
@@ -159,7 +159,6 @@ resource "aws_iam_role_policy_attachment" "data_ingress_server_ebs_cmk_instance_
 }
 
 data "aws_iam_policy_document" "sft_get_secret" {
-  statement {
     sid    = "GetTrendMicroSecret"
     effect = "Allow"
     actions = [
@@ -167,7 +166,6 @@ data "aws_iam_policy_document" "sft_get_secret" {
     ]
     resources = [var.trendmicro_secret_arn]
   }
-}
 
 resource "aws_iam_policy" "sft_get_secret" {
   name        = "GetTrendMicroSecretSFT"

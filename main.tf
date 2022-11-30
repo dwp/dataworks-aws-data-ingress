@@ -1,6 +1,7 @@
 module "data-ingress-cluster" {
     source                                  = "./terraform/data-ingress-cluster"
     common_repo_tags                        = local.common_repo_tags
+    account                                 = local.account[local.environment]
     private_ips                             = cidrhost(data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity[0].cidr_block, 14)
     subnet_id                               = data.terraform_remote_state.aws_sdx.outputs.subnet_sdx_connectivity.0.id
     asg_instance_count                      = local.asg_instance_count
