@@ -212,7 +212,7 @@ resource "aws_iam_policy" "data_ingress_ni" {
   name        = "DataIngressClusterni"
   description = "Allow data ingress cluster to log"
   policy      = data.aws_iam_policy_document.data_ingress_server_ni.json
-
+  lifecycle {ignore_changes = [tags]}
 }
 
 resource "aws_iam_policy" "data_ingress_cluster_monitoring_logging" {
