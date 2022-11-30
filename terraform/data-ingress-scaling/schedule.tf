@@ -23,9 +23,7 @@ resource "aws_autoscaling_schedule" "test_on" {
   scheduled_action_name  = "test_scaling_on"
   desired_capacity       = var.asg_instance_count.test_desired
   max_size               = var.asg_instance_count.test_max
-  recurrence             = format("%s %s", formatdate("mm hh DD MM", timeadd(timestamp(), "65m")), " *")
-  start_time             = timeadd(timestamp(), "3m")
-  end_time               = timeadd(timestamp(), "80m")
+  recurrence             = format("%s %s", formatdate("mm hh DD MM", timeadd(timestamp(), "63m")), " *")
   time_zone              = var.time_zone
   autoscaling_group_name = var.data_ingress_autoscaling_group_name
 }
@@ -35,9 +33,7 @@ resource "aws_autoscaling_schedule" "test_off" {
   scheduled_action_name  = "test_scaling_off"
   desired_capacity       = var.asg_instance_count.off
   max_size               = var.asg_instance_count.off
-  recurrence             = format("%s %s", formatdate("mm hh DD MM", timeadd(timestamp(), "80m")), " *")
+  recurrence             = format("%s %s", formatdate("mm hh DD MM", timeadd(timestamp(), "78m")), " *")
   time_zone              = var.time_zone
-  start_time             = timeadd(timestamp(), "4m")
-  end_time               = timeadd(timestamp(), "80m")
   autoscaling_group_name = var.data_ingress_autoscaling_group_name
 }
