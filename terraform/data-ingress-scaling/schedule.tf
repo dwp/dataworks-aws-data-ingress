@@ -4,7 +4,6 @@ resource "aws_autoscaling_schedule" "on" {
   max_size               = var.asg_instance_count.max[var.environment]
   min_size               = var.asg_instance_count.min[var.environment]
   recurrence             = "00 23 1 * *"
-  start_time             = timeadd(timestamp(), "6m")
   time_zone              = var.time_zone
   autoscaling_group_name = var.data_ingress_autoscaling_group_name
 }
@@ -16,7 +15,6 @@ resource "aws_autoscaling_schedule" "off" {
   min_size               = var.asg_instance_count.off
   recurrence             = "00 23 4 * *"
   time_zone              = var.time_zone
-  start_time             = timeadd(timestamp(), "8m")
   autoscaling_group_name = var.data_ingress_autoscaling_group_name
 }
 
