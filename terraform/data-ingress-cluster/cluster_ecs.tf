@@ -77,7 +77,7 @@ resource "aws_autoscaling_group" "data_ingress_server" {
   protect_from_scale_in = false
   default_cooldown      = 30
   force_delete          = true
-  vpc_zone_identifier   = contains(["development","qa"], var.environment) ? [var.sdx_subnet_connectivity_zero, var.sdx_subnet_connectivity_zero] : [var.sdx_subnet_connectivity_zero]
+  vpc_zone_identifier   = contains(["development","qa"], var.environment) ? [var.sdx_subnet_connectivity_zero, var.sdx_subnet_connectivity_one] : [var.sdx_subnet_connectivity_zero]
   # set mono subnet in higher envs to ensure the instance is started in the required az when capacity is equal to 1
   launch_template {
     id      = aws_launch_template.data_ingress_server.id
