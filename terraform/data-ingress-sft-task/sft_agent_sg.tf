@@ -78,7 +78,7 @@ resource "aws_security_group_rule" "service_egress" {
   security_group_id        = aws_security_group.sft_agent_service.id
 }
 
-resource "aws_security_group_rule" "traffic_to_sft_sg_secondary_ports" {
+resource "aws_security_group_rule" "egress_sft_sg_secondary_ports" {
   type              = "egress"
   from_port         = 8080
   to_port           = 8081
@@ -87,7 +87,7 @@ resource "aws_security_group_rule" "traffic_to_sft_sg_secondary_ports" {
   security_group_id =  aws_security_group.sft_agent_service.id
 }
 
-resource "aws_security_group_rule" "traffic_from_sft_sg_secondary_ports" {
+resource "aws_security_group_rule" "ingress_sft_sg_secondary_ports" {
   type              = "ingress"
   from_port         = 8080
   to_port           = 8081
@@ -96,7 +96,7 @@ resource "aws_security_group_rule" "traffic_from_sft_sg_secondary_ports" {
   security_group_id = aws_security_group.sft_agent_service.id
 }
 
-resource "aws_security_group_rule" "traffic_to_sft_sg_sft_port" {
+resource "aws_security_group_rule" "egress_sft_port" {
   type              = "egress"
   from_port         = var.sft_port
   to_port           = var.sft_port
@@ -105,7 +105,7 @@ resource "aws_security_group_rule" "traffic_to_sft_sg_sft_port" {
   security_group_id = aws_security_group.sft_agent_service.id
 }
 
-resource "aws_security_group_rule" "traffic_from_sft_sg_sft_port" {
+resource "aws_security_group_rule" "ingress_sft_port" {
   type              = "ingress"
   from_port         = var.sft_port
   to_port           = var.sft_port
