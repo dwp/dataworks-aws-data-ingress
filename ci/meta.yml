@@ -27,7 +27,7 @@
                 source ../previous_success/exit-if-succeeded.sh
               fi
               export TF_VAR_ecs_hardened_ami_id=$(cat ../dw-al2-ecs-ami/id)
-              export TF_VAR_test_trend_micro_on=notcitemp
+              export TF_VAR_test_trend_micro_on=ci
               cp ../terraform-bootstrap/terraform.tf .
               terraform workspace show
               terraform init -upgrade
