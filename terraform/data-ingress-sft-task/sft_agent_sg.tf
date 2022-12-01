@@ -78,39 +78,39 @@ resource "aws_security_group_rule" "service_egress" {
   security_group_id        = aws_security_group.sft_agent_service.id
 }
 
-//
-//resource "aws_security_group_rule" "exameple" {
-//  type              = "egress"
-//  from_port         = 8080
-//  to_port           = 8081
-//  protocol          = "tcp"
-//  cidr_blocks       = ["0.0.0.0/0"]
-//  security_group_id = aws_security_group.sft_agent_service.id
-//}
-//
-//resource "aws_security_group_rule" "examssspeled" {
-//  type              = "ingress"
-//  from_port         = 8080
-//  to_port           = 8081
-//  protocol          = "tcp"
-//  cidr_blocks       = ["0.0.0.0/0"]
-//  security_group_id = aws_security_group.sft_agent_service.id
-//}
-//
-//resource "aws_security_group_rule" "exaddmeple" {
-//  type              = "egress"
-//  from_port         = var.sft_port
-//  to_port           = var.sft_port
-//  protocol          = "tcp"
-//  cidr_blocks       = ["0.0.0.0/0"]
-//  security_group_id = aws_security_group.sft_agent_service.id
-//}
-//
-//resource "aws_security_group_rule" "exaddddmpeled" {
-//  type              = "ingress"
-//  from_port         = var.sft_port
-//  to_port           = var.sft_port
-//  protocol          = "tcp"
-//  cidr_blocks       = ["0.0.0.0/0"]
-//  security_group_id = aws_security_group.sft_agent_service.id
-//}
+
+resource "aws_security_group_rule" "traffic_to_sft_sg_secondary_ports" {
+  type              = "egress"
+  from_port         = 8080
+  to_port           = 8081
+  protocol          = "tcp"
+  source_security_group_id = var.data_ingress_sg_id
+  security_group_id =  aws_security_group.sft_agent_service.id
+}
+
+resource "aws_security_group_rule" "traffic_from_sft_sg_secondary_ports" {
+  type              = "ingress"
+  from_port         = 8080
+  to_port           = 8081
+  protocol          = "tcp"
+  source_security_group_id = aws_security_group.sft_agent_service.id
+  security_group_id = var.data_ingress_sg_id
+}
+
+resource "aws_security_group_rule" "traffic_to_sft_sg_sft_port" {
+  type              = "egress"
+  from_port         = var.sft_port
+  to_port           = var.sft_port
+  protocol          = "tcp"
+  source_security_group_id = var.data_ingress_sg_id
+  security_group_id = aws_security_group.sft_agent_service.id
+}
+
+resource "aws_security_group_rule" "traffic_from_sft_sg_sft_port" {
+  type              = "ingress"
+  from_port         = var.sft_port
+  to_port           = var.sft_port
+  protocol          = "tcp"
+  source_security_group_id = aws_security_group.sft_agent_service.id
+  security_group_id = var.data_ingress_sg_id
+}

@@ -157,7 +157,7 @@ data "template_file" "sft_agent_receiver_definition" {
       },
       {
         name : "TEST_TREND_MICRO_ENV",
-        value : var.environment
+        value : "temp"
       },
       {
         name : "TEST_TREND_MICRO_ON",

@@ -21,3 +21,7 @@ output "ecs_cluster_id" {
 output "trendmicro_secret_arn" {
   value = data.aws_secretsmanager_secret.trendmicro.arn
 }
+
+output "data_ingress_sg_id" {
+  value = aws_security_group.data_ingress_server.id
+}

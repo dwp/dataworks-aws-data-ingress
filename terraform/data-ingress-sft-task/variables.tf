@@ -6,6 +6,7 @@ variable "region" {
 }
 variable "data_ingress_log_group_name" {}
 variable "sft_port" {}
+variable "data_ingress_sg_id" {}
 variable "account" {}
 variable "management_account" {}
 variable "ecr_repository_name" {
