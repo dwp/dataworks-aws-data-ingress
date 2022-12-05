@@ -24,7 +24,6 @@ module "data-ingress-cluster" {
     companies_s3_prefix                     = local.companies_s3_prefix
     filename_prefix                         = local.filename_prefix
     config_bucket_key_arn                   = data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
-    published_bucket_key_arn                = data.terraform_remote_state.common.outputs.published_bucket_cmk.arn
     stage_bucket_key_arn                    = data.terraform_remote_state.common.outputs.stage_data_ingress_bucket_cmk.arn
     cert_bucket = data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket
     ecs_hardened_ami_id = var.ecs_hardened_ami_id

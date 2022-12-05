@@ -16,7 +16,6 @@ variable "monitoring_topic_arn" {}
 variable "sft_port" {}
 variable "cert_bucket" {}
 variable "config_bucket_key_arn" {}
-variable "published_bucket_key_arn" {}
 variable "sdx_prefix_list_id_s3" {}
 variable "security_group_rules" {}
 variable "name" {}

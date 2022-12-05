@@ -120,7 +120,7 @@ data "aws_iam_policy_document" "kms_key_use" {
       "kms:GenerateDataKey",
       "kms:DescribeKey"
     ]
-    resources = [var.config_bucket_key_arn, var.published_bucket_key_arn]
+    resources = [var.config_bucket_key_arn]
 
   }
 
@@ -162,12 +162,6 @@ data "aws_iam_policy_document" "data_ingress_server_ni" {
     resources = [
       "*"
     ]
-  }
-
-  statement {
-    sid       = "PublishMessageTrendMicroCluster"
-    actions   = ["sns:*"]
-    resources = ["*"]
   }
 
   statement {

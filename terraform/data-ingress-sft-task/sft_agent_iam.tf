@@ -95,7 +95,7 @@ data "aws_iam_policy_document" "data_ingress_server_task_assume_role" {
   }
 }
 
-data "aws_iam_policy_document" "data_ingress_server_task" {
+data "aws_iam_policy_document" "data_ingress_server_task_certs" {
 
   statement {
     sid    = "CertificateExportDI"
@@ -106,30 +106,7 @@ data "aws_iam_policy_document" "data_ingress_server_task" {
     ]
     resources = [aws_acm_certificate.data_ingress_server.arn]
   }
-
-  statement {
-    sid       = "PublishMessageTrendMicro"
-    actions   = ["sns:*"]
-    resources = ["*"]
-  }
-
-    statement {
-    sid       = "PublishedBucketKMSDecryptDI"
-    actions   = ["kms:*"]
-    resources = ["*"]
-
-    //    resources = [data.terraform_remote_state.common.outputs.published_bucket_cmk.arn, data.terraform_remote_state.common.outputs.stage_data_ingress_bucket_cmk.arn]
-  }
-
-  statement {
-    sid = "PublishedBucketReadDIlb"
-    actions = [
-      "s3:*"
-    ]
-    //    resources = [data.terraform_remote_state.common.outputs.data_ingress_stage_bucket.arn, "${data.terraform_remote_state.common.outputs.data_ingress_stage_bucket.arn}/*"]
-    resources = ["*"]
-  }
-  statement {
+   statement {
     sid       = "DataIngressGetCAMgmtCertS3"
     effect    = "Allow"
     actions   = ["s3:GetObject"]
@@ -137,15 +114,15 @@ data "aws_iam_policy_document" "data_ingress_server_task" {
   }
 }
 
-resource "aws_iam_policy" "data_ingress_server_task" {
+resource "aws_iam_policy" "data_ingress_server_task_certs" {
   name        = "DataIngressServer"
   description = "Custom policy for data ingress server"
-  policy      = data.aws_iam_policy_document.data_ingress_server_task.json
+  policy      = data.aws_iam_policy_document.data_ingress_server_task_certs.json
 }
 
-resource "aws_iam_role_policy_attachment" "data_ingress_server" {
+resource "aws_iam_role_policy_attachment" "data_ingress_server_task_certs" {
   role       = aws_iam_role.data_ingress_server_task.name
-  policy_arn = aws_iam_policy.data_ingress_server_task.arn
+  policy_arn = aws_iam_policy.data_ingress_server_task_certs.arn
 }
 
 resource "aws_iam_role_policy_attachment" "data_ingress_server_export_certificate_bucket_read" {
@@ -156,6 +133,51 @@ resource "aws_iam_role_policy_attachment" "data_ingress_server_export_certificat
 resource "aws_iam_role_policy_attachment" "data_ingress_server_ebs_cmk_instance_encrypt_decrypt" {
   role       = aws_iam_role.data_ingress_server_task.name
   policy_arn = "arn:aws:iam::${var.account[var.environment]}:policy/EBSCMKInstanceEncryptDecrypt"
+}
+
+data "aws_iam_policy_document" "stage_bucket_all" {
+  statement {
+  sid       = "BucketsKMSDecryptDI"
+    actions = [
+      "kms:Encrypt",
+      "kms:Decrypt",
+      "kms:ReEncrypt*",
+      "kms:GenerateDataKey*",
+      "kms:DescribeKey"
+    ]
+    resources = [var.stage_bucket_kms_key_arn]
+  }
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "s3:GetBucketLocation",
+      "s3:ListBucket"
+    ]
+    resources = [
+      var.stage_bucket.arn
+    ]
+  }
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:*Object*",
+    ]
+    resources = [
+      "${var.stage_bucket.arn}/*",
+    ]
+  }
+}
+
+resource "aws_iam_policy" "stage_bucket_all" {
+  name        = "stageBucketAlltask"
+  description = "Allow task to read and write to data ingress bucket and use kms key"
+  policy      = data.aws_iam_policy_document.stage_bucket_all.json
+}
+
+resource "aws_iam_role_policy_attachment" "stage_bucket_all" {
+  role       = aws_iam_role.data_ingress_server_task.name
+  policy_arn = aws_iam_policy.stage_bucket_all.arn
 }
 
 data "aws_iam_policy_document" "sft_get_secret" {
