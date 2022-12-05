@@ -115,7 +115,7 @@ data "aws_iam_policy_document" "data_ingress_server_task_certs" {
 }
 
 resource "aws_iam_policy" "data_ingress_server_task_certs" {
-  name        = "DataIngressServer"
+  name        = "DataIngressServerCerts"
   description = "Custom policy for data ingress server"
   policy      = data.aws_iam_policy_document.data_ingress_server_task_certs.json
 }
