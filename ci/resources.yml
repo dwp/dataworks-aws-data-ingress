@@ -10,7 +10,7 @@ resources:
   - name: dataworks-aws-data-ingress
     type: git
     source:
-      branch: master
+      branch: fix-e2e
       uri: https://github.com/dwp/dataworks-aws-data-ingress.git
       access_token: ((dataworks-secrets.concourse_github_pat))
     webhook_token: ((dataworks.concourse_github_webhook_token))
@@ -55,7 +55,7 @@ resources:
   - name: dataworks-behavioural-framework
     type: git
     source:
-      branch: master
+      branch: test-scaling
       uri: https://github.com/dwp/dataworks-behavioural-framework.git
       access_token: ((dataworks-secrets.concourse_github_pat))
     webhook_token: ((dataworks.concourse_github_webhook_token))

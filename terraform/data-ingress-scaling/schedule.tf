@@ -1,4 +1,5 @@
 resource "aws_autoscaling_schedule" "on" {
+  count                  = contains(["preprod", "production"], var.environment) ? 1 : 0
   scheduled_action_name  = "on"
   desired_capacity       = var.asg_instance_count.desired[var.environment]
   max_size               = var.asg_instance_count.max[var.environment]
@@ -9,6 +10,7 @@ resource "aws_autoscaling_schedule" "on" {
 }
 
 resource "aws_autoscaling_schedule" "off" {
+  count                  = contains(["preprod", "production"], var.environment) ? 1 : 0
   scheduled_action_name  = "off"
   desired_capacity       = var.asg_instance_count.off
   max_size               = var.asg_instance_count.off
