@@ -34,5 +34,32 @@ Sft agent task runs the [ingress sft agent image](https://github.com/dwp/datawor
 
 1. [data-ingress-cluster](https://github.com/dwp/dataworks-aws-data-ingress/tree/master/terraform/data-ingress-cluster): contains resources needed to create ECS cluster including launch template, autoscaling group and monitoring.
 1. [data-ingress-sft-task](https://github.com/dwp/dataworks-aws-data-ingress/tree/master/terraform/data-ingress-sft-task): contains SFT ingress tasks and services.
-1. [data-ingress-scaling](https://github.com/dwp/dataworks-aws-data-ingress/tree/master/terraform/data-ingress-scaling): contains autoscaling schedules, two monthly actions and two time-based actions used for testing (feature name: [@data-ingress](https://github.com/dwp/dataworks-behavioural-framework/blob/master/src/features/data-ingress.feature)).
+1. [data-ingress-scaling](https://github.com/dwp/dataworks-aws-data-ingress/tree/master/terraform/data-ingress-scaling): contains autoscaling schedules, 
+
+## Tests
+
+Feature name: [@data-ingress](https://github.com/dwp/dataworks-behavioural-framework/blob/master/src/features/data-ingress.feature).
+
+### Scaling tests
+The scaling of the autoscaling group is carried out by using `aws_autoscaling_schedule` terraform resources.
+
+Two monthly actions, scale up to 1 and scale down to 0, are expected in the production environment. The recurrence of these is `00 23 1 * *` and `00 23 4 * *` respectively.
+
+Additionally, two time-based actions are used for testing. The recurrence of these schedules is `current time + 5m` for upscaling to 2 (one more instance is needed in lower envs for hosting the SFT sender that is only used for testing) and `current time + 18m` for downscaling to 0.
+
+
+### Trend micro test
+
+When the following conditions are true
+```
+ENVIRONMENT == 'development'
+TESTING_ON == 'ci'
+TYPE == 'receiver'
+```
+the Trend Micro test runs and an Eicar test file is created, detected and removed and a notification is sent to Trend Micro dashboard.
+
+### SFT test
+
+The sender agent will create a file in the mount point directory that is then sent to the receiver endpoint that renames it and puts it on S3. Example configuration for the receiver including testing routs are defined in the [e2e congif](https://github.com/dwp/dataworks-aws-data-ingress/blob/master/terraform/data-ingress-sft-task/sft_config/agent-application-config-receiver-e2e.tpl).
+
 
