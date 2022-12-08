@@ -156,12 +156,12 @@ data "template_file" "sft_agent_receiver_definition" {
         value = var.dks_fqdn
       },
       {
-        name : "TEST_TREND_MICRO_ENV",
+        name : "ENVIRONMENT",
         value : var.environment
       },
       {
-        name : "TEST_TREND_MICRO_ON",
-        value : var.test_trend_micro_on
+        name : "TESTING_ON",
+        value : var.testing_on
       },
       {
         name : "TREND_MICRO_SECRET_NAME",

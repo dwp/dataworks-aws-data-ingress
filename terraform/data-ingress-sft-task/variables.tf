@@ -25,7 +25,7 @@ variable "cert_bucket" {}
 variable "environment" {}
 variable "dks_fqdn" {}
 variable "env_prefix" {}
-variable "test_trend_micro_on" {
+variable "testing_on" {
   type    = string
   default = ""
 }

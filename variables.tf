@@ -9,7 +9,7 @@ variable "region" {
   default = "eu-west-2"
 }
 
-variable "test_trend_micro_on" {
+variable "testing_on" {
   type    = string
   default = ""
 }
