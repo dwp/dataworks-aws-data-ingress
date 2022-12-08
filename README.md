@@ -1,11 +1,10 @@
-# dataworks-aws-data-ingress
+# DataWorks AWS Data Ingress
 
-## A repo for Dataworks AWS Data ingress service infrastructure
+## A repository for Data Ingress ECS cluster infrastructure
 
-This repo contains Makefile and base terraform folders and jinja2 files to fit the standard pattern.
-This repo is a base to create new Terraform repos, renaming the template files and adding the githooks submodule, making the repo ready for use.
+This repository contains Makefile and base terraform folders and jinja2 files to fit the standard pattern.
 
-Running aviator will create the pipeline required on the AWS-Concourse instance, in order pass a mandatory CI ran status check.  this will likely require you to login to Concourse, if you haven't already.
+Running `aviator` will create the pipeline required on the AWS-Concourse instance, in order pass a mandatory CI ran status check.  this will likely require you to login to Concourse, if you haven't already.
 
 After cloning this repo, please generate `terraform.tf` and `terraform.tfvars` files:  
 `make bootstrap`
@@ -33,7 +32,7 @@ Sft agent task runs the [ingress sft agent image](https://github.com/dwp/datawor
 
 ## Terraform modules
 
-data-ingress-cluster: contains resources needed to create ECS cluster including launch template, autoscaling group and monitoring.
-data-ingress-sft-task: contains SFT ingress tasks and services.
-data-ingress-scaling: contains autoscaling schedules, two monthly actions and two time-based actions used for testing (feature name: @data-ingress).
+1. [data-ingress-cluster](https://github.com/dwp/dataworks-aws-data-ingress/tree/master/terraform/data-ingress-cluster): contains resources needed to create ECS cluster including launch template, autoscaling group and monitoring.
+1. [data-ingress-sft-task](https://github.com/dwp/dataworks-aws-data-ingress/tree/master/terraform/data-ingress-sft-task): contains SFT ingress tasks and services.
+1. [data-ingress-scaling](https://github.com/dwp/dataworks-aws-data-ingress/tree/master/terraform/data-ingress-scaling): contains autoscaling schedules, two monthly actions and two time-based actions used for testing (feature name: [@data-ingress](https://github.com/dwp/dataworks-behavioural-framework/blob/master/src/features/data-ingress.feature)).
 
