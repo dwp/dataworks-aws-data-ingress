@@ -45,7 +45,7 @@ The scaling of the autoscaling group is carried out by using `aws_autoscaling_sc
 
 Two monthly actions, scale up to 1 and scale down to 0, are expected in the production environment. The recurrence of these is `00 23 1 * *` and `00 23 4 * *` respectively.
 
-Additionally, two time-based actions are used for testing. The recurrence of these schedules is `current time + 5m` for upscaling to 2 (one more instance is needed in lower envs for hosting the SFT sender that is only used for testing) and `current time + 18m` for downscaling to 0.
+Additionally, two time-based actions are triggered whenever a Pull request is merged. The recurrence of these schedules is `current time + 5m` for upscaling to 2 (1+1 instance for hosting the SFT sender that is only used for testing) and `current time + 18m` for downscaling to 0. After the test has completed, the schedules are removed.
 
 
 ### Trend micro test
