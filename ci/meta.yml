@@ -31,7 +31,7 @@
               cp ../terraform-bootstrap/terraform.tf .
               terraform workspace show
               terraform init -upgrade
-              if [ $TF_WORKSPACE = "default" ] | [ $TF_WORKSPACE = "development" ] | [ $TF_WORKSPACE = "qa" ]; then
+              if [ "${TF_WORKSPACE}" == "default" ] || [ "${TF_WORKSPACE}" == "development" ] || [ "${TF_WORKSPACE}" == "qa" ]; then
                 terraform plan -target=module.data-ingress-cluster $DETAILED_EXITCODE
                 terraform plan -target=module.data-ingress-sft-task $DETAILED_EXITCODE
               else
