@@ -31,6 +31,7 @@ variable "environment" {}
 variable "sdx_subnet_connectivity_zero" {}
 variable "sdx_subnet_connectivity_one" {}
 variable "data_ingress_server_ec2_instance_type" {}
+variable "time_zone" {}
 variable "ecs_hardened_ami_id" {
   default = ""
 }

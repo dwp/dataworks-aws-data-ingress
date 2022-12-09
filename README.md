@@ -24,6 +24,8 @@ In addition, you may want to do the following:
 ## ECS Cluster 
 
 Data Ingress ECS cluster sits in the sdx VPC.
+The capacity provider is data-ingress-ag, for which the is carried out by using `aws_autoscaling_schedule` terraform resources.
+Two monthly actions, scale up to 1 and scale down to 0, are expected in the production environment. The recurrence of these is `00 23 1 * *` and `00 23 4 * *` respectively.
 
 Trend Micro deep security agent is installed via user data on the EC2 instances. Installation details such as tenant id and token are stored in dataworks-secrets.
 
@@ -32,20 +34,17 @@ Sft agent task runs the [ingress sft agent image](https://github.com/dwp/datawor
 
 ## Terraform modules
 
-1. [data-ingress-cluster](https://github.com/dwp/dataworks-aws-data-ingress/tree/master/terraform/data-ingress-cluster): contains resources needed to create ECS cluster including launch template, autoscaling group and monitoring.
+1. [data-ingress-cluster](https://github.com/dwp/dataworks-aws-data-ingress/tree/master/terraform/data-ingress-cluster): contains resources needed to create ECS cluster including launch template, autoscaling group, autoscaling schedules and monitoring.
 1. [data-ingress-sft-task](https://github.com/dwp/dataworks-aws-data-ingress/tree/master/terraform/data-ingress-sft-task): contains SFT ingress tasks and services.
-1. [data-ingress-scaling](https://github.com/dwp/dataworks-aws-data-ingress/tree/master/terraform/data-ingress-scaling): contains autoscaling schedules, 
+1. [data-ingress-test-scaling](https://github.com/dwp/dataworks-aws-data-ingress/tree/master/terraform/data-ingress-test-scaling): contains autoscaling schedules that are only active in dev and qa for testing purposes. 
 
 ## Tests
 
-Feature name: [@data-ingress](https://github.com/dwp/dataworks-behavioural-framework/blob/master/src/features/data-ingress.feature).
+Feature name: [@data-ingress](https://github.com/dwp/dataworks-behavioural-framework/blob/master/src/features/data-ingress.feature)
 
 ### Scaling tests
-The scaling of the autoscaling group is carried out by using `aws_autoscaling_schedule` terraform resources.
 
-Two monthly actions, scale up to 1 and scale down to 0, are expected in the production environment. The recurrence of these is `00 23 1 * *` and `00 23 4 * *` respectively.
-
-Additionally, two time-based actions are triggered whenever a Pull request is merged. The recurrence of these schedules is `current time + 5m` for upscaling to 2 (1+1 instance for hosting the SFT sender that is only used for testing) and `current time + 18m` for downscaling to 0. After the test has completed, the schedules are removed.
+Two time-based actions are triggered whenever a Pull request is merged. The recurrence of these schedules is `current time + 5m` for upscaling to 2 (1+1 instance for hosting the SFT sender that is only used for testing) and `current time + 18m` for downscaling to 0. After the test has completed, the schedules are removed.
 
 
 ### Trend micro test

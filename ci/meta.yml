@@ -31,8 +31,12 @@
               cp ../terraform-bootstrap/terraform.tf .
               terraform workspace show
               terraform init -upgrade
-              terraform plan -target=module.data-ingress-cluster $DETAILED_EXITCODE
-              terraform plan -target=module.data-ingress-sft-task $DETAILED_EXITCODE
+              if [ $TF_WORKSPACE = "default" ] | [ $TF_WORKSPACE = "development" ] | [ $TF_WORKSPACE = "qa" ]; then
+                terraform plan -target=module.data-ingress-cluster $DETAILED_EXITCODE
+                terraform plan -target=module.data-ingress-sft-task $DETAILED_EXITCODE
+              else
+                terraform plan $DETAILED_EXITCODE
+              fi
 
           dir: dataworks-aws-data-ingress
         inputs:

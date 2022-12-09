@@ -25,15 +25,17 @@ module "data-ingress-cluster" {
     filename_prefix                         = local.filename_prefix
     config_bucket_key_arn                   = data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
     stage_bucket_key_arn                    = data.terraform_remote_state.common.outputs.stage_data_ingress_bucket_cmk.arn
-    cert_bucket = data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket
-    ecs_hardened_ami_id = var.ecs_hardened_ami_id
+    cert_bucket                             = data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket
+    ecs_hardened_ami_id                     = var.ecs_hardened_ami_id
+    time_zone                               = local.time_zone
 }
 
-module "data-ingress-scaling" {
-    source                                  = "./terraform/data-ingress-scaling"
+module "data-ingress-test-scaling" {
+    source                                  = "./terraform/data-ingress-test-scaling"
     asg_instance_count                      = local.asg_instance_count
     environment                             = local.environment
-    data_ingress_autoscaling_group_name          = module.data-ingress-cluster.data_ingress_autoscaling_group_name
+    data_ingress_autoscaling_group_name     = module.data-ingress-cluster.data_ingress_autoscaling_group_name
+    time_zone                               = local.time_zone
 }
 
 module "data-ingress-sft-task" {
