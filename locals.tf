@@ -12,8 +12,6 @@ locals {
   }
 
   time_zone                     = "Europe/London"
-
-  today_date                    = formatdate("YYYY-MM-DD hh:mm:ss", timestamp())
   autoscaling_group_name = "data-ingress-ag"
   stage_bucket           = data.terraform_remote_state.common.outputs.data_ingress_stage_bucket
   companies_s3_prefix    = "data-ingress/companies"
