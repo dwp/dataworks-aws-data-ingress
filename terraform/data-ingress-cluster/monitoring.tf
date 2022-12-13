@@ -23,19 +23,23 @@ resource "aws_cloudwatch_metric_alarm" "sft_stopped" {
   threshold                 = "1"
   alarm_description         = "This metric monitors container termination"
   insufficient_data_actions = []
-  alarm_actions             = [local.monitoring_topic_arn]
-  lifecycle {ignore_changes = [tags]}
+  alarm_actions             = [var.monitoring_topic_arn]
   dimensions = {
     RuleName = aws_cloudwatch_event_rule.sft_stopped.name
   }
   tags = merge(
-    local.common_repo_tags,
+    var.common_repo_tags,
     {
       Name              = "ch_sft_receiver_container_stopped",
       notification_type = "Information"
       severity          = "Critical"
     },
   )
+  lifecycle {
+    ignore_changes = [
+      tags
+    ]
+  }
 }
 
 resource "aws_cloudwatch_event_rule" "sft_running" {
@@ -63,19 +67,23 @@ resource "aws_cloudwatch_metric_alarm" "sft_running" {
   threshold                 = "1"
   alarm_description         = "This metric monitors when the container starts"
   insufficient_data_actions = []
-  alarm_actions             = [local.monitoring_topic_arn]
-  lifecycle {ignore_changes = [tags]}
+  alarm_actions             = [var.monitoring_topic_arn]
   dimensions = {
     RuleName = aws_cloudwatch_event_rule.sft_running.name
   }
   tags = merge(
-    local.common_repo_tags,
+    var.common_repo_tags,
     {
       Name              = "ch_sft_receiver_container_running",
       notification_type = "Information"
       severity          = "Critical"
     },
   )
+  lifecycle {
+    ignore_changes = [
+      tags
+    ]
+  }
 }
 
 resource "aws_cloudwatch_event_rule" "file_landed" {
@@ -87,16 +95,16 @@ resource "aws_cloudwatch_event_rule" "file_landed" {
   "detail-type": ["Object Created"],
   "detail": {
     "bucket": {
-      "name":["${local.stage_bucket.id}"]},
+      "name":["${var.stage_bucket.id}"]},
     "object": {
-       "key": [{"prefix":"${local.companies_s3_prefix}/${local.filename_prefix}-"}]}
+       "key": [{"prefix":"${var.companies_s3_prefix}/${var.filename_prefix}-"}]}
   }
 }
 EOF
 }
 
 resource "aws_s3_bucket_notification" "bucket_notification" {
-  bucket      = local.stage_bucket.id
+  bucket      = var.stage_bucket.id
   eventbridge = true
 }
 
@@ -111,17 +119,21 @@ resource "aws_cloudwatch_metric_alarm" "file_landed" {
   threshold                 = "1"
   alarm_description         = "Monitoring stage bucket"
   insufficient_data_actions = []
-  alarm_actions             = [local.monitoring_topic_arn]
-  lifecycle {ignore_changes = [tags]}
+  alarm_actions             = [var.monitoring_topic_arn]
   dimensions = {
     RuleName = aws_cloudwatch_event_rule.file_landed.name
   }
   tags = merge(
-    local.common_repo_tags,
+    var.common_repo_tags,
     {
       Name              = "ch_completed_all_steps",
       notification_type = "Information",
       severity          = "Critical"
     },
   )
+  lifecycle {
+    ignore_changes = [
+      tags
+    ]
+  }
 }

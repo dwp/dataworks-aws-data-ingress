@@ -24,4 +24,4 @@ jobs:
       params:
         AWS_ROLE_ARN: arn:aws:iam::((aws_account.production)):role/ci
         CLUSTER: data-ingress
-        SERVICE: data-ingress
+        SERVICE: sft_agent_receiver

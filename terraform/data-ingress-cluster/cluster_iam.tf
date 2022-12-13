@@ -1,13 +1,13 @@
 resource "aws_iam_role" "data_ingress_server" {
   name               = "DataingressCluster"
   assume_role_policy = data.aws_iam_policy_document.data_ingress_server_assume_role.json
-  lifecycle {ignore_changes = [tags]}
   tags = merge(
-    local.common_repo_tags,
+    var.common_repo_tags,
     {
       Name = "data_ingress_server_role"
     }
   )
+  lifecycle {ignore_changes = [tags]}
 }
 
 resource "aws_iam_instance_profile" "data_ingress_server" {
@@ -39,9 +39,6 @@ resource "aws_iam_policy" "data_ingress_server_tagging" {
   name        = "DataIngressEC2TaggingItself"
   description = "Allow Data Ingress EC2s modify their tags"
   policy      = data.aws_iam_policy_document.data_ingress_server_tagging_policy.json
-  lifecycle {
-    ignore_changes = [tags]
-  }
 }
 
 data "aws_iam_policy_document" "data_ingress_server_tagging_policy" {
@@ -123,8 +120,8 @@ data "aws_iam_policy_document" "kms_key_use" {
       "kms:GenerateDataKey",
       "kms:DescribeKey"
     ]
-    resources = [data.terraform_remote_state.common.outputs.config_bucket_cmk.arn,
-    data.terraform_remote_state.common.outputs.published_bucket_cmk.arn]
+    resources = [var.config_bucket_key_arn]
+
   }
 
   statement {
@@ -132,9 +129,7 @@ data "aws_iam_policy_document" "kms_key_use" {
     actions = [
       "kms:*"
     ]
-    resources = ["*"]
-
-    //    resources = [data.terraform_remote_state.common.outputs.published_bucket_cmk.arn, data.terraform_remote_state.common.outputs.stage_data_ingress_bucket_cmk.arn]
+    resources = [var.stage_bucket_key_arn]
   }
 
 }
@@ -148,9 +143,6 @@ resource "aws_iam_policy" "kms_key_use" {
   name        = "DataIngressKMSPB"
   description = "Allow data ingress cluster to log"
   policy      = data.aws_iam_policy_document.kms_key_use.json
-  lifecycle {
-    ignore_changes = [tags]
-  }
 }
 
 resource "aws_iam_role_policy_attachment" "data_ingress_cluster_monitoring_logging" {
@@ -173,19 +165,13 @@ data "aws_iam_policy_document" "data_ingress_server_ni" {
   }
 
   statement {
-    sid       = "PublishMessageTrendMicroCluster"
-    actions   = ["sns:*"]
-    resources = ["*"]
-  }
-
-  statement {
     sid    = "CertificateExportDI"
     effect = "Allow"
     actions = [
       "acm:ExportCertificate",
       "acm:GetCertificate",
     ]
-    resources = [aws_acm_certificate.data_ingress_server.arn]
+    resources = [var.acm_cert_arn]
   }
   statement {
 
@@ -196,14 +182,13 @@ data "aws_iam_policy_document" "data_ingress_server_ni" {
       "ec2:DescribeNetworkInterfaces",
       "ec2:TerminateInstances"
     ]
-    //    condition {
-    //      test = "ForAnyValue:StringEquals"
-    //      variable = "ec2:ResourceTag/Owner"
-    //      values = [local.name]
-    //    }
-    resources = [
-      "*"
-    ]
+
+    condition {
+      test = "ForAnyValue:StringEquals"
+      variable = "ec2:ResourceTag/Owner"
+      values = [var.name]
+    }
+    resources = ["arn:aws:ec2:${var.region}:${var.account}:network-interface/*"]
   }
 
 }
@@ -222,14 +207,12 @@ resource "aws_iam_policy" "data_ingress_ni" {
   description = "Allow data ingress cluster to log"
   policy      = data.aws_iam_policy_document.data_ingress_server_ni.json
   lifecycle {ignore_changes = [tags]}
-
 }
 
 resource "aws_iam_policy" "data_ingress_cluster_monitoring_logging" {
   name        = "DataIngressClusterLoggingPolicy"
   description = "Allow data ingress cluster to log"
   policy      = data.aws_iam_policy_document.data_ingress_cluster_monitoring_logging.json
-  lifecycle {ignore_changes = [tags]}
 
 }
 
@@ -246,7 +229,7 @@ data "aws_iam_policy_document" "data_ingress_get_secret" {
     sid       = "DataIngressGetCAMgmtCertS3"
     effect    = "Allow"
     actions   = ["s3:GetObject"]
-    resources = ["${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.arn}/*"]
+    resources = ["${var.cert_bucket.arn}/*"]
   }
 }
 
@@ -254,7 +237,6 @@ resource "aws_iam_policy" "data_ingress_get_secret" {
   name        = "DataIngressGetSecret"
   description = "Allow data ingress instances to get secret"
   policy      = data.aws_iam_policy_document.data_ingress_get_secret.json
-  lifecycle {ignore_changes = [tags]}
 }
 
 resource "aws_iam_role_policy_attachment" "data_ingress_get_secret" {
@@ -265,13 +247,25 @@ resource "aws_iam_role_policy_attachment" "data_ingress_get_secret" {
 data "aws_iam_policy_document" "stage_bucket_all" {
 
   statement {
-    sid = "StageBucketS3All"
-    actions = [
-      "s3:*"
-    ]
-    //    resources = [data.terraform_remote_state.common.outputs.data_ingress_stage_bucket.arn, "${data.terraform_remote_state.common.outputs.data_ingress_stage_bucket.arn}/*"]
-    resources = ["*"]
+    effect = "Allow"
 
+    actions = [
+      "s3:GetBucketLocation",
+      "s3:ListBucket"
+    ]
+    resources = [
+      var.stage_bucket.arn
+    ]
+  }
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:*Object*",
+    ]
+    resources = [
+      "${var.stage_bucket.arn}/e2e/*",
+      "${var.stage_bucket.arn}/data-ingress/*"
+    ]
   }
 }
 
@@ -279,7 +273,6 @@ resource "aws_iam_policy" "stage_bucket_all" {
   name        = "stageBucketAll"
   description = "Allow data ingress instances to read and write to test bucket"
   policy      = data.aws_iam_policy_document.stage_bucket_all.json
-  lifecycle {ignore_changes = [tags]}
 }
 
 resource "aws_iam_role_policy_attachment" "stage_bucket_all" {

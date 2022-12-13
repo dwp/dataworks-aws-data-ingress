@@ -7,32 +7,32 @@ data "aws_iam_policy_document" "sft_agent_task" {
       "ecr:GetDownloadUrlForLayer",
       "ecr:BatchGetImage",
     ]
-    resources = ["arn:aws:ecr:${var.region}:${local.account[local.management_account[local.environment]]}:repository/${local.ecr_repository_name}"]
+    resources = ["arn:aws:ecr:${var.region}:${var.account[var.management_account[var.environment]]}:repository/${var.ecr_repository_name}"]
   }
 
   statement {
     sid       = "AllowKMSDecryptdataIngress"
     actions   = ["kms:Decrypt"]
-    resources = [data.terraform_remote_state.common.outputs.config_bucket_cmk.arn]
+    resources = [var.config_bucket_kms_key_arn]
   }
 
   statement {
     sid     = "PullSFTAgentConfigS3dataIngress"
     actions = ["s3:GetObject"]
     resources = [
-      "${data.terraform_remote_state.common.outputs.config_bucket.arn}/${aws_s3_bucket_object.data_ingress_sft_agent_config_receiver.key}",
-      "${data.terraform_remote_state.common.outputs.config_bucket.arn}/${aws_s3_bucket_object.data_ingress_sft_agent_config_sender.key}",
-      "${data.terraform_remote_state.common.outputs.config_bucket.arn}/${aws_s3_bucket_object.data_ingress_sft_agent_application_config_receiver.key}",
-      "${data.terraform_remote_state.common.outputs.config_bucket.arn}/${aws_s3_bucket_object.data_ingress_sft_agent_application_config_sender.key}",
-      "${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.arn}/*"
+      "${var.config_bucket.arn}/${aws_s3_bucket_object.data_ingress_sft_agent_config_receiver.key}",
+      "${var.config_bucket.arn}/${aws_s3_bucket_object.data_ingress_sft_agent_config_sender.key}",
+      "${var.config_bucket.arn}/${aws_s3_bucket_object.data_ingress_sft_agent_application_config_receiver.key}",
+      "${var.config_bucket.arn}/${aws_s3_bucket_object.data_ingress_sft_agent_application_config_sender.key}",
+      "${var.config_bucket.arn}/*"
     ]
   }
   statement {
     sid     = "ListConfigBucketDI"
     actions = ["s3:ListBucket"]
     resources = [
-      data.terraform_remote_state.common.outputs.config_bucket.arn,
-      "${data.terraform_remote_state.common.outputs.config_bucket.arn}/*"
+      var.config_bucket.arn,
+      "${var.config_bucket.arn}/*"
     ]
   }
 
@@ -50,8 +50,8 @@ data "aws_iam_policy_document" "sft_task_ni" {
     sid    = "niAttachmentPerission"
     effect = "Allow"
     actions = ["ecs:DescribeContainerInstances",
-      "ec2:AttachNetworkInterface",
-    "ec2:DescribeNetworkInterfaces"]
+              "ec2:AttachNetworkInterface",
+              "ec2:DescribeNetworkInterfaces"]
     resources = ["*"]
   }
 }
@@ -64,14 +64,12 @@ resource "aws_iam_role_policy_attachment" "sft_task_ni" {
 resource "aws_iam_policy" "sft_task_ni" {
   name   = "SFTni"
   policy = data.aws_iam_policy_document.sft_task_ni.json
-  lifecycle {ignore_changes = [tags]}
 }
 
 resource "aws_iam_policy" "sft_agent_task" {
   name        = "IngressSFTAgentTask"
   description = "Custom policy for the ingress sft agent task"
   policy      = data.aws_iam_policy_document.sft_agent_task.json
-  lifecycle {ignore_changes = [tags]}
 }
 
 resource "aws_iam_role_policy_attachment" "sft_agent" {
@@ -82,7 +80,6 @@ resource "aws_iam_role_policy_attachment" "sft_agent" {
 resource "aws_iam_role" "data_ingress_server_task" {
   name               = "DataIngressServer"
   assume_role_policy = data.aws_iam_policy_document.data_ingress_server_task_assume_role.json
-  lifecycle {ignore_changes = [tags]}
 }
 
 data "aws_iam_policy_document" "data_ingress_server_task_assume_role" {
@@ -98,7 +95,7 @@ data "aws_iam_policy_document" "data_ingress_server_task_assume_role" {
   }
 }
 
-data "aws_iam_policy_document" "data_ingress_server_task" {
+data "aws_iam_policy_document" "data_ingress_server_task_certs" {
 
   statement {
     sid    = "CertificateExportDI"
@@ -109,59 +106,80 @@ data "aws_iam_policy_document" "data_ingress_server_task" {
     ]
     resources = [aws_acm_certificate.data_ingress_server.arn]
   }
-
-  statement {
-    sid       = "PublishMessageTrendMicro"
-    actions   = ["sns:*"]
-    resources = ["*"]
-  }
-
-    statement {
-    sid       = "PublishedBucketKMSDecryptDI"
-    actions   = ["kms:*"]
-    resources = ["*"]
-
-    //    resources = [data.terraform_remote_state.common.outputs.published_bucket_cmk.arn, data.terraform_remote_state.common.outputs.stage_data_ingress_bucket_cmk.arn]
-  }
-
-  statement {
-    sid = "PublishedBucketReadDIlb"
-    actions = [
-      "s3:*"
-    ]
-    //    resources = [data.terraform_remote_state.common.outputs.data_ingress_stage_bucket.arn, "${data.terraform_remote_state.common.outputs.data_ingress_stage_bucket.arn}/*"]
-    resources = ["*"]
-  }
-  statement {
+   statement {
     sid       = "DataIngressGetCAMgmtCertS3"
     effect    = "Allow"
     actions   = ["s3:GetObject"]
-    resources = ["${data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket.arn}/*"]
+    resources = ["${var.cert_bucket.arn}/*"]
   }
 }
 
-resource "aws_iam_policy" "data_ingress_server_task" {
-  name        = "DataIngressServer"
+resource "aws_iam_policy" "data_ingress_server_task_certs" {
+  name        = "DataIngressServerCerts"
   description = "Custom policy for data ingress server"
-  policy      = data.aws_iam_policy_document.data_ingress_server_task.json
-  lifecycle {ignore_changes = [tags]}
+  policy      = data.aws_iam_policy_document.data_ingress_server_task_certs.json
 }
 
-resource "aws_iam_role_policy_attachment" "data_ingress_server" {
+resource "aws_iam_role_policy_attachment" "data_ingress_server_task_certs" {
   role       = aws_iam_role.data_ingress_server_task.name
-  policy_arn = aws_iam_policy.data_ingress_server_task.arn
+  policy_arn = aws_iam_policy.data_ingress_server_task_certs.arn
 }
 
 resource "aws_iam_role_policy_attachment" "data_ingress_server_export_certificate_bucket_read" {
   role       = aws_iam_role.data_ingress_server_task.name
-  policy_arn = "arn:aws:iam::${local.account[local.environment]}:policy/CertificatesBucketRead"
+  policy_arn = "arn:aws:iam::${var.account[var.environment]}:policy/CertificatesBucketRead"
 }
 
 resource "aws_iam_role_policy_attachment" "data_ingress_server_ebs_cmk_instance_encrypt_decrypt" {
   role       = aws_iam_role.data_ingress_server_task.name
-  policy_arn = "arn:aws:iam::${local.account[local.environment]}:policy/EBSCMKInstanceEncryptDecrypt"
+  policy_arn = "arn:aws:iam::${var.account[var.environment]}:policy/EBSCMKInstanceEncryptDecrypt"
 }
 
+data "aws_iam_policy_document" "stage_bucket_all" {
+  statement {
+  sid       = "BucketsKMSDecryptDI"
+    actions = [
+      "kms:Encrypt",
+      "kms:Decrypt",
+      "kms:ReEncrypt*",
+      "kms:GenerateDataKey*",
+      "kms:DescribeKey"
+    ]
+    resources = [var.stage_bucket_kms_key_arn]
+  }
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "s3:GetBucketLocation",
+      "s3:ListBucket"
+    ]
+    resources = [
+      var.stage_bucket.arn
+    ]
+  }
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:*Object*",
+    ]
+    resources = [
+      "${var.stage_bucket.arn}/e2e/*",
+      "${var.stage_bucket.arn}/data-ingress/*"
+    ]
+  }
+}
+
+resource "aws_iam_policy" "stage_bucket_all" {
+  name        = "stageBucketAlltask"
+  description = "Allow task to read and write to data ingress bucket and use kms key"
+  policy      = data.aws_iam_policy_document.stage_bucket_all.json
+}
+
+resource "aws_iam_role_policy_attachment" "stage_bucket_all" {
+  role       = aws_iam_role.data_ingress_server_task.name
+  policy_arn = aws_iam_policy.stage_bucket_all.arn
+}
 
 data "aws_iam_policy_document" "sft_get_secret" {
   statement {
@@ -170,7 +188,8 @@ data "aws_iam_policy_document" "sft_get_secret" {
     actions = [
       "secretsmanager:GetSecretValue",
     ]
-    resources = [data.aws_secretsmanager_secret.trendmicro.arn]
+    resources = [var.trendmicro_secret_arn]
+
   }
 }
 
@@ -178,7 +197,6 @@ resource "aws_iam_policy" "sft_get_secret" {
   name        = "GetTrendMicroSecretSFT"
   description = "Allow data ingress instances to get secret"
   policy      = data.aws_iam_policy_document.sft_get_secret.json
-  lifecycle {ignore_changes = [tags]}
 }
 
 resource "aws_iam_role_policy_attachment" "sft_get_secret" {

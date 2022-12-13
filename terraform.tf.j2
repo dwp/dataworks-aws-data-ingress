@@ -10,7 +10,7 @@ terraform {
   }
   required_providers {
     aws = {
-      version = "~> 3.74"
+      version = "~> 4.30.0"
     }
   }
 }
@@ -42,35 +42,17 @@ locals {
     {%- endfor %}
   }
 
-  persistence_tag_value = {
-    development = "Ignore"
-    qa          = "Ignore"
-    integration = "Ignore"
-    preprod     = "Ignore"
-    production  = "Ignore"
-  }
-
   management_workspace = {
       management-dev = "default"
       management     = "management"
   }
 
-  auto_shutdown_tag_value = {
-    development = "True"
-    qa          = "False"
-    integration = "True"
-    preprod     = "False"
-    production  = "False"
+  common_repo_tags = {
+    CreatedBy    = "terraform"
+    Owner        = "dataworks-aws-data-ingress"
+    Persistence  = "Ignore"
+    AutoShutdown = "False"
   }
-
-  overridden_tags = {
-    Role         = "repo_template_terraform"
-    Owner        = local.name
-    Persistence  = local.persistence_tag_value[local.environment]
-    AutoShutdown = local.auto_shutdown_tag_value[local.environment]
-  }
-
-  common_repo_tags = "${merge(module.dataworks_common.common_tags, local.overridden_tags)}"
 
   cidr_block = {
   {%- for environment, ranges in cidr_block.items() %}
@@ -175,48 +157,6 @@ data "terraform_remote_state" "management" {
     region         = "{{terraform.state_file_region}}"
     encrypt        = true
     kms_key_id     = "arn:aws:kms:{{terraform.state_file_region}}:{{terraform.state_file_account}}:key/{{terraform.state_file_kms_key}}"
-    dynamodb_table = "remote_state_locks"
-  }
-}
-
-data "terraform_remote_state" "internal_compute" {
-  backend   = "s3"
-  workspace = terraform.workspace
-
-  config = {
-    bucket         = "{{terraform.state_file_bucket}}"
-    key            = "terraform/dataworks/aws-internal-compute.tfstate"
-    region         = "{{terraform.state_file_region}}"
-    encrypt        = true
-    kms_key_id     = "arn:aws:kms:{{terraform.state_file_region}}:{{terraform.state_file_account}}:key/{{terraform.state_file_kms_key}}"
-    dynamodb_table = "remote_state_locks"
-  }
-}
-
-data "terraform_remote_state" "data_egress" {
-  backend   = "s3"
-  workspace = terraform.workspace
-
-  config = {
-    bucket         = "{{terraform.state_file_bucket}}"
-    key            = "terraform/dataworks/dataworks-aws-data-egress.tfstate"
-    region         = "{{terraform.state_file_region}}"
-    encrypt        = true
-    kms_key_id     = "arn:aws:kms:{{terraform.state_file_region}}:{{terraform.state_file_account}}:key/{{terraform.state_file_kms_key}}"
-    dynamodb_table = "remote_state_locks"
-  }
-}
-
-data "terraform_remote_state" "internet_egress" {
-  backend   = "s3"
-  workspace = terraform.workspace
-
-  config = {
-    bucket         = "{{terraform.state_file_bucket}}"
-    key            = "terraform/dataworks/aws-internet-egress.tfstate"
-    region         = "{{terraform.state_file_region}}"
-    encrypt        = true
-    kms_key_id     = "arn:aws:kms:{{state_file_region}}:{{state_file_account}}:key/{{state_file_kms_key}}"
     dynamodb_table = "remote_state_locks"
   }
 }

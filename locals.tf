@@ -1,6 +1,5 @@
 locals {
-  cluster_name                = "data-ingress"
-  launch_template_name        = "${local.cluster_name}-launch-template" #changing the template name will affect the trend micro test
+  launch_template_name        = "data-ingress-launch-template"
   name_data_ingress_log_group = "/app/data_ingress"
 
   env_prefix = {
@@ -13,14 +12,7 @@ locals {
   }
 
   time_zone                     = "Europe/London"
-  instance_terminates_rule_name = "abcd-rule-test"
-  az_ni                         = "[eu-west-2a]"
-  az_sender                     = "[eu-west-2b]"
-  monitoring_topic_arn          = data.terraform_remote_state.security-tools.outputs.sns_topic_london_monitoring.arn
-  today_date                    = formatdate("YYYY-MM-DD hh:mm:ss", timestamp())
-
   autoscaling_group_name = "data-ingress-ag"
-  publish_bucket         = data.terraform_remote_state.common.outputs.published_bucket
   stage_bucket           = data.terraform_remote_state.common.outputs.data_ingress_stage_bucket
   companies_s3_prefix    = "data-ingress/companies"
   companies_s3_prefix_route_test    = "route-test/data-ingress/companies"
@@ -74,9 +66,7 @@ locals {
     production     = "management"
     management     = "management"
   }
-
   filename_prefix = "BasicCompanyData"
-
   management_infra_account = {
     development    = "default"
     qa             = "default"
@@ -109,7 +99,6 @@ locals {
     local.common_repo_tags,
     {
       Name        = local.data_ingress_server_name,
-      Persistence = "Ignore",
     }
   )
   cw_data_ingress_server_agent_namespace                = "/app/data-ingress"
@@ -134,23 +123,10 @@ locals {
     },
   ]
 
-  ecr_repository_name        = "dataworks-ingress-sft-agent"
   sft_agent_config_s3_prefix = "component/data-ingress-sft"
   proxy_port                 = "3128"
   sft_port                   = "8091"
   api_key                    = "Te5tAp1Key"
   secret_trendmicro          = "/concourse/dataworks/data_ingress/trendmicro"
 
-  test_sft = {
-    development    = "true"
-    qa             = "true"
-    integration    = "false"
-    management-dev = "false"
-    preprod        = "false"
-    production     = "false"
-    management     = "false"
-  }
-
-  mount_path    = "/mnt/point"
-  source_volume = "s3fs"
 }
