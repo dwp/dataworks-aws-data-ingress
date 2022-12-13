@@ -30,6 +30,10 @@ module "data-ingress-cluster" {
     time_zone                               = local.time_zone
 }
 
+output "network_interface_ip" {
+    value = module.data-ingress-cluster.network_interface.ip
+}
+
 module "data-ingress-test-scaling" {
     source                                  = "./terraform/data-ingress-test-scaling"
     asg_instance_count                      = local.asg_instance_count
