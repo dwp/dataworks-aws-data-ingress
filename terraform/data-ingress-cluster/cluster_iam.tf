@@ -263,7 +263,8 @@ data "aws_iam_policy_document" "stage_bucket_all" {
       "s3:*Object*",
     ]
     resources = [
-      "${var.stage_bucket.arn}/*",
+      "${var.stage_bucket.arn}/e2e/*",
+      "${var.stage_bucket.arn}/data-ingress/*"
     ]
   }
 }
