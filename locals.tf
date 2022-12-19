@@ -126,7 +126,7 @@ locals {
   sft_agent_config_s3_prefix = "component/data-ingress-sft"
   proxy_port                 = "3128"
   sft_port                   = "8091"
-  api_key                    = "Te5tAp1Key"
+  api_key                    = "93e87e51-94ba-4f20-af04-2138dae42f31"
   secret_trendmicro          = "/concourse/dataworks/data_ingress/trendmicro"
 
 }
