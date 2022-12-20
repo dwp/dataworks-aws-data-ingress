@@ -46,6 +46,7 @@ module "data-ingress-sft-task" {
     source                                  = "./terraform/data-ingress-sft-task"
     environment                             = local.environment
     common_repo_tags                        = local.common_repo_tags
+    api_key                                 = local.data_ingress[local.environment].sft_agent_api_key
     env_prefix                              = local.env_prefix
     certificate_authority_arn               = data.terraform_remote_state.aws_certificate_authority.outputs.root_ca.arn
     ecs_execution_role                      = data.terraform_remote_state.common.outputs.ecs_task_execution_role.arn

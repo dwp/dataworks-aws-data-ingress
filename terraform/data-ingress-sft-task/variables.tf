@@ -85,7 +85,6 @@ variable "ecs_hardened_ami_id" {
 }
 variable "companies_s3_prefix" {}
 variable "api_key" {
-  default = "Te5tAp1Key"
 }
 
 variable "test_sft" {
