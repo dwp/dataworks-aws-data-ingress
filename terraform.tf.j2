@@ -42,6 +42,14 @@ locals {
     {%- endfor %}
   }
 
+  data_ingress = {
+     {%- for environment, ranges in data_ingress.items() %}
+         {{ environment }} = {
+           {%- for key, value in ranges.items() %}
+             {{ key }} = "{{ value }}"{% endfor %}
+         } {%- endfor %}
+  }
+
   management_workspace = {
       management-dev = "default"
       management     = "management"
