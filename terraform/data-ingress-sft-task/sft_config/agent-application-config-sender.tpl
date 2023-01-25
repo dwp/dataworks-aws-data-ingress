@@ -10,11 +10,11 @@ sender:
         -
           name: httpRequest
           properties:
-            destination: "https://${ip}:${port}/app"
+            destination: "https://${ip}:${port}/internal/AWSDataworx1/inbound/GFTS/CH"
       deleteOnSend: false
       errorFolder: /data-ingress/error/warehouse
       filenameRegex: .*
       maxThreadPoolSize: 5
-      name: app
+      name: internal/AWSDataworx1/inbound/GFTS/CH
       source: /mnt/send_point/
       threadPoolSize: 5
