@@ -98,6 +98,7 @@ variable "test_sft" {
     management     = "false"
   }
 }
+
 variable "trendmicro_secret_arn" {}
 
 variable "receiver_destination" {
@@ -110,5 +111,4 @@ variable "receiver_destination" {
     production     = ""
     management     = "/mnt/point/data-ingress/companies"
   }
-
 }

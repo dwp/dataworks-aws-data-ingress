@@ -4,6 +4,7 @@ resource "aws_s3_bucket_object" "data_ingress_sft_agent_config_receiver" {
   content    = data.template_file.data_ingress_sft_agent_config_tpl_receiver.rendered
   kms_key_id = var.config_bucket_kms_key_arn
 }
+
 resource "aws_s3_bucket_object" "data_ingress_sft_agent_config_sender" {
   bucket     = var.config_bucket.id
   key        = "${var.sft_agent_config_s3_prefix}/agent-config-sender.yml"
@@ -17,7 +18,6 @@ resource "aws_s3_bucket_object" "data_ingress_sft_agent_application_config_recei
   content    = data.template_file.data_ingress_sft_agent_application_config_tpl_receiver.rendered
   kms_key_id = var.config_bucket_kms_key_arn
 }
-
 
 data "template_file" "data_ingress_sft_agent_config_tpl_sender" {
   template = file("${path.module}/sft_config/agent-config-sender.tpl")
@@ -37,7 +37,6 @@ data "template_file" "data_ingress_sft_agent_application_config_tpl_receiver" {
   template = file("${path.module}/sft_config/agent-application-config-receiver.tpl")
   vars = {
     destination                = var.receiver_destination[var.environment]
-    source_filename            = "(.+)"
   }
 }
 
