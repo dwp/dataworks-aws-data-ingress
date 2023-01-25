@@ -1,11 +1,11 @@
 receiver:
   routes:
-    - name: app
+    - name: internal/AWSDataworx1/inbound/GFTS/CH
       actions:
         - name: renameFile
           properties:
-            rename_regex: "${source_filename}"
-            rename_replacement: FILENAME
+            rename_regex: ".*"
+            rename_replacement: "testname.csv"
         - name: writeFile
           properties:
             destination: ${destination_e2e}
