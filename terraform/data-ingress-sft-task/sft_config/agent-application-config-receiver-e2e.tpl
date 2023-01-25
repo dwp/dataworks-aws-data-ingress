@@ -4,8 +4,8 @@ receiver:
       actions:
         - name: renameFile
           properties:
-            rename_regex: ".*"
-            rename_replacement: "testname.csv"
+            rename_regex: (.+)
+            rename_replacement: FILENAME
         - name: writeFile
           properties:
             destination: ${destination_e2e}
