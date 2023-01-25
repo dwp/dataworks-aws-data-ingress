@@ -99,3 +99,16 @@ variable "test_sft" {
   }
 }
 variable "trendmicro_secret_arn" {}
+
+variable "receiver_destination" {
+    default = {
+    development    = "/mnt/point/e2e/data-ingress/companies"
+    qa             = "/mnt/point/e2e/data-ingress/companies"
+    integration    = ""
+    management-dev = ""
+    preprod        = ""
+    production     = ""
+    management     = "/mnt/point/data-ingress/companies"
+  }
+
+}

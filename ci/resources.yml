@@ -10,7 +10,7 @@ resources:
   - name: dataworks-aws-data-ingress
     type: git
     source:
-      branch: test-sft-1
+      branch: master
       uri: https://github.com/dwp/dataworks-aws-data-ingress.git
       access_token: ((dataworks-secrets.concourse_github_pat))
     webhook_token: ((dataworks.concourse_github_webhook_token))
