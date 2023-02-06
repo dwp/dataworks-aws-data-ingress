@@ -4,7 +4,7 @@ receiver:
       actions:
         - name: renameFile
           properties:
-            rename_regex: (.+)
+            rename_regex: (.+.zip)
             rename_replacement: FILENAME
         - name: writeFile
           properties:
