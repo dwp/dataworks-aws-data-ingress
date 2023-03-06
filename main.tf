@@ -78,3 +78,11 @@ module "data-ingress-sft-task" {
     companies_s3_prefix                     = local.companies_s3_prefix
     data_ingress_sg_id                      = module.data-ingress-cluster.data_ingress_sg_id
 }
+
+module "data-ingress-enable-disable-alarms" {
+    source                                  = "./terraform/data-ingress-enable-disable-alarms"
+    environment                             = local.environment
+    time_zone                               = local.time_zone
+    common_repo_tags                        = local.common_repo_tags
+    alarm_name = module.data-ingress-cluster.no_file_landed_alarm_name
+}

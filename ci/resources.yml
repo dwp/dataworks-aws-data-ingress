@@ -8,7 +8,7 @@ resources:
     check_every: 5m
 
   - name: dataworks-aws-data-ingress
-    type: git
+    type: disable-alarm
     source:
       branch: master
       uri: https://github.com/dwp/dataworks-aws-data-ingress.git

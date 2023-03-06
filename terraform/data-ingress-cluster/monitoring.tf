@@ -87,7 +87,7 @@ resource "aws_cloudwatch_metric_alarm" "sft_running" {
 }
 
 resource "aws_cloudwatch_event_rule" "file_landed" {
-  name          = "file_landed_on_staging_rule"
+  name          = "CH_file_landed_on_staging_rule"
   description   = "checks that file landed on staging bucket"
   event_pattern = <<EOF
 {
@@ -109,7 +109,7 @@ resource "aws_s3_bucket_notification" "bucket_notification" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "file_landed" {
-  alarm_name                = "file_landed_on_staging"
+  alarm_name                = "CH_file_landed_on_staging"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = "1"
   metric_name               = "TriggeredRules"
@@ -128,6 +128,36 @@ resource "aws_cloudwatch_metric_alarm" "file_landed" {
     {
       Name              = "ch_completed_all_steps",
       notification_type = "Information",
+      severity          = "Critical"
+    },
+  )
+  lifecycle {
+    ignore_changes = [
+      tags
+    ]
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "no_file_landed" {
+  alarm_name                = "no_CH_file_landed_on_staging"
+  comparison_operator       = "LessThanOrEqualToThreshold"
+  evaluation_periods        = "1"
+  metric_name               = "TriggeredRules"
+  namespace                 = "AWS/Events"
+  period                    = "12" #259200three days
+  statistic                 = "Sum"
+  threshold                 = "0"
+  alarm_description         = "Monitoring stage bucket"
+  insufficient_data_actions = []
+  alarm_actions             = [var.monitoring_topic_arn]
+  dimensions = {
+    RuleName = aws_cloudwatch_event_rule.file_landed.name
+  }
+  tags = merge(
+    var.common_repo_tags,
+    {
+      Name              = "no_CH_file_landed_on_staging",
+      notification_type = "Error",
       severity          = "Critical"
     },
   )
