@@ -16,7 +16,6 @@ resource "aws_lambda_function" "enable_alarms_lambda" {
 
   environment {
     variables = {
-      log_path = aws_cloudwatch_log_group.data_ingress_enable_disable_alarms_lambda.name
       action = "enable"
       alarm_name = var.alarm_name
     }
@@ -33,7 +32,6 @@ resource "aws_lambda_function" "disable_alarms_lambda" {
 
   environment {
     variables = {
-      log_path = aws_cloudwatch_log_group.data_ingress_enable_disable_alarms_lambda.name
       action = "disable"
       alarm_name = var.alarm_name
     }
