@@ -1,7 +1,7 @@
 resource "aws_cloudwatch_event_rule" "enable" {
     name = "enable_no_file_landed_alarm"
     description = "enabling alarm"
-    schedule_expression = "cron(50 16 6 * *)"
+    schedule_expression = "cron(50 16 6 * ? *)"
 }
 
 resource "aws_cloudwatch_event_target" "schedule_lambda_enable" {
@@ -13,7 +13,7 @@ resource "aws_cloudwatch_event_target" "schedule_lambda_enable" {
 resource "aws_cloudwatch_event_rule" "disable" {
     name = "disable_no_file_landed_alarm"
     description = "disabling alarm"
-    schedule_expression = "cron(05 17 6 * *)"
+    schedule_expression = "cron(05 17 6 * ? *)"
 }
 
 resource "aws_cloudwatch_event_target" "schedule_lambda_disable" {
