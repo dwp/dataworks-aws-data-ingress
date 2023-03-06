@@ -49,5 +49,3 @@ data "aws_iam_policy_document" "alarms_policy_document" {
     }
   }
 }
-
-}
