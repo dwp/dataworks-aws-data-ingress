@@ -140,6 +140,7 @@ resource "aws_cloudwatch_metric_alarm" "file_landed" {
 
 resource "aws_cloudwatch_metric_alarm" "no_file_landed" {
   alarm_name                = "no_CH_file_landed_on_staging"
+  actions_enabled = false
   comparison_operator       = "LessThanOrEqualToThreshold"
   evaluation_periods        = "1"
   metric_name               = "TriggeredRules"
