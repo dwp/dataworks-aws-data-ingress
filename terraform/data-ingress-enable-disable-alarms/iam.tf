@@ -23,7 +23,7 @@ data "aws_iam_policy_document" "alarms_policy_document" {
       "cloudwatch:DisableAlarmActions",
       "cloudwatch:EnableAlarmActions",
     ]
-    resources = var.alarm_arn
+    resources = [var.alarm_arn]
   }
 
   statement {
