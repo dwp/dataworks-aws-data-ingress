@@ -84,5 +84,6 @@ module "data-ingress-enable-disable-alarms" {
     environment                             = local.environment
     time_zone                               = local.time_zone
     common_repo_tags                        = local.common_repo_tags
-    alarm_name = module.data-ingress-cluster.no_file_landed_alarm_name
+    alarm_name = module.data-ingress-cluster.no_file_landed_alarm.name
+    alarm_arn = module.data-ingress-cluster.no_file_landed_alarm.arn
 }

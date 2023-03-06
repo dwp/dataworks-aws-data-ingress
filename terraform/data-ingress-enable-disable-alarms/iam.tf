@@ -12,12 +12,18 @@ resource "aws_iam_role" "enable_disable_alarms_lambda" {
 data "aws_iam_policy_document" "alarms_policy_document" {
   statement {
     actions = [
-      "cloudwatch:DescribeAlarms",
-      "cloudwatch:DisableAlarmActions",
-      "cloudwatch:EnableAlarmActions",
+      "cloudwatch:DescribeAlarms"
     ]
     resources = [
       "*"]
+  }
+
+    statement {
+    actions = [
+      "cloudwatch:DisableAlarmActions",
+      "cloudwatch:EnableAlarmActions",
+    ]
+    resources = var.alarm_arn
   }
 
   statement {
@@ -28,9 +34,7 @@ data "aws_iam_policy_document" "alarms_policy_document" {
       "logs:AssociateKmsKey"
     ]
 
-    resources =
-
-    ["*"]
+    resources = ["*"]
 
   }
 }

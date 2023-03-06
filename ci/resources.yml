@@ -8,9 +8,9 @@ resources:
     check_every: 5m
 
   - name: dataworks-aws-data-ingress
-    type: disable-alarm
+    type: git
     source:
-      branch: master
+      branch: disable-alarm
       uri: https://github.com/dwp/dataworks-aws-data-ingress.git
       access_token: ((dataworks-secrets.concourse_github_pat))
     webhook_token: ((dataworks.concourse_github_webhook_token))
