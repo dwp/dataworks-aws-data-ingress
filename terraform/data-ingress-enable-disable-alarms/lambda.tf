@@ -40,14 +40,14 @@ resource "aws_lambda_function" "disable_alarms_lambda" {
   }
 }
 
-resource "aws_lambda_permission" "permission_to_run_lambda" {
+resource "aws_lambda_permission" "permission_to_run_lambda_disable" {
     statement_id = "AllowExecutionFromCloudWatch"
     action = "lambda:InvokeFunction"
     function_name = aws_lambda_function.disable_alarms_lambda.function_name
     principal = "events.amazonaws.com"
 }
 
-resource "aws_lambda_permission" "permission_to_run_lambda" {
+resource "aws_lambda_permission" "permission_to_run_lambda_enable" {
     statement_id = "AllowExecutionFromCloudWatch"
     action = "lambda:InvokeFunction"
     function_name = aws_lambda_function.enable_alarms_lambda.function_name

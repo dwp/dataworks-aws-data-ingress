@@ -39,7 +39,7 @@ data "aws_iam_policy_document" "alarms_policy_document" {
   }
 }
 
- data "aws_iam_policy_document" "assume_role" {
+data "aws_iam_policy_document" "assume_role" {
   statement {
     actions = ["sts:AssumeRole"]
 
