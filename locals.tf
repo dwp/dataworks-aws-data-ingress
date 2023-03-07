@@ -40,8 +40,8 @@ locals {
       production  = 0
     }
     off          = 0
-    test_desired = 2
-    test_max     = 2
+    test_desired = 0
+    test_max     = 0
   }
 
   data_ingress_server_ssmenabled = {
