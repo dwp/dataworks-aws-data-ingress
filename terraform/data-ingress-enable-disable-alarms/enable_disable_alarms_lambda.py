@@ -21,34 +21,36 @@ def setup_logging():
 logger = setup_logging()
 
 
-def enable(alarm_name):
+def enable(rule_name):
     try:
-        enable_alarm = client.enable_alarm_actions(AlarmNames=[alarm_name])
-        return enable_alarm
+        logger.info(f'Enabling rule {rule_name}.')
+        enable_rule = client.enable_rule(Name=rule_name)
+        return enable_rule
     except Exception as e:
-        logger.error(f'Failed to enable alarm {alarm_name}. {e}')
+        logger.error(f'Failed to enable rule {rule_name}. {e}')
 
 
-def disable(alarm_name):
+def disable(rule_name):
     try:
-        disable_alarm = client.disable_alarm_actions(AlarmNames=[alarm_name])
-        return disable_alarm
+        logger.info(f'Disabling rule {rule_name}.')
+        disable_rule = client.disable_rule(ruleNames=rule_name)
+        return disable_rule
     except Exception as e:
-        logger.error(f'Failed to disable alarm {alarm_name}. {e}')
+        logger.error(f'Failed to disable rule {rule_name}. {e}')
 
 
 def lambda_handler(event, context):
 
     global client
-    client = boto3.client('cloudwatch')
+    client = boto3.client('events')
 
     global action
     action = os.getenv('action')
 
-    global alarm_names
-    alarm_name = os.getenv('alarm_name')
+    global rule_names
+    rule_name = os.getenv('rule_name')
 
     if action == "enable":
-        enable(alarm_name)
+        enable(rule_name)
     if action == "disable":
-        disable(alarm_name)
+        disable(rule_name)

@@ -12,7 +12,8 @@ resource "aws_iam_role" "enable_disable_alarms_lambda" {
 data "aws_iam_policy_document" "alarms_policy_document" {
   statement {
     actions = [
-      "cloudwatch:DescribeAlarms"
+      "events:Describe*",
+      "events:List*"
     ]
     resources = [
       "*"]
@@ -20,10 +21,10 @@ data "aws_iam_policy_document" "alarms_policy_document" {
 
     statement {
     actions = [
-      "cloudwatch:DisableAlarmActions",
-      "cloudwatch:EnableAlarmActions",
+      "events:DisableRule",
+      "events:EnableRule",
     ]
-    resources = [var.alarm_arn]
+    resources = [var.rule_arn]
   }
 
   statement {

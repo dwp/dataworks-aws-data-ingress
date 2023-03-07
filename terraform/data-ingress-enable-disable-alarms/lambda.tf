@@ -17,7 +17,7 @@ resource "aws_lambda_function" "enable_alarms_lambda" {
   environment {
     variables = {
       action = "enable"
-      alarm_name = var.alarm_name
+      alarm_name = var.rule_name
     }
   }
 }
@@ -33,7 +33,7 @@ resource "aws_lambda_function" "disable_alarms_lambda" {
   environment {
     variables = {
       action = "disable"
-      alarm_name = var.alarm_name
+      alarm_name = var.rule_name
     }
   }
 }

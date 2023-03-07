@@ -26,9 +26,10 @@ output "data_ingress_sg_id" {
   value = aws_security_group.data_ingress_server.id
 }
 
-output "no_file_landed_alarm" {
+output "no_file_landed_rule" {
   value = {
-    name = aws_cloudwatch_metric_alarm.no_file_landed.alarm_name
-    arn = aws_cloudwatch_metric_alarm.no_file_landed.arn
+
+    name = aws_cloudwatch_event_rule.no_file_landed.name
+    arn  = aws_cloudwatch_event_rule.no_file_landed.arn
   }
 }
