@@ -139,14 +139,15 @@ resource "aws_cloudwatch_metric_alarm" "file_landed" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "no_file_landed" {
-  alarm_name                = "no_CH_file_landed_on_staging"
-  comparison_operator       = "LessThanOrEqualToThreshold"
-  evaluation_periods        = "1"
+  alarm_name                = "No_CH_file_received"
+  comparison_operator       = "LessThanThreshold"
+  evaluation_periods        = "2"
   metric_name               = "TriggeredRules"
   namespace                 = "AWS/Events"
-  period                    = "300" #259200three days
+  period                    = "180"
   statistic                 = "Sum"
-  threshold                 = "0"
+  threshold                 = "1"
+  datapoints_to_alarm       = "0"
   alarm_description         = "Monitoring stage bucket no file sent"
   alarm_actions             = [var.monitoring_topic_arn]
   dimensions = {
