@@ -149,7 +149,7 @@ resource "aws_cloudwatch_metric_alarm" "no_file_landed" {
   statistic                 = "Sum"
   threshold                 = "0"
   alarm_description         = "Monitoring stage bucket"
-  insufficient_data_actions = []
+  insufficient_data_actions = [var.monitoring_topic_arn]
   alarm_actions             = [var.monitoring_topic_arn]
   dimensions = {
     RuleName = aws_cloudwatch_event_rule.file_landed.name
