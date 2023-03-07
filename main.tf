@@ -79,11 +79,11 @@ module "data-ingress-sft-task" {
     data_ingress_sg_id                      = module.data-ingress-cluster.data_ingress_sg_id
 }
 
-module "data-ingress-enable-disable-alarms" {
-    source                                  = "./terraform/data-ingress-enable-disable-alarms"
+module "data-ingress-enable-disable-rules" {
+    source                                  = "terraform/data-ingress-enable-disable-rules"
     environment                             = local.environment
     time_zone                               = local.time_zone
     common_repo_tags                        = local.common_repo_tags
-    alarm_name = module.data-ingress-cluster.no_file_landed_alarm.name
-    alarm_arn = module.data-ingress-cluster.no_file_landed_alarm.arn
+    rule_name = module.data-ingress-cluster.no_file_landed_rule.name
+    rule_arn = module.data-ingress-cluster.no_file_landed_rule.arn
 }
