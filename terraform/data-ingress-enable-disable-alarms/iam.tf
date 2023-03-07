@@ -1,15 +1,15 @@
-resource "aws_iam_role" "enable_disable_alarms_lambda" {
-  name = "enable_disable_alarms_lambda_role"
+resource "aws_iam_role" "enable_disable_rules_lambda" {
+  name = "enable_disable_rules_lambda_role"
   path = "/service-role/"
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
 
   inline_policy {
     name   = "lambda_policy"
-    policy = data.aws_iam_policy_document.alarms_policy_document.json
+    policy = data.aws_iam_policy_document.rules_policy_document.json
   }
 }
 
-data "aws_iam_policy_document" "alarms_policy_document" {
+data "aws_iam_policy_document" "rules_policy_document" {
   statement {
     actions = [
       "events:Describe*",
