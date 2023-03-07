@@ -140,17 +140,18 @@ resource "aws_cloudwatch_metric_alarm" "file_landed" {
 
 resource "aws_cloudwatch_metric_alarm" "no_file_landed" {
   alarm_name                = "no_CH_file_landed_on_staging"
-  actions_enabled = false
+  actions_enabled           = false
   comparison_operator       = "LessThanThreshold"
   evaluation_periods        = "18"
   metric_name               = "TriggeredRules"
   namespace                 = "AWS/Events"
   period                    = "30" #259200three days
-  statistic                 = "Sum"
+  statistic                 = "SampleCount"
   threshold                 = "1"
   alarm_description         = "Monitoring stage bucket"
   insufficient_data_actions = [var.monitoring_topic_arn]
   alarm_actions             = [var.monitoring_topic_arn]
+  treat_missing_data        = "breaching"
   dimensions = {
     RuleName = aws_cloudwatch_event_rule.file_landed.name
   }
