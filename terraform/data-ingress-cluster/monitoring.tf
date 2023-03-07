@@ -145,10 +145,10 @@ resource "aws_cloudwatch_metric_alarm" "no_file_landed" {
   metric_name               = "TriggeredRules"
   namespace                 = "AWS/Events"
   period                    = "300" #259200three days
-  statistic                 = "Sum"
+  statistic                 = "Maximum"
   threshold                 = "0"
-  alarm_description         = "Monitoring stage bucket"
-  insufficient_data_actions = [var.monitoring_topic_arn]
+  alarm_description         = "Monitoring stage bucket no file sent"
+  datapoints_to_alarm       = "1"
   alarm_actions             = [var.monitoring_topic_arn]
   dimensions = {
     RuleName = aws_cloudwatch_event_rule.no_file_landed.name
