@@ -102,6 +102,7 @@
               terraform workspace show
               cp ../terraform-bootstrap/terraform.tf .
               terraform init -upgrade
+              terraform state rm module.data-ingress-enable-disable-alarms.aws_cloudwatch_log_group.data_ingress_enable_disable_alarms_lambda
               terraform plan -out terraform.plan
               terraform apply -auto-approve terraform.plan
           dir: dataworks-aws-data-ingress
