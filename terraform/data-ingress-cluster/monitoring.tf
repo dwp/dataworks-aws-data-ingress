@@ -145,9 +145,8 @@ resource "aws_cloudwatch_metric_alarm" "no_file_landed" {
   metric_name               = "TriggeredRules"
   namespace                 = "AWS/Events"
   period                    = "180"
-  statistic                 = "Sum"
-  threshold                 = "1"
-  datapoints_to_alarm       = "0"
+  statistic                 = "SampleCount"
+  threshold                 = "-1"
   alarm_description         = "Monitoring stage bucket no file sent"
   alarm_actions             = [var.monitoring_topic_arn]
   dimensions = {
