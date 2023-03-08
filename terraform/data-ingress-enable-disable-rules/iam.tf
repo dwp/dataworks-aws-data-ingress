@@ -38,6 +38,18 @@ data "aws_iam_policy_document" "rules_policy_document" {
     resources = ["*"]
 
   }
+    statement {
+    actions = [
+          "cloudwatch:DescribeAlarms",
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    actions = ["cloudwatch:DisableAlarmActions",
+               "cloudwatch:EnableAlarmActions"]
+    resources = [var.alarm_arn]
+  }
 }
 
 data "aws_iam_policy_document" "assume_role" {

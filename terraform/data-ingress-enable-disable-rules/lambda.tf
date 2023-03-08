@@ -18,6 +18,7 @@ resource "aws_lambda_function" "enable_rules_lambda" {
     variables = {
       action = "enable"
       rule_name = var.rule_name
+      alarm_name = var.alarm_name
     }
   }
 }
@@ -34,6 +35,7 @@ resource "aws_lambda_function" "disable_rules_lambda" {
     variables = {
       action = "disable"
       rule_name = var.rule_name
+      alarm_name = var.alarm_name
     }
   }
 }

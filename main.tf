@@ -86,4 +86,6 @@ module "data-ingress-enable-disable-rules" {
     common_repo_tags                        = local.common_repo_tags
     rule_name                               = module.data-ingress-cluster.no_file_landed_rule.name
     rule_arn                                = module.data-ingress-cluster.no_file_landed_rule.arn
+    alarm_name                              = module.data-ingress-cluster.no_file_landed_alarm.name
+    alarm_arn                               = module.data-ingress-cluster.no_file_landed_alarm.arn
 }

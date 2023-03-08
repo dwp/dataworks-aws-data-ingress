@@ -33,3 +33,11 @@ output "no_file_landed_rule" {
     arn  = aws_cloudwatch_event_rule.no_file_landed.arn
   }
 }
+
+output "no_file_landed_alarm" {
+  value = {
+
+    name = aws_cloudwatch_metric_alarm.no_file_landed.name
+    arn  = aws_cloudwatch_metric_alarm.no_file_landed.arn
+  }
+}
