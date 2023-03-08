@@ -29,6 +29,22 @@ data "aws_iam_policy_document" "rules_policy_document" {
     ]
     resources = [var.stage_bucket.arn]
   }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "kms:Encrypt",
+      "kms:Decrypt",
+      "kms:ReEncrypt*",
+      "kms:GenerateDataKey*",
+      "kms:DescribeKey",
+    ]
+
+    resources = [
+      var.stage_bucket_kms_key_arn
+    ]
+  }
     statement {
     actions = [
           "cloudwatch:DescribeAlarms",

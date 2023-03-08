@@ -90,4 +90,5 @@ module "data-ingress-check-file-landed" {
     alarm_arn                               = module.data-ingress-cluster.no_file_landed.alarm_arn
     alarm_name                              = module.data-ingress-cluster.no_file_landed.alarm_name
     prefix                                  = local.companies_s3_prefix
+    stage_bucket_kms_key_arn                = data.terraform_remote_state.common.outputs.stage_data_ingress_bucket_cmk.arn
 }

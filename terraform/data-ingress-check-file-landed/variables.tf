@@ -6,3 +6,4 @@ variable "stage_bucket" {}
 variable "alarm_name" {}
 variable "alarm_arn" {}
 variable "prefix" {}
+variable "stage_bucket_kms_key_arn" {}
