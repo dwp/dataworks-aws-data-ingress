@@ -32,6 +32,16 @@ data "aws_iam_policy_document" "rules_policy_document" {
 
   statement {
     effect = "Allow"
+    actions = [
+      "s3:*Object*",
+    ]
+    resources = [
+      "${var.stage_bucket.arn}/data-ingress/*"
+    ]
+  }
+
+  statement {
+    effect = "Allow"
 
     actions = [
       "kms:Encrypt",

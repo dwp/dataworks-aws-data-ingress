@@ -257,6 +257,7 @@ data "aws_iam_policy_document" "stage_bucket_all" {
       var.stage_bucket.arn
     ]
   }
+
   statement {
     effect = "Allow"
     actions = [
