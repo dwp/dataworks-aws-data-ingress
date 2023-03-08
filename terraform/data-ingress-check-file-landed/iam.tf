@@ -1,5 +1,5 @@
-resource "aws_iam_role" "enable_disable_rules_lambda" {
-  name = "enable_disable_rules_lambda_role"
+resource "aws_iam_role" "check_file_landed" {
+  name = "check_file_landed_role"
   path = "/service-role/"
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
 
@@ -10,22 +10,6 @@ resource "aws_iam_role" "enable_disable_rules_lambda" {
 }
 
 data "aws_iam_policy_document" "rules_policy_document" {
-  statement {
-    actions = [
-      "events:Describe*",
-      "events:List*"
-    ]
-    resources = [
-      "*"]
-  }
-
-    statement {
-    actions = [
-      "events:DisableRule",
-      "events:EnableRule",
-    ]
-    resources = [var.rule_arn]
-  }
 
   statement {
     actions = [
@@ -37,6 +21,10 @@ data "aws_iam_policy_document" "rules_policy_document" {
 
     resources = ["*"]
 
+  }
+  statement {
+    actions = ["s3:List*"]
+    resources = [var.stage_bucket.arn]
   }
     statement {
     actions = [

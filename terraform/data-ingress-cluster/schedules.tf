@@ -15,7 +15,7 @@ resource "aws_autoscaling_schedule" "off" {
   desired_capacity       = var.asg_instance_count.off
   max_size               = var.asg_instance_count.off
   min_size               = var.asg_instance_count.off
-  recurrence             = "00 23 4 * *"
+  recurrence             = var.shut_down_time
   time_zone              = var.time_zone
   autoscaling_group_name = aws_autoscaling_group.data_ingress_server.name
 }
