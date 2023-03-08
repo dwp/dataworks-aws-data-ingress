@@ -45,12 +45,12 @@ def lambda_handler(event, context):
     s3 = boto3.resource('s3')
 
     global cw_client
-    s3_client = boto3.client('cloudwatch')
+    cw_client = boto3.client('cloudwatch')
 
     bucket = os.getenv('bucket')
     prefix = os.getenv('prefix')
     alarm_name = os.getenv('alarm_name')
-    filename_prefix = os.getenv('filename_prefix')+datetime.now().strftime('%Y-%m')
+    filename_prefix = os.getenv('filename_prefix')+"-"+datetime.now().strftime('%Y-%m')
     keys = s3_keys(bucket, prefix)
 
     if not any([filename_prefix in key for key in keys]):
