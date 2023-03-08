@@ -81,7 +81,7 @@ module "data-ingress-sft-task" {
 }
 
 module "data-ingress-check-file-landed" {
-    source                                  = "terraform/data-ingress-check-file-landed"
+    source                                  = "./terraform/data-ingress-check-file-landed"
     environment                             = local.environment
     common_repo_tags                        = local.common_repo_tags
     shut_down_time                          = local.shut_down_time
