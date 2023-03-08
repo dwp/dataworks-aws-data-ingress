@@ -23,7 +23,10 @@ data "aws_iam_policy_document" "rules_policy_document" {
 
   }
   statement {
-    actions = ["s3:List*"]
+    actions = [
+      "s3:GetBucketLocation",
+      "s3:ListBucket"
+    ]
     resources = [var.stage_bucket.arn]
   }
     statement {
