@@ -22,19 +22,11 @@ def setup_logging():
 logger = setup_logging()
 
 
-def s3_keys(s3_client, bucket, prefix):
+def s3_keys(bucket, prefix):
     logger.info(f"looking for objects with prefix {prefix}")
     try:
-        keys = []
-        paginator = s3_client.get_paginator("list_objects_v2")
-        pages = paginator.paginate(Bucket=bucket, Prefix=prefix)
-        for page in pages:
-            if "Contents" in page:
-                keys = keys + [obj["Key"] for obj in page["Contents"]]
-        logger.info(f"found {len(keys)} keys under prefix {prefix}")
-        logger.info(f"key under set prefix {prefix}: {keys}")
-
-        return [keys]
+        bkt = s3.Bucket(bucket)
+        return bkt.objects.filter(Prefix=prefix)
     except Exception as ex:
         logger.error(f"failed to list keys in bucket. {ex}")
 
@@ -49,8 +41,8 @@ def alarm(alarm_name):
 
 def lambda_handler(event, context):
 
-    global s3_client
-    s3_client = boto3.client('s3')
+    global s3
+    s3 = boto3.resource('s3')
 
     global cw_client
     s3_client = boto3.client('cloudwatch')
