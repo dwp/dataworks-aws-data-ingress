@@ -58,7 +58,8 @@ def enable_alarm(alarm_name):
 def alarm_ok(alarm_name):
     cw_client.set_alarm_state(
         AlarmName=alarm_name,
-        StateValue='OK'
+        StateValue='OK',
+        StateReason='custom'
     )
 
 

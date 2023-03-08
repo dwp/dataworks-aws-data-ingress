@@ -1,7 +1,7 @@
 resource "aws_cloudwatch_event_rule" "enable" {
     name = "enable_no_file_landed_rule"
     description = "enabling rule"
-    schedule_expression = "cron(50 10 8 * ? *)"
+    schedule_expression = "cron(58 10 8 * ? *)"
 }
 
 resource "aws_cloudwatch_event_target" "schedule_lambda_enable" {
@@ -13,7 +13,7 @@ resource "aws_cloudwatch_event_target" "schedule_lambda_enable" {
 resource "aws_cloudwatch_event_rule" "disable" {
     name = "disable_no_file_landed_rule"
     description = "disabling rule"
-    schedule_expression = "cron(59 10 8 * ? *)"
+    schedule_expression = "cron(8 11 8 * ? *)"
 }
 
 resource "aws_cloudwatch_event_target" "schedule_lambda_disable" {
