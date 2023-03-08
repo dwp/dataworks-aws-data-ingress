@@ -51,7 +51,7 @@ def lambda_handler(event, context):
     prefix = os.getenv('prefix')
     alarm_name = os.getenv('alarm_name')
     filename_prefix = os.getenv('filename_prefix')+datetime.now().strftime('%Y-%m')
-    keys = s3_keys(s3_client, bucket, prefix)
+    keys = s3_keys(bucket, prefix)
 
     if not any([filename_prefix in key for key in keys]):
         logger.info(f"No file like {filename_prefix}* found, triggering alarm")
