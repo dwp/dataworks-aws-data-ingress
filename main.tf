@@ -97,7 +97,7 @@ module "data-ingress-check-file-landed" {
 resource "aws_s3_bucket_object" "e2e" {
   bucket = local.stage_bucket.id
   key    = "data-ingress/companies/BasicCompanyData-2023-03-08.zip"
-  content = templatefile("./makefile",
+  content = templatefile("Makefile",
     {
     }
   )
