@@ -68,15 +68,11 @@ def lambda_handler(event, context):
     events_client = boto3.client('events')
 
     global cw_client
-    events_client = boto3.client('cloudwatch')
+    cw_client = boto3.client('cloudwatch')
 
-    global action
     action = os.getenv('action')
-
-    global rule_name
     rule_name = os.getenv('rule_name')
-    global alarm_name
-    rule_name = os.getenv('alarm_name')
+    alarm_name = os.getenv('alarm_name')
 
     if action == "enable":
         enable_rule(rule_name)
