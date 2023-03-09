@@ -4,7 +4,7 @@ resource "aws_autoscaling_schedule" "on" {
   desired_capacity       = var.asg_instance_count.desired[var.environment]
   max_size               = var.asg_instance_count.max[var.environment]
   min_size               = var.asg_instance_count.min[var.environment]
-  recurrence             = "00 23 1 * *"
+  recurrence             = "30 8 1 * *"
   time_zone              = var.time_zone
   autoscaling_group_name = aws_autoscaling_group.data_ingress_server.name
 }
