@@ -146,7 +146,7 @@ resource "aws_cloudwatch_metric_alarm" "no_file_landed" {
   namespace                 = "AWS/Events"
   period                    = "60"
   statistic                 = "Sum"
-  threshold                 = "1"
+  threshold                 = "0"
   alarm_description         = "Monitoring stage bucket"
   alarm_actions             = [var.monitoring_topic_arn]
   dimensions = {

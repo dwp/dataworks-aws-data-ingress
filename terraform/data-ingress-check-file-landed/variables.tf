@@ -1,6 +1,6 @@
 variable "common_repo_tags" {}
 variable "environment" {}
-variable "shut_down_time" {}
+variable "scale_down_time" {}
 variable "filename_prefix" {}
 variable "stage_bucket" {}
 variable "alarm_name" {}
