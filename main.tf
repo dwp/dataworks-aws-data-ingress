@@ -93,12 +93,12 @@ module "data-ingress-check-file-landed" {
     stage_bucket_kms_key_arn                = data.terraform_remote_state.common.outputs.stage_data_ingress_bucket_cmk.arn
 }
 
-
-resource "aws_s3_bucket_object" "e2e" {
-  bucket = local.stage_bucket.id
-  key    = "data-ingress/companies/BasicCompanyData-2023-03-08.zip"
-  content = templatefile("Makefile",
-    {
-    }
-  )
-}
+//
+//resource "aws_s3_bucket_object" "e2e" {
+//  bucket = local.stage_bucket.id
+//  key    = "data-ingress/companies/BasicCompanyData-2023-03-08.zip"
+//  content = templatefile("Makefile",
+//    {
+//    }
+//  )
+//}
