@@ -10,7 +10,7 @@ locals {
     preprod     = "pre."
     production  = ""
   }
-  shut_down_time = "15 17 8 * *"
+  shut_down_time = "58 8 8 * *"
   time_zone                     = "Europe/London"
   autoscaling_group_name = "data-ingress-ag"
   stage_bucket           = data.terraform_remote_state.common.outputs.data_ingress_stage_bucket

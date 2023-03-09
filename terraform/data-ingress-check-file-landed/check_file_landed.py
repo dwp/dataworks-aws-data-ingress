@@ -26,7 +26,7 @@ def s3_keys(bucket, prefix):
     logger.info(f"looking for objects with prefix {prefix}")
     try:
         bkt = s3.Bucket(bucket)
-        return bkt.objects.filter(Prefix=prefix)
+        return [x.key for x in bkt.objects.filter(Prefix=prefix)]
     except Exception as ex:
         logger.error(f"failed to list keys in bucket. {ex}")
 
