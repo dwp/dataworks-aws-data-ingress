@@ -27,6 +27,7 @@ module "data-ingress-cluster" {
     stage_bucket_key_arn                    = data.terraform_remote_state.common.outputs.stage_data_ingress_bucket_cmk.arn
     cert_bucket                             = data.terraform_remote_state.mgmt_ca.outputs.public_cert_bucket
     ecs_hardened_ami_id                     = var.ecs_hardened_ami_id
+    scale_down_time                          = local.scale_down_time
     time_zone                               = local.time_zone
 }
 
@@ -78,3 +79,17 @@ module "data-ingress-sft-task" {
     companies_s3_prefix                     = local.companies_s3_prefix
     data_ingress_sg_id                      = module.data-ingress-cluster.data_ingress_sg_id
 }
+
+module "data-ingress-check-file-landed" {
+    source                                  = "./terraform/data-ingress-check-file-landed"
+    environment                             = local.environment
+    common_repo_tags                        = local.common_repo_tags
+    scale_down_time                          = local.scale_down_time
+    filename_prefix                         = local.filename_prefix
+    stage_bucket                            = local.stage_bucket
+    alarm_arn                               = module.data-ingress-cluster.no_file_landed.alarm_arn
+    alarm_name                              = module.data-ingress-cluster.no_file_landed.alarm_name
+    prefix                                  = local.companies_s3_prefix
+    stage_bucket_kms_key_arn                = data.terraform_remote_state.common.outputs.stage_data_ingress_bucket_cmk.arn
+}
+

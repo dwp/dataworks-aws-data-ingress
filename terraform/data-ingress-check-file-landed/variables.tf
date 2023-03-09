@@ -1,0 +1,9 @@
+variable "common_repo_tags" {}
+variable "environment" {}
+variable "scale_down_time" {}
+variable "filename_prefix" {}
+variable "stage_bucket" {}
+variable "alarm_name" {}
+variable "alarm_arn" {}
+variable "prefix" {}
+variable "stage_bucket_kms_key_arn" {}

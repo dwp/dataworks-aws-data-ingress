@@ -25,3 +25,10 @@ output "trendmicro_secret_arn" {
 output "data_ingress_sg_id" {
   value = aws_security_group.data_ingress_server.id
 }
+
+output "no_file_landed" {
+  value = {
+    alarm_name = aws_cloudwatch_metric_alarm.no_file_landed.alarm_name
+    alarm_arn = aws_cloudwatch_metric_alarm.no_file_landed.arn
+  }
+}

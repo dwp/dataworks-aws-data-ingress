@@ -27,6 +27,7 @@ variable "subnet_id" {}
 variable "config_bucket" {}
 variable "current_region" {}
 variable "asg_instance_count" {}
+variable "scale_down_time" {}
 variable "environment" {}
 variable "sdx_subnet_connectivity_zero" {}
 variable "sdx_subnet_connectivity_one" {}
