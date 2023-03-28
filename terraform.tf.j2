@@ -19,6 +19,7 @@ provider "aws" {
   region  = "{{terraform.provider_region}}"
 
   default_tags {
+
     tags = merge(local.common_repo_tags, {
       Application      = "DataWorks"                              # As per our definition on ServiceNow
       Function         = "Data and Analytics"                     # As per our definition on ServiceNow
