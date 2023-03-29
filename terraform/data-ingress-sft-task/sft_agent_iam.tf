@@ -20,10 +20,10 @@ data "aws_iam_policy_document" "sft_agent_task" {
     sid     = "PullSFTAgentConfigS3dataIngress"
     actions = ["s3:GetObject"]
     resources = [
-      "${var.config_bucket.arn}/${aws_s3_bucket_object.data_ingress_sft_agent_config_receiver.key}",
-      "${var.config_bucket.arn}/${aws_s3_bucket_object.data_ingress_sft_agent_config_sender.key}",
-      "${var.config_bucket.arn}/${aws_s3_bucket_object.data_ingress_sft_agent_application_config_receiver.key}",
-      "${var.config_bucket.arn}/${aws_s3_bucket_object.data_ingress_sft_agent_application_config_sender.key}",
+      "${var.config_bucket.arn}/${aws_s3_object.data_ingress_sft_agent_config_receiver.key}",
+      "${var.config_bucket.arn}/${aws_s3_object.data_ingress_sft_agent_config_sender.key}",
+      "${var.config_bucket.arn}/${aws_s3_object.data_ingress_sft_agent_application_config_receiver.key}",
+      "${var.config_bucket.arn}/${aws_s3_object.data_ingress_sft_agent_application_config_sender.key}",
       "${var.config_bucket.arn}/*"
     ]
   }
