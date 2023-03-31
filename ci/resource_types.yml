@@ -21,3 +21,9 @@ resource_types:
     source:
       repository: concourse/github-release-resource
       tag: ((github_release_version))
+
+  - name: slack-notification
+    type: docker-image
+    source:
+      repository: cfcommunity/slack-notification-resource
+      tag: latest
