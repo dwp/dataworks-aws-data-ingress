@@ -53,7 +53,7 @@ variable "data_ingress_server_ssmenabled" {
 variable "acm_cert_arn" {}
 variable "stage_bucket_key_arn" {}
 
-variable "cw_data_ingress_server_agent_namespace" {}
+variable "cwa_namespace" {}
 variable "cwa_log_group_name" {}
 variable "cwa_metrics_collection_interval" {}
 variable "cwa_cpu_metrics_collection_interval" {}
