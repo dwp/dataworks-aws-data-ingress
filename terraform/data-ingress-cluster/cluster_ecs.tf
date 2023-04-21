@@ -132,7 +132,7 @@ resource "aws_launch_template" "data_ingress_server" {
     s3_script_cloudwatch_shell                       = aws_s3_object.data_ingress_server_cloudwatch_script.id
     s3_script_logging_shell                          = aws_s3_object.data_ingress_server_logging_script.id
     s3_script_config_hcs_shell                       = aws_s3_object.data_ingress_server_config_hcs_script.id
-    cwa_namespace                                    = var.cw_data_ingress_server_agent_namespace
+    cwa_namespace                                    = var.cwa_namespace
     cwa_log_group_name                               = var.cwa_log_group_name
     cwa_metrics_collection_interval                  = var.cwa_metrics_collection_interval
     cwa_cpu_metrics_collection_interval              = var.cwa_cpu_metrics_collection_interval
