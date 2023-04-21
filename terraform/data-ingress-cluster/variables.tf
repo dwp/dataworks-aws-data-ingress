@@ -53,12 +53,12 @@ variable "data_ingress_server_ssmenabled" {
 variable "acm_cert_arn" {}
 variable "stage_bucket_key_arn" {}
 
-variable "cwa_namespace" {}
+variable "cw_data_ingress_server_agent_namespace" {}
 variable "cwa_log_group_name" {}
-variable "cwa_metrics_collection_interval" {}
-variable "cwa_cpu_metrics_collection_interval" {}
-variable "cwa_disk_measurement_metrics_collection_interval" {}
-variable "cwa_disk_io_metrics_collection_interval" {}
-variable "cwa_mem_metrics_collection_interval" {}
-variable "cwa_netstat_metrics_collection_interval" {}
+variable "cw_agent_metrics_collection_interval" {}
+variable "cw_agent_cpu_metrics_collection_interval" {}
+variable "cw_agent_disk_measurement_metrics_collection_interval" {}
+variable "cw_agent_disk_io_metrics_collection_interval" {}
+variable "cw_agent_mem_metrics_collection_interval" {}
+variable "cw_agent_netstat_metrics_collection_interval" {}
 
