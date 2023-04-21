@@ -127,7 +127,7 @@ resource "aws_launch_template" "data_ingress_server" {
     proxy_port                                       = var.proxy.port
     secret_name                                      = var.secret_trendmicro
     hcs_environment                                  = local.hcs_environment[local.environment]
-    s3_scripts_bucket                                = data.terraform_remote_state.management.outputs.config_bucket.id
+    s3_scripts_bucket                                = local.config_bucket.id
     s3_script_logrotate                              = aws_s3_object.data_ingress_server_logrotate_script.id
     s3_script_cloudwatch_shell                       = aws_s3_object.data_ingress_server_cloudwatch_script.id
     s3_script_logging_shell                          = aws_s3_object.data_ingress_server_logging_script.id
