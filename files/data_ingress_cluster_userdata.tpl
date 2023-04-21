@@ -37,3 +37,39 @@ else
     aws ec2 terminate-instances --instance-ids $INSTANCE_ID
 fi
 aws ec2 create-tags --resources $INSTANCE_ID --tags Key=Name,Value=$HOSTNAME
+
+echo "Creating directories"
+mkdir -p /var/log/ingress
+mkdir -p /opt/ingress
+
+
+echo "Downloading startup scripts"
+S3_LOGROTATE="s3://${s3_scripts_bucket}/${s3_script_logrotate}"
+S3_CLOUDWATCH_SHELL="s3://${s3_scripts_bucket}/${s3_script_cloudwatch_shell}"
+S3_LOGGING_SHELL="s3://${s3_scripts_bucket}/${s3_script_logging_shell}"
+S3_CONFIG_HCS_SHELL="s3://${s3_scripts_bucket}/${s3_script_config_hcs_shell}"
+
+echo "Copying scripts"
+$(which aws) s3 cp "$S3_LOGROTATE"     /etc/logrotate.d/dks/dks.logrotate
+$(which aws) s3 cp "$S3_CLOUDWATCH_SHELL"  /opt/ingress/cloudwatch.sh
+$(which aws) s3 cp "$S3_LOGGING_SHELL"     /opt/ingress/logging.sh
+$(which aws) s3 cp "$S3_CONFIG_HCS_SHELL"  /opt/ingress/config_hcs.sh
+
+echo "Setup cloudwatch logs"
+chmod u+x /opt/ingress/cloudwatch.sh
+/opt/ingress/cloudwatch.sh \
+    "${cwa_metrics_collection_interval}" "${cwa_namespace}" "${cwa_cpu_metrics_collection_interval}" \
+    "${cwa_disk_measurement_metrics_collection_interval}" "${cwa_disk_io_metrics_collection_interval}" \
+    "${cwa_mem_metrics_collection_interval}" "${cwa_netstat_metrics_collection_interval}" "${cwa_log_group_name}" \
+    "$AWS_DEFAULT_REGION"
+
+echo "Setup hcs pre-requisites"
+chmod u+x /opt/ingress/config_hcs.sh
+/opt/ingress/config_hcs.sh "${hcs_environment}" "${proxy_host}" "${proxy_port}"
+
+echo "Creating ingress user"
+useradd ingress -m
+
+echo "Changing permissions"
+chown ingress:ingress -R  /opt/ingress
+chown ingress:ingress -R  /var/log/ingress

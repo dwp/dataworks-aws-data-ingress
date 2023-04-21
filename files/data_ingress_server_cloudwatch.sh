@@ -138,6 +138,12 @@ cat > /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json <<CWAGEN
             "timezone": "UTC"
           },
           {
+            "file_path": "/var/log/ingress/config_hcs.log",
+            "log_group_name": "${cwa_log_group_name}",
+            "log_stream_name": "config_hcs.log",
+            "timezone": "UTC"
+          },
+          {
             "file_path": "/var/log/data_ingress_server/data_ingress_server.out",
             "log_group_name": "${cwa_log_group_name}",
             "log_stream_name": "data_ingress_server.out",
