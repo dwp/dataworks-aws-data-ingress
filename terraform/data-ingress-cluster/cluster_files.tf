@@ -4,7 +4,7 @@ data "local_file" "data_ingress_server_logrotate_script" {
 }
 
 resource "aws_s3_object" "data_ingress_server_logrotate_script" {
-  bucket  = local.config_bucket.id
+  bucket  = var.config_bucket.id
   key     = "component/data-ingress-server/data-ingress-server.logrotate"
   content = data.local_file.data_ingress_server_logrotate_script.content
 
@@ -21,7 +21,7 @@ data "local_file" "data_ingress_server_cloudwatch_script" {
 }
 
 resource "aws_s3_object" "data_ingress_server_cloudwatch_script" {
-  bucket  = local.config_bucket.id
+  bucket  = var.config_bucket.id
   key     = "component/data-ingress-server/data-ingress-server-cloudwatch.sh"
   content = data.local_file.data_ingress_server_cloudwatch_script.content
 
@@ -38,7 +38,7 @@ data "local_file" "data_ingress_server_logging_script" {
 }
 
 resource "aws_s3_object" "data_ingress_server_logging_script" {
-  bucket  = local.config_bucket.id
+  bucket  = var.config_bucket.id
   key     = "component/data-ingress-server/data-ingress-server-logging.sh"
   content = data.local_file.data_ingress_server_logging_script.content
 
@@ -55,7 +55,7 @@ data "local_file" "data_ingress_server_config_hcs_script" {
 }
 
 resource "aws_s3_object" "data_ingress_server_config_hcs_script" {
-  bucket  = local.config_bucket.id
+  bucket  = var.config_bucket.id
   key     = "component/data-ingress-server/data-ingress-server-config-hcs.sh"
   content = data.local_file.data_ingress_server_config_hcs_script.content
 
