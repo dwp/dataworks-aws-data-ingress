@@ -134,12 +134,12 @@ resource "aws_launch_template" "data_ingress_server" {
     s3_script_config_hcs_shell                       = aws_s3_object.data_ingress_server_config_hcs_script.id
     cwa_namespace                                    = var.cw_data_ingress_server_agent_namespace
     cwa_log_group_name                               = var.cwa_log_group_name
-    cwa_metrics_collection_interval                  = var.cw_agent_metrics_collection_interval
-    cwa_cpu_metrics_collection_interval              = var.cw_agent_cpu_metrics_collection_interval
-    cwa_disk_measurement_metrics_collection_interval = var.cw_agent_disk_measurement_metrics_collection_interval
-    cwa_disk_io_metrics_collection_interval          = var.cw_agent_disk_io_metrics_collection_interval
-    cwa_mem_metrics_collection_interval              = var.cw_agent_mem_metrics_collection_interval
-    cwa_netstat_metrics_collection_interval          = var.cw_agent_netstat_metrics_collection_interval
+    cwa_metrics_collection_interval                  = var.cwa_metrics_collection_interval
+    cwa_cpu_metrics_collection_interval              = var.cwa_cpu_metrics_collection_interval
+    cwa_disk_measurement_metrics_collection_interval = var.cwa_disk_measurement_metrics_collection_interval
+    cwa_disk_io_metrics_collection_interval          = var.cwa_disk_io_metrics_collection_interval
+    cwa_mem_metrics_collection_interval              = var.cwa_mem_metrics_collection_interval
+    cwa_netstat_metrics_collection_interval          = var.cwa_netstat_metrics_collection_interval
   }))
   instance_initiated_shutdown_behavior = "terminate"
   iam_instance_profile {
