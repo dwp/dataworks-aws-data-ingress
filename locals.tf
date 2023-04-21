@@ -10,21 +10,13 @@ locals {
     preprod     = "pre."
     production  = ""
   }
-  sft_agent_version = {
-    development = "latest"
-    qa = "0.0.7"
-    integration = "0.0.7"
-    preprod = "0.0.7"
-    production = "0.0.7"
-  }
-
-  scale_down_time = "30 23 4 * *"
-  time_zone                     = "Europe/London"
-  autoscaling_group_name = "data-ingress-ag"
-  stage_bucket           = data.terraform_remote_state.common.outputs.data_ingress_stage_bucket
-  companies_s3_prefix    = "data-ingress/companies"
-  companies_s3_prefix_route_test    = "route-test/data-ingress/companies"
-  config_bucket          = data.terraform_remote_state.common.outputs.config_bucket
+  scale_down_time                = "30 23 4 * *"
+  time_zone                      = "Europe/London"
+  autoscaling_group_name         = "data-ingress-ag"
+  stage_bucket                   = data.terraform_remote_state.common.outputs.data_ingress_stage_bucket
+  companies_s3_prefix            = "data-ingress/companies"
+  companies_s3_prefix_route_test = "route-test/data-ingress/companies"
+  config_bucket                  = data.terraform_remote_state.common.outputs.config_bucket
   asg_instance_count = {
     desired = {
       development = 2
