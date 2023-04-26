@@ -137,7 +137,7 @@
               cd src/runners
               ./run-ci.sh \
               "../../../meta"
-              aws autoscaling update-auto-scaling-group --auto-scaling-group-name "$ASG_NAME" --max-size 2 --desired-capacity 2
+
         inputs:
           - name: dataworks-behavioural-framework
           - name: dataworks-aws-data-ingress
