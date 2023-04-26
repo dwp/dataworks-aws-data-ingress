@@ -62,3 +62,7 @@ variable "cwa_disk_io_metrics_collection_interval" {}
 variable "cwa_mem_metrics_collection_interval" {}
 variable "cwa_netstat_metrics_collection_interval" {}
 
+variable "config_bucket_arn"{}
+
+
+

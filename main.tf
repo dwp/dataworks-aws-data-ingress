@@ -38,6 +38,7 @@ module "data-ingress-cluster" {
     cwa_disk_io_metrics_collection_interval          = local.cw_agent_disk_io_metrics_collection_interval
     cwa_mem_metrics_collection_interval              = local.cw_agent_mem_metrics_collection_interval
     cwa_netstat_metrics_collection_interval          = local.cw_agent_netstat_metrics_collection_interval
+    config_bucket_arn                                = local.config_bucket_arn
 }
 
 output "network_interface_ip" {

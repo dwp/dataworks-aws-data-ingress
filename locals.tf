@@ -2,6 +2,8 @@ locals {
   launch_template_name        = "data-ingress-launch-template"
   name_data_ingress_log_group = "/app/data_ingress"
 
+  config_bucket_arn = data.terraform_remote_state.common.outputs.config_bucket["arn"]
+
   env_prefix = {
     development = "dev."
     qa          = "qa."
