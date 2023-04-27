@@ -319,4 +319,17 @@ data "aws_iam_policy_document" "data_ingress_server_s3_policy" {
       "${var.config_bucket_arn}/*"
     ]
   }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "kms:Decrypt",
+      "kms:DescribeKey",
+    ]
+
+    resources = [
+      local.config_bucket_cmk
+    ]
+  }
 }

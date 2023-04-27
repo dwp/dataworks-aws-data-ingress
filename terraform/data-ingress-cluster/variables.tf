@@ -63,6 +63,7 @@ variable "cwa_mem_metrics_collection_interval" {}
 variable "cwa_netstat_metrics_collection_interval" {}
 
 variable "config_bucket_arn"{}
+variable "config_bucket_cmk"{}
 
 
 
