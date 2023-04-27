@@ -329,7 +329,7 @@ data "aws_iam_policy_document" "data_ingress_server_s3_policy" {
     ]
 
     resources = [
-      local.config_bucket_cmk
+      var.config_bucket_cmk
     ]
   }
 }
