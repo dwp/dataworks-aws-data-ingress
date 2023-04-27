@@ -3,6 +3,7 @@ locals {
   name_data_ingress_log_group = "/app/data_ingress"
 
   config_bucket_arn = data.terraform_remote_state.common.outputs.config_bucket["arn"]
+  config_bucket_cmk = data.terraform_remote_state.common.outputs.config_bucket_cmk["arn"]
 
   env_prefix = {
     development = "dev."
