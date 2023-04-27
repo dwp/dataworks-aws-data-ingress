@@ -50,14 +50,6 @@ output "data_ingress_sg_id" {
     value = module.data-ingress-cluster.data_ingress_sg_id
 }
 
-module "data-ingress-test-scaling" {
-    source                                  = "./terraform/data-ingress-test-scaling"
-    asg_instance_count                      = local.asg_instance_count
-    environment                             = local.environment
-    data_ingress_autoscaling_group_name     = module.data-ingress-cluster.data_ingress_autoscaling_group_name
-    time_zone                               = local.time_zone
-}
-
 module "data-ingress-sft-task" {
     source                                  = "./terraform/data-ingress-sft-task"
     environment                             = local.environment
