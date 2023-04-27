@@ -46,6 +46,10 @@ output "network_interface_ip" {
     value = module.data-ingress-cluster.network_interface.ip
 }
 
+output "data_ingress_sg_id" {
+    value = module.data-ingress-cluster.data_ingress_sg_id
+}
+
 module "data-ingress-test-scaling" {
     source                                  = "./terraform/data-ingress-test-scaling"
     asg_instance_count                      = local.asg_instance_count
