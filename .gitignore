@@ -10,3 +10,5 @@ aviator_pipeline.yml
 workspaces.tf
 tpus
 .terraform.lock.hcl
+
+terraform/data-ingress-check-file-landed/bin/*

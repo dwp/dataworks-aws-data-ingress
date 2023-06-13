@@ -10,6 +10,14 @@ locals {
     preprod     = "pre."
     production  = ""
   }
+  sft_agent_version = {
+    development = "latest"
+    qa = "latest"
+    integration = "latest"
+    preprod = "latest"
+    production = "latest"
+  }
+
   scale_down_time = "30 23 4 * *"
   time_zone                     = "Europe/London"
   autoscaling_group_name = "data-ingress-ag"
