@@ -76,7 +76,7 @@ data "template_file" "sft_agent_receiver_definition" {
     name               = "sft_agent_receiver"
     group_name         = "sft_agent_receiver"
     cpu                = var.task_definition_cpu[var.environment]
-    image_url          = format("%s:%s", "${var.account[var.management_account[var.environment]]}.dkr.ecr.${var.region}.amazonaws.com/${var.ecr_repository_name}", "latest")
+    image_url          = format("%s:%s", "${var.account[var.management_account[var.environment]]}.dkr.ecr.${var.region}.amazonaws.com/${var.ecr_repository_name}", "${var.sft_agent_version[var.environment]}")
     memory             = var.task_definition_memory[var.environment]
     memory_reservation = var.task_definition_memory[var.environment]
     user               = "0"
