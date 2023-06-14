@@ -38,6 +38,7 @@ else
 fi
 aws ec2 create-tags --resources $INSTANCE_ID --tags Key=Name,Value=$HOSTNAME
 
+
 echo "Creating directories"
 mkdir -p /var/log/ingress
 mkdir -p /opt/ingress
@@ -65,7 +66,7 @@ chmod u+x /opt/ingress/cloudwatch.sh
 
 echo "Setup hcs pre-requisites"
 chmod u+x /opt/ingress/config_hcs.sh
-/opt/ingress/config_hcs.sh "${hcs_environment}" "${proxy_host}" "${proxy_port}"
+/opt/ingress/config_hcs.sh "${hcs_environment}" "${proxy_host}" "${proxy_port}" "${tanium_server_1}" "${tanium_server_2}" "${tanium_env}" "${tanium_port}" "${tanium_log_level}" "${install_tenable}" "${install_trend}" "${install_tanium}" "${tenantid}" "${token}" "${policyid}" "${tenant}"
 
 echo "Creating ingress user"
 useradd ingress -m
