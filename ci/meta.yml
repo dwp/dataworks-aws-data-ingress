@@ -102,7 +102,7 @@
               terraform workspace show
               cp ../terraform-bootstrap/terraform.tf .
               terraform init -upgrade
-              terraform plan -out terraform.plan
+              terraform plan -out terraform.plan -replace=aws_autoscaling_schedule.test_on[0] -replace=aws_autoscaling_schedule.test_off[0]
               terraform apply -auto-approve terraform.plan
           dir: dataworks-aws-data-ingress
         inputs:
