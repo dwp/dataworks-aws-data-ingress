@@ -60,11 +60,6 @@ module "dataworks_common" {
   tag_value_environment = local.environment
 }
 
-data "aws_secretsmanager_secret_version" "terraform_secrets" {
-  provider  = aws.management_dns
-  secret_id = "/concourse/dataworks/terraform"
-}
-
 locals {
   name        = "dataworks-aws-data-ingress"
   environment = terraform.workspace == "default" ? "development" : terraform.workspace
