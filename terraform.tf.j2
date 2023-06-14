@@ -54,11 +54,6 @@ provider "aws" {
 
 }
 
-data "aws_secretsmanager_secret_version" "terraform_secrets" {
-  provider  = aws.management_dns
-  secret_id = "/concourse/dataworks/terraform"
-}
-
 module "dataworks_common" {
   source                = "{{terraform.dataworks_common_module_name}}"
   version               = "{{terraform.dataworks_common_module_version}}"
