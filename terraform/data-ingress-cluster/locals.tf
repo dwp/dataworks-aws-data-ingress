@@ -68,10 +68,6 @@ locals {
     management     = "41"
   }
 
-  ## Trend config
-  tenant   = jsondecode(data.aws_secretsmanager_secret_version.terraform_secrets.secret_binary).trend.tenant
-  tenantid = jsondecode(data.aws_secretsmanager_secret_version.terraform_secrets.secret_binary).trend.tenantid
-  token    = jsondecode(data.aws_secretsmanager_secret_version.terraform_secrets.secret_binary).trend.token
 
   policy_id = {
     development    = "69"

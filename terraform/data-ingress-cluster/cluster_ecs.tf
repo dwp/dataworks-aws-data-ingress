@@ -148,9 +148,9 @@ resource "aws_launch_template" "data_ingress_server" {
     tanium_env                                       = local.tanium_env[local.environment]
     tanium_port                                      = var.tanium_port_1
     tanium_log_level                                 = local.tanium_log_level[local.environment]
-    tenant                                           = local.tenant
-    tenantid                                         = local.tenantid
-    token                                            = local.token
+    tenant                                           = var.tenant
+    tenantid                                         = var.tenant_id
+    token                                            = var.token
     policyid                                         = local.policy_id[local.environment]
   }))
   instance_initiated_shutdown_behavior = "terminate"

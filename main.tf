@@ -40,6 +40,9 @@ module "data-ingress-cluster" {
     cwa_netstat_metrics_collection_interval          = local.cw_agent_netstat_metrics_collection_interval
     config_bucket_arn                                = local.config_bucket_arn
     config_bucket_cmk                                = local.config_bucket_cmk
+    tenant                                           = local.tenant
+    tenant_id                                        = local.tenant_id
+    token                                            = local.token
 }
 
 output "network_interface_ip" {

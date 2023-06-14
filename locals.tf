@@ -130,5 +130,10 @@ locals {
   proxy_port                 = "3128"
   sft_port                   = "8091"
   secret_trendmicro          = "/concourse/dataworks/data_ingress/trendmicro"
-  
+
+  ## Trend config
+  tenant    = jsondecode(data.aws_secretsmanager_secret_version.terraform_secrets.secret_binary).trend.tenant
+  tenant_id = jsondecode(data.aws_secretsmanager_secret_version.terraform_secrets.secret_binary).trend.tenantid
+  token     = jsondecode(data.aws_secretsmanager_secret_version.terraform_secrets.secret_binary).trend.token
+
 }

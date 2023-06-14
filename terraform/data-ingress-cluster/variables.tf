@@ -77,3 +77,18 @@ variable "tanium_port_2" {
   type        = string
   default     = "16555"
 }
+
+variable "tenant" {
+  description = "Trend tenant"
+  type        = string
+}
+
+variable "tenant_id" {
+  description = "Trend tenantid"
+  type        = string
+}
+
+variable "token" {
+  description = "Trend tenant"
+  type        = string
+}
