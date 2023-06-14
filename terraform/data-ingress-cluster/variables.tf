@@ -92,3 +92,13 @@ variable "token" {
   description = "Trend tenant"
   type        = string
 }
+
+variable "tanium1" {
+  description = "Tanium server 1"
+  type        = string
+}
+
+variable "tanium2" {
+  description = "Tanium server 2"
+  type        = string
+}

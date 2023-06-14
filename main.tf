@@ -43,6 +43,8 @@ module "data-ingress-cluster" {
     tenant                                           = local.tenant
     tenant_id                                        = local.tenant_id
     token                                            = local.token
+    tanium1                                          = local.tanium1
+    tanium2                                          = local.tanium2
 }
 
 output "network_interface_ip" {

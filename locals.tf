@@ -131,6 +131,10 @@ locals {
   sft_port                   = "8091"
   secret_trendmicro          = "/concourse/dataworks/data_ingress/trendmicro"
 
+  ## Tanium servers
+  tanium1 = jsondecode(data.aws_secretsmanager_secret_version.terraform_secrets.secret_binary).tanium[local.environment].server_1
+  tanium2 = jsondecode(data.aws_secretsmanager_secret_version.terraform_secrets.secret_binary).tanium[local.environment].server_2
+  
   ## Trend config
   tenant    = jsondecode(data.aws_secretsmanager_secret_version.terraform_secrets.secret_binary).trend.tenant
   tenant_id = jsondecode(data.aws_secretsmanager_secret_version.terraform_secrets.secret_binary).trend.tenantid

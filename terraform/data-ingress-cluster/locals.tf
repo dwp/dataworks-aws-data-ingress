@@ -1,5 +1,6 @@
 locals {
-      
+
+  environment = terraform.workspace == "default" ? "development" : terraform.workspace      
   tenable_install = {
     development    = "true"
     qa             = "true"
@@ -32,9 +33,6 @@ locals {
 
 
   ## Tanium config
-  ## Tanium Servers
-  tanium1 = jsondecode(data.aws_secretsmanager_secret_version.terraform_secrets.secret_binary).tanium[local.environment].server_1
-  tanium2 = jsondecode(data.aws_secretsmanager_secret_version.terraform_secrets.secret_binary).tanium[local.environment].server_2
 
   ## Tanium Env Config
   tanium_env = {
