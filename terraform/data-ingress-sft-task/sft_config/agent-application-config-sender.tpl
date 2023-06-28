@@ -16,5 +16,5 @@ sender:
       filenameRegex: .*
       maxThreadPoolSize: 5
       name: internal/AWSDataworx1/inbound/GFTS/CH
-      source: /mnt/send_point/
+      source: /mnt/point/
       threadPoolSize: 5
