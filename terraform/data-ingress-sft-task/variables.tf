@@ -112,3 +112,5 @@ variable "receiver_destination" {
     management     = "/mnt/point/data-ingress/companies"
   }
 }
+
+variable "sft_agent_version" {}
