@@ -71,9 +71,9 @@ resource "aws_network_interface" "di_ni_receiver" {
 
 resource "aws_autoscaling_group" "data_ingress_server" {
   name = var.autoscaling_group_name
-  min_size              = var.asg_instance_count.off
-  max_size              = var.asg_instance_count.off
-  desired_capacity      = var.asg_instance_count.off
+  min_size              = var.asg_instance_count.min[var.environment]
+  max_size              = var.asg_instance_count.max[var.environment]
+  desired_capacity      = var.asg_instance_count.desired[var.environment]
   protect_from_scale_in = false
   default_cooldown      = 30
   force_delete          = true
