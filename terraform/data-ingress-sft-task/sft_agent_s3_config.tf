@@ -37,6 +37,7 @@ data "template_file" "data_ingress_sft_agent_application_config_tpl_receiver" {
   template = file("${path.module}/sft_config/agent-application-config-receiver.tpl")
   vars = {
     destination                = var.receiver_destination[var.environment]
+    filename_prefix            = var.filename_prefix
   }
 }
 

@@ -15,10 +15,10 @@ locals {
   }
   sft_agent_version = {
     development = "latest"
-    qa = "0.0.7"
-    integration = "0.0.7"
-    preprod = "0.0.7"
-    production = "0.0.7"
+    qa = "0.0.9"
+    integration = "0.0.9"
+    preprod = "0.0.9"
+    production = "0.0.9"
   }
 
   scale_down_time                = "30 23 4 * *"

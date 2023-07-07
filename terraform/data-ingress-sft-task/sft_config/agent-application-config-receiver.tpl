@@ -5,7 +5,7 @@ receiver:
         - name: renameFile
           properties:
             rename_regex: (.+)
-            rename_replacement: FILENAME
+            rename_replacement: ${filename_prefix}-NOW[yyyy-MM-dd].zip
         - name: writeFile
           properties:
             destination: ${destination}
