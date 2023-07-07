@@ -9,12 +9,10 @@ resource "aws_s3_object" "data_ingress_server_logrotate_script" {
   content    = data.local_file.data_ingress_server_logrotate_script.content
   kms_key_id = var.config_bucket_cmk
 
-  tags = merge(
-    var.common_repo_tags,
-    {
+  tags = {
       Name = "data-ingress-server-logrotate-script"
-    },
-  )
+    }
+
 }
 
 data "local_file" "data_ingress_server_cloudwatch_script" {
@@ -27,12 +25,9 @@ resource "aws_s3_object" "data_ingress_server_cloudwatch_script" {
   content    = data.local_file.data_ingress_server_cloudwatch_script.content
   kms_key_id = var.config_bucket_cmk
 
-  tags = merge(
-    var.common_repo_tags,
-    {
+  tags = {
       Name = "data-ingress-server-cloudwatch-script"
-    },
-  )
+    }
 }
 
 data "local_file" "data_ingress_server_logging_script" {
@@ -45,12 +40,9 @@ resource "aws_s3_object" "data_ingress_server_logging_script" {
   content    = data.local_file.data_ingress_server_logging_script.content
   kms_key_id = var.config_bucket_cmk
 
-  tags = merge(
-    var.common_repo_tags,
-    {
+  tags = {
       Name = "data-ingress-server-logging-script"
-    },
-  )
+    }
 }
 
 data "local_file" "data_ingress_server_config_hcs_script" {
@@ -63,10 +55,8 @@ resource "aws_s3_object" "data_ingress_server_config_hcs_script" {
   content    = data.local_file.data_ingress_server_config_hcs_script.content
   kms_key_id = var.config_bucket_cmk
 
-  tags = merge(
-    var.common_repo_tags,
-    {
+  tags = {
       Name = "data-ingress-server-config-hcs-script"
-    },
-  )
+    }
+
 }
