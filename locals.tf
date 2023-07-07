@@ -2,6 +2,9 @@ locals {
   launch_template_name        = "data-ingress-launch-template"
   name_data_ingress_log_group = "/app/data_ingress"
 
+  config_bucket_arn = data.terraform_remote_state.common.outputs.config_bucket["arn"]
+  config_bucket_cmk = data.terraform_remote_state.common.outputs.config_bucket_cmk["arn"]
+
   env_prefix = {
     development = "dev."
     qa          = "qa."
@@ -18,13 +21,13 @@ locals {
     production = "0.0.9"
   }
 
-  scale_down_time = "30 23 4 * *"
-  time_zone                     = "Europe/London"
-  autoscaling_group_name = "data-ingress-ag"
-  stage_bucket           = data.terraform_remote_state.common.outputs.data_ingress_stage_bucket
-  companies_s3_prefix    = "data-ingress/companies"
-  companies_s3_prefix_route_test    = "route-test/data-ingress/companies"
-  config_bucket          = data.terraform_remote_state.common.outputs.config_bucket
+  scale_down_time                = "30 23 4 * *"
+  time_zone                      = "Europe/London"
+  autoscaling_group_name         = "data-ingress-ag"
+  stage_bucket                   = data.terraform_remote_state.common.outputs.data_ingress_stage_bucket
+  companies_s3_prefix            = "data-ingress/companies"
+  companies_s3_prefix_route_test = "route-test/data-ingress/companies"
+  config_bucket                  = data.terraform_remote_state.common.outputs.config_bucket
   asg_instance_count = {
     desired = {
       development = 2
@@ -135,5 +138,14 @@ locals {
   proxy_port                 = "3128"
   sft_port                   = "8091"
   secret_trendmicro          = "/concourse/dataworks/data_ingress/trendmicro"
+
+  ## Tanium servers
+  tanium1 = jsondecode(data.aws_secretsmanager_secret_version.terraform_secrets.secret_binary).tanium[local.environment].server_1
+  tanium2 = jsondecode(data.aws_secretsmanager_secret_version.terraform_secrets.secret_binary).tanium[local.environment].server_2
+
+  ## Trend config
+  tenant    = jsondecode(data.aws_secretsmanager_secret_version.terraform_secrets.secret_binary).trend.tenant
+  tenant_id = jsondecode(data.aws_secretsmanager_secret_version.terraform_secrets.secret_binary).trend.tenantid
+  token     = jsondecode(data.aws_secretsmanager_secret_version.terraform_secrets.secret_binary).trend.token
 
 }

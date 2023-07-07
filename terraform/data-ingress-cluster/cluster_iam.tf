@@ -280,3 +280,56 @@ resource "aws_iam_role_policy_attachment" "stage_bucket_all" {
   role       = aws_iam_role.data_ingress_server.name
   policy_arn = aws_iam_policy.stage_bucket_all.arn
 }
+
+resource "aws_iam_role_policy_attachment" "data_ingress_s3_attachment" {
+  role       = aws_iam_role.data_ingress_server.name
+  policy_arn = aws_iam_policy.data_ingress_server_s3.arn
+}
+
+resource "aws_iam_policy" "data_ingress_server_s3" {
+  name        = "DataIngressS3ConfigAccess"
+  description = "Allow Data Ingress to access config bucket"
+  policy      = data.aws_iam_policy_document.data_ingress_server_s3_policy.json
+}
+
+data "aws_iam_policy_document" "data_ingress_server_s3_policy" {
+  statement {
+    sid    = "AllowECSToListConfigBucket"
+    effect = "Allow"
+
+    actions = [
+      "s3:GetBucketLocation",
+      "s3:ListBucket",
+    ]
+
+    resources = [
+      var.config_bucket_arn
+    ]
+  }
+
+  statement {
+    sid    = "AllowECSToGetConfigBucketObjects"
+    effect = "Allow"
+
+    actions = [
+      "s3:GetObject*",
+    ]
+
+    resources = [
+      "${var.config_bucket_arn}/*"
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "kms:Decrypt",
+      "kms:DescribeKey",
+    ]
+
+    resources = [
+      var.config_bucket_cmk
+    ]
+  }
+}

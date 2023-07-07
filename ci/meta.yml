@@ -136,10 +136,12 @@
               cd src/runners
               ./run-ci.sh \
               "../../../meta"
+
         inputs:
           - name: dataworks-behavioural-framework
           - name: dataworks-aws-data-ingress
           - name: meta
+
 
     cycle-containers:
       task: cycle-containers
@@ -188,13 +190,20 @@
               source /assume-role
               set +x
 
-              instance_ids=$(aws ec2 describe-instances --filters Name=tag:Name,Values=data-ingress-* Name=instance-state-name,Values=running | jq -r '.Reservations[].Instances[].InstanceId')
+              instance_ids=$(aws ec2 describe-instances --filters Name=tag:Name,Values=$ASG_NAME Name=instance-state-name,Values=running | jq -r '.Reservations[].Instances[].InstanceId')
 
-              for instance_id in $instance_ids;
-                do
-                  aws ec2 terminate-instances --instance-ids "$instance_id"
-                done;
+              echo "Terminating $ASG_NAME instances in $TF_WORKSPACE..."
 
+              if [ ! -z "$instance_ids" ]; then
+                for instance_id in $instance_ids;
+                  do
+                    aws ec2 terminate-instances --instance-ids "$instance_id"
+                  done;
+              else    
+                echo "No $ASG_NAME instances found for termination.  Continuing..."
+              fi;
+              
+              aws autoscaling update-auto-scaling-group --auto-scaling-group-name "$ASG_NAME" --max-size 2 --desired-capacity 2
               desired_capacity=$(aws autoscaling describe-auto-scaling-groups --auto-scaling-group-name "$ASG_NAME" | jq -r '.AutoScalingGroups[0].DesiredCapacity')
 
               count=0
@@ -203,7 +212,7 @@
               while [ "$count" -lt "$max_retries" ]
                 do
                   sleep "$SLEEP_TIME"
-                  instance_ids=$(aws ec2 describe-instances --filters Name=tag:Name,Values=data-ingress-* Name=instance-state-name,Values=running | jq -r '.Reservations[].Instances[].InstanceId')
+                  instance_ids=$(aws ec2 describe-instances --filters Name=tag:Name,Values=$INSTANCE_PREFIX Name=instance-state-name,Values=running | jq -r '.Reservations[].Instances[].InstanceId')
                   instance_count=$(echo $instance_ids | tr ' ' '\n' | wc -l)
                   if [[ $instance_count -eq $desired_capacity ]]; then
                     image_ids="$(aws ec2 describe-instances --instance-ids $instance_ids | jq -r '.Reservations[] | .Instances[] | .ImageId')"
@@ -227,6 +236,7 @@
         AWS_DEFAULT_REGION: ((dataworks.aws_region))
         AWS_ROLE_ARN: arn:aws:iam::((aws_account.qa)):role/ci
         ASG_NAME: data-ingress-ag
+        INSTANCE_PREFIX: data-ingress
         SLEEP_TIME: 60
         MAX_RETRIES: 10
 
@@ -250,12 +260,13 @@
               source /assume-role
               set +x
               max_retries=5
-              task_json="$(aws ecs run-task --cluster "$CLUSTER_NAME" --capacity-provider-strategy 'capacityProvider=data-ingress-cluster' --task-definition ami_ecs_test_td --overrides "{\"containerOverrides\": [{\"name\": \"test-ecs-ami\", \"command\": [\"sh\", \"-c\", \"sleep 300\"]}]}")"
+              sleep 180
+              task_json="$(aws ecs run-task --cluster data-ingress --capacity-provider-strategy 'capacityProvider=data-ingress-ag' --task-definition ami_ecs_test_td --overrides "{\"containerOverrides\": [{\"name\": \"test-ecs-ami\", \"command\": [\"sh\", \"-c\", \"sleep 300\"]}]}")"
               task_arn=$(echo $task_json | jq -r '.tasks[0].taskArn')
               while [ $max_retries > 0 ]
               do
                 sleep 15
-                task_json="$(aws ecs describe-tasks --cluster "$CLUSTER_NAME" --tasks $task_arn)"
+                task_json="$(aws ecs describe-tasks --cluster data-ingress --tasks $task_arn)"
                 container_status="$(echo "$task_json" | jq -r '.tasks[0].containers[0].lastStatus')"
                 if [ "$container_status" == "RUNNING" ]; then
                   exit 0
@@ -269,7 +280,9 @@
         AWS_DEFAULT_REGION: ((dataworks.aws_region))
         AWS_ROLE_ARN: arn:aws:iam::((aws_account.qa)):role/ci
         CLUSTER_NAME: data-ingress
-        CAPACITY_PROVIDER: data-ingress-cluster
+        CLUSTER_TAG_NAME: data-ingress-cluster
+        CAPACITY_PROVIDER: data-ingress-ag
+        ASG_NAME: data-ingress-ag
 
     ami-test-results:
       task: ami-test-result
@@ -397,7 +410,6 @@
                   done;
               else    
                 echo "No $ASG_NAME instances found for termination.  Continuing..."
-                exit 0
               fi;
 
               desired_capacity=$(aws autoscaling describe-auto-scaling-groups --auto-scaling-group-name "$ASG_NAME" | jq -r '.AutoScalingGroups[0].DesiredCapacity')
@@ -421,7 +433,7 @@
         params:
           AWS_DEFAULT_REGION: ((dataworks.aws_region))
           AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
-          ASG_NAME: data-ingress-cluster
+          ASG_NAME: data-ingress-ag
           INSTANCE_PREFIX: data-ingress
           SLEEP_TIME: 60
           MAX_RETRIES: 10

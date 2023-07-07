@@ -48,8 +48,13 @@ jobs:
       #          inputs:
       #            - name: previous_success
 
-      - .: (( inject meta.plan.terminate-ecs-instances ))
+      - .: (( inject meta.plan.terminate-ecs-instances ))   
       - .: (( inject meta.plan.test-ecs-ami ))
+        config:
+          params:
+            TF_WORKSPACE: qa
+            AWS_ACC: ((aws_account.qa))
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.qa)):role/ci
         on_failure:
           do:
             - .: (( inject meta.plan.ami-test-results ))
