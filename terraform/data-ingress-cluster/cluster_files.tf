@@ -12,6 +12,7 @@ resource "aws_s3_object" "data_ingress_server_logrotate_script" {
   tags = {
       Name = "data-ingress-server-logrotate-script"
     }
+
 }
 
 data "local_file" "data_ingress_server_cloudwatch_script" {
