@@ -17,6 +17,7 @@ jobs:
       - .: (( inject meta.plan.terraform-plan ))
         params:
           TF_WORKSPACE: 'default'
+      - .: (( inject meta.plan.terminate-ecs-instances-pre-e2e))  
       - .: (( inject meta.plan.e2e-test))
         params:
           TF_WORKSPACE: development
