@@ -8,6 +8,11 @@ mkdir ${folder}
 
 #install deep security agent
 
+# Add VPC IP's to local host file with local DNS config for Trend
+echo Adding VPC Endpoint IP to hosts file
+vpce_ip1=$(dig +short "${proxy_host}" | sed -n 1p | grep '^[.0-9]*$')
+sed -i -e '$a'"$vpce_ip1"'  'dwx-squid-proxy.local /etc/hosts
+
 tenant_id_activation=$(aws secretsmanager get-secret-value --secret-id ${secret_name} --query SecretString --output text | jq .tenant_id_activation | tr -d '"')
 token=$(aws secretsmanager get-secret-value --secret-id ${secret_name} --query SecretString --output text | jq .token | tr -d '"')
 policy_id=$(aws secretsmanager get-secret-value --secret-id ${secret_name} --query SecretString --output text | jq .policy_id | tr -d '"')

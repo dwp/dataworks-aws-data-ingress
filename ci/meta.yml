@@ -413,7 +413,6 @@
                 echo "No $ASG_NAME instances found for termination.  Continuing..."
               fi;
 
-              aws autoscaling update-auto-scaling-group --auto-scaling-group-name "$ASG_NAME" --max-size 2 --desired-capacity 2
               desired_capacity=$(aws autoscaling describe-auto-scaling-groups --auto-scaling-group-name "$ASG_NAME" | jq -r '.AutoScalingGroups[0].DesiredCapacity')
 
               count=0
