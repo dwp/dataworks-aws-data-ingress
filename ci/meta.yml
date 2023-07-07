@@ -126,7 +126,6 @@
           E2E_TEST_TIMEOUT: 300
           E2E_FEATURE_TAG_FILTER: "@data-ingress"
           ASSUME_DURATION: 3600
-          AWS_ROLE_ARN: arn:aws:iam::((aws_account.qa)):role/ci
         run:
           path: sh
           dir: dataworks-behavioural-framework
