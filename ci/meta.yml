@@ -432,7 +432,6 @@
               exit 1
         params:
           AWS_DEFAULT_REGION: ((dataworks.aws_region))
-          AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
           ASG_NAME: data-ingress-ag
           INSTANCE_PREFIX: data-ingress
           SLEEP_TIME: 60
