@@ -21,7 +21,7 @@
   "healthCheck": {
     "command": [
       "CMD-SHELL",
-      "pgrep -f sft-agent.jar || exit 1"
+      "pgrep -f sft-agent.jar"
     ],
     "interval": 5,
     "timeout": 2,
