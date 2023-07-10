@@ -19,6 +19,8 @@ jobs:
         params:
           TF_WORKSPACE: 'qa'
       - .: (( inject meta.plan.terminate-ecs-instances-pre-e2e))
+        params:
+          AWS_ROLE_ARN: arn:aws:iam::((aws_account.qa)):role/ci
       - .: (( inject meta.plan.e2e-test))
         params:
           TF_WORKSPACE: qa
