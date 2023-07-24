@@ -107,3 +107,8 @@ variable "tanium_service_endpoint_dns" {
   description = "Tanium Service endpoint DNS"
   type        = string
 }
+
+variable "tanium_service_endpoint_sg" {
+  description = "Tanium Service endpoint sg"
+  type        = string
+}
