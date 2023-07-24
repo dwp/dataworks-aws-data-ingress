@@ -45,6 +45,7 @@ module "data-ingress-cluster" {
     token                                            = local.token
     tanium1                                          = local.tanium1
     tanium2                                          = local.tanium2
+    tanium_service_endpoint_dns                      = data.terraform_remote_state.aws_sdx.outputs.tanium_service_endpoint.dns
 }
 
 output "network_interface_ip" {
