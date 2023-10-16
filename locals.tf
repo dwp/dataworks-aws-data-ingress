@@ -21,6 +21,14 @@ locals {
     production = "0.0.9"
   }
 
+  agent_config_file = {
+    development = "agent-config-receiver.tpl"
+    qa          = "agent-config-receiver.tpl"
+    integration = "agent-config-receiver.tpl"
+    preprod     = "agent-config-receiver-with-tls.tpl"
+    production  = "agent-config-receiver-with-tls.tpl"
+  }
+
   scale_down_time                = "30 23 4 * *"
   time_zone                      = "Europe/London"
   autoscaling_group_name         = "data-ingress-ag"

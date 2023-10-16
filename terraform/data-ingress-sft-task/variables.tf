@@ -98,6 +98,11 @@ variable "test_sft" {
     management     = "false"
   }
 }
+variable "agent_config_file" {
+    default     = "agent-config-with-tls.tpl"
+    type        = string
+    description = "The SFT configuration file to use. Defaults to TLS config."
+  }
 
 variable "trendmicro_secret_arn" {}
 
