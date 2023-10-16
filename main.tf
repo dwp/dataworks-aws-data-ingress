@@ -93,6 +93,7 @@ module "data-ingress-sft-task" {
     trendmicro_secret_arn                   = module.data-ingress-cluster.trendmicro_secret_arn
     companies_s3_prefix                     = local.companies_s3_prefix
     data_ingress_sg_id                      = module.data-ingress-cluster.data_ingress_sg_id
+    agent_config_file                       = local.agent_config_file[local.environment]
 }
 
 module "data-ingress-check-file-landed" {

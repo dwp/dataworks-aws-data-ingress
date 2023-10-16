@@ -9,3 +9,10 @@ receiver:
         - name: writeFile
           properties:
             destination: ${destination}
+%{ if test_sft ~}
+    - name: DA
+      actions: 
+        - name: writeFile
+          properties:
+            destination: /mnt/point/e2e/data-ingress/test
+%{ endif }

@@ -27,7 +27,7 @@ data "template_file" "data_ingress_sft_agent_config_tpl_sender" {
 }
 
 data "template_file" "data_ingress_sft_agent_config_tpl_receiver" {
-  template = file("${path.module}/sft_config/agent-config-receiver.tpl")
+  template = file("${path.module}/sft_config/${var.agent_config_file}")
   vars = {
     apiKey = var.api_key
   }
@@ -38,6 +38,7 @@ data "template_file" "data_ingress_sft_agent_application_config_tpl_receiver" {
   vars = {
     destination                = var.receiver_destination[var.environment]
     filename_prefix            = var.filename_prefix
+    test_sft                   = var.test_sft[var.environment]
   }
 }
 
