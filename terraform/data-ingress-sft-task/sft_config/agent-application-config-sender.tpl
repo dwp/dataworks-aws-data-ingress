@@ -10,7 +10,7 @@ sender:
         -
           name: httpRequest
           properties:
-            destination: "https://${ip}:${port}/internal/AWSDataworx1/inbound/GFTS/CH"
+            destination: "${sft_sender_http_protocol}://${ip}:${port}/internal/AWSDataworx1/inbound/GFTS/CH"
       deleteOnSend: false
       errorFolder: /data-ingress/error/warehouse
       filenameRegex: .*
