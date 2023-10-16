@@ -119,3 +119,8 @@ variable "receiver_destination" {
 }
 
 variable "sft_agent_version" {}
+
+variable "sft_sender_http_protocol" {
+  default = "http"
+  description = "The HTTP protocol to use when communicating with the sft_recevier."
+}
