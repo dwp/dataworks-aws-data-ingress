@@ -14,5 +14,5 @@ receiver:
       actions: 
         - name: writeFile
           properties:
-            destination: /mnt/point/e2e/data-ingress/test
+            destination: /mnt/point/e2e/data-egress/startup-test
 %{ endif }
