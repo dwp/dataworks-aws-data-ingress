@@ -15,4 +15,14 @@ receiver:
         - name: writeFile
           properties:
             destination: /mnt/point/e2e/data-egress/startup-test
+    - name: internal/DSPRIS/inbound/Dataworks/UCFS/data
+      actions:
+        - name: writeFile
+          properties:
+            destination: /mnt/point/e2e/data-egress/txr/ris
+    - name: internal/CEHA/inbound/Dataworks/UCFS/data
+      actions:
+        - name: writeFile
+          properties:
+            destination: /mnt/point/e2e/data-egress/txr/cre
 %{ endif }
